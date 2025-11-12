@@ -6,7 +6,7 @@ la vista puede delegar la lógica y ser más sencilla y testeable.
 import random
 from typing import List, Dict, Tuple
 
-# Definición de niveles (puedes editar o cargar desde DB más tarde)
+# Definición de niveles 
 LEVELS: List[Dict[str, str]] = [
     {"word": "gato", "target": "a"},
     {"word": "casa", "target": "s"},
