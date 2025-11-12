@@ -20,7 +20,7 @@ def contacts(request):
     return render(request, 'contacts.html')
 
 
-# Juego "Encuentra la letra" implementado en el servidor (sin JS)
+# JUEGO: ENCUENTRA LA LETRA
 def encuentra(request):
     # Definir los niveles (palabra y letra objetivo)
     levels = [
@@ -110,3 +110,5 @@ def encuentra(request):
     }
 
     return render(request, 'encuentra_letra.html', context)
+
+## FIN DE ENCUENTRA LA LETRA
