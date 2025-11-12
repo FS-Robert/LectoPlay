@@ -1,8 +1,5 @@
-"""Lógica del juego 'Encuentra la letra'.
+#Lógica del juego 'Encuentra la letra'.#
 
-Este módulo expone funciones puras que no dependen de Django, de forma que
-la vista puede delegar la lógica y ser más sencilla y testeable.
-"""
 import random
 from typing import List, Dict, Tuple
 
@@ -18,6 +15,7 @@ LEVELS: List[Dict[str, str]] = [
     {"word": "manzana", "target": "z"},
     {"word": "libro", "target": "b"},
     {"word": "silla", "target": "l"},
+    
 ]
 
 
