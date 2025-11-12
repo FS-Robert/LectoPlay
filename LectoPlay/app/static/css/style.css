@@ -257,3 +257,28 @@ p {
 .auth-link a:hover {
   text-decoration: underline;
 }
+
+/* --- Estilos para seleccionar letras directamente desde la palabra --- */
+.letter-btn {
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin: 0 4px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  color: #023047;
+  font-weight: 700;
+}
+
+.letter-btn:hover {
+  background: #ffefcf;
+  transform: translateY(-3px) scale(1.05);
+  border-color: #ffd166;
+}
+
+.letter-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.12);
+}

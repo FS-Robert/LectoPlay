@@ -21,7 +21,15 @@
             <p>Puntos: <strong>{{ score }}</strong></p>
 
             <div style="margin-top:1rem; font-size:1.6rem;">
-                <div>Palabra:   <span style="letter-spacing:0.5rem; font-weight:bold;">{{ spaced_word }}</span></div>
+                <div>Palabra:
+                    <form method="post" id="word-form" style="display:inline-block; margin-left:0.5rem;">
+                        {% csrf_token %}
+                        {% comment %}Render each character as a button so the user can hover and click directly on the letter shown in the word.{% endcomment %}
+                        {% for ch in word %}
+                            <button type="submit" name="choice" value="{{ ch }}" class="letter-btn" aria-label="Letra {{ ch }}">{{ ch|upper }}</button>
+                        {% endfor %}
+                    </form>
+                </div>
                 <div style="margin-top:0.5rem;">Encuentra la letra: <strong>{{ target|upper }}</strong></div>
             </div>
 
@@ -29,12 +37,7 @@
                 <div style="color:crimson; margin-top:0.5rem; font-weight:bold;">{{ message }}</div>
             {% endif %}
 
-            <form method="post" style="margin-top:1rem;">
-                {% csrf_token %}
-                {% for c in choices %}
-                    <button name="choice" value="{{ c }}" class="btn" style="margin:0.25rem;">{{ c|upper }}</button>
-                {% endfor %}
-            </form>
+            {# Removed separate choice buttons: selection is now made by clicking letters in the word above #}
 
             <form method="post" style="margin-top:0.5rem;">
                 {% csrf_token %}
