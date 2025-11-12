@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Iniciar Sesión - LectoPlay</title>
+  {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="auth-body">
+
+  <div class="auth-container">
+    <h2>🎮 Iniciar Sesión en <span class="lectoplay">LectoPlay</span></h2>
+    <p class="auth-subtitle">¡Bienvenido de nuevo! Aprende jugando 📚</p>
+
+    <input id="email" type="email" placeholder="Correo electrónico" required>
+    <input id="password" type="password" placeholder="Contraseña" required>
+    <button class="auth-btn" onclick="loginUser()">Entrar</button>
+
+    <p class="auth-link">¿No tienes cuenta? 
+      <a href="{% url 'register' %}">Regístrate aquí</a>
+    </p>
+  </div>
+
+  <script type="module" src="{% static 'js/firebase-auth.js' %}"></script>
+</body>
+</html>

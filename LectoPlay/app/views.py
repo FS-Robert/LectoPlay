@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from firebase_admin import auth
 
 # Create your views here.
 from django.shortcuts import render, HttpResponse
@@ -14,3 +15,22 @@ def ejercicios(request):
 
 def contacts(request):
     return render(request, 'contacts.html')
+
+def register_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = auth.create_user(
+            email=email,
+            password=password,
+            display_name=name
+        )
+        return redirect('login')
+    return render(request, 'register.html')
+
+
+
+def login_view(request):
+    return render(request, 'login.html')

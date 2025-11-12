@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Registrarse - LectoPlay</title>
+   {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="auth-body">
+
+  <div class="auth-container">
+    <h2>🧩 Crea tu cuenta en <span class="lectoplay">LectoPlay</span></h2>
+    <p class="auth-subtitle">¡Comienza tu aventura de lectura divertida! 🌈</p>
+
+    <input id="name" type="text" placeholder="Nombre completo" required>
+    <input id="email" type="email" placeholder="Correo electrónico" required>
+    <input id="password" type="password" placeholder="Contraseña" required>
+    <button class="auth-btn" onclick="registerUser()">Registrarse</button>
+
+    <p class="auth-link">¿Ya tienes cuenta? 
+      <a href="{% url 'login' %}">Inicia sesión</a>
+    </p>
+  </div>
+
+  <script type="module" src="{% static 'js/firebase-auth.js' %}"></script>
+</body>
+</html>

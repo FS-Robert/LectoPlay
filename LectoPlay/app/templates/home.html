@@ -21,6 +21,12 @@
                     <li><a href="{% url 'contacts' %}">Contacto</a></li>
                 </ul>
             </div>
+            <div id="user-info">
+              <!-- Aquí se mostrará el usuario logueado -->
+              <button id="login-btn" class="btn-login" onclick="window.location.href='/login'">
+               Iniciar Sesión
+              </button>
+            </div> 
         </nav>
     </header>
 
@@ -47,6 +53,29 @@
         </p>
         {% endblock %}
     </main>
+
+     <script type="module">
+    // --- Detectar usuario guardado ---
+    const userEmail = localStorage.getItem("userEmail");
+    const userInfoDiv = document.getElementById("user-info");
+
+    if (userEmail) {
+      userInfoDiv.innerHTML = `
+        <div class="user-avatar">
+          <img src="https://ui-avatars.com/api/?name=${userEmail.charAt(0).toUpperCase()}" 
+               alt="avatar" class="avatar">
+          <span>${userEmail}</span>
+          <button onclick="logoutUser()">Cerrar sesión</button>
+        </div>
+      `;
+    }
+
+    // --- Cerrar sesión ---
+    window.logoutUser = function() {
+      localStorage.removeItem("userEmail");
+      window.location.reload();
+    };
+  </script>
 
     <!-- Footer -->
     <footer>
