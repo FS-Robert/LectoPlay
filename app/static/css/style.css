@@ -1,0 +1,159 @@
+/* General */
+body {
+    font-family: 'Comic Sans MS', 'Poppins', sans-serif;
+    background-color: #fdf6f0;
+    margin: 0;
+    color: #333;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #ffb703;
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.logo a {
+    color: white;
+    font-size: 1.8rem;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #023047;
+}
+
+/* Layout */
+.container {
+    width: 90%;
+    margin: 20px auto;
+}
+
+/* Footer */
+footer {
+    background-color: #8ecae6;
+    color: #023047;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 40px;
+    font-weight: 600;
+}
+
+/* Buttons (optional use in other pages) */
+button, .btn {
+    background-color: #ffafcc;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 1rem;
+}
+
+button:hover, .btn:hover {
+    background-color: #f28482;
+}
+
+/* Extra Fun Touch */
+h1, h2 {
+    color: #219ebc;
+}
+p {
+    font-size: 1.1rem;
+}
+
+/* === Sección de Ejercicios === */
+.ejercicios {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: #ffcad4;
+    border-radius: 15px;
+    width: 280px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card h3 {
+    color: #219ebc;
+}
+
+.card p {
+    color: #333;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.contact-form {
+    background-color: #fff3e0;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    border: 2px solid #ffd166;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: #fffdf8;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #06d6a0;
+    background-color: #e9fdf6;
+}
+
+.contact-form button {
+    background-color: #ffafcc;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.contact-form button:hover {
+    background-color: #f28482;
+}

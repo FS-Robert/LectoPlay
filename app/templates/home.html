@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LectoPlay{% endblock %}</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo"><a href="{% url 'home' %}">LectoPlay</a></h1>
+                <ul class="nav-links">
+                    <li><a href="{% url 'home' %}">Inicio</a></li>
+                    <li><a href="{% url 'about' %}">Acerca de</a></li>
+                    <li><a href="{% url 'ejercicios' %}">Ejercicios</a></li> 
+                    <li><a href="{% url 'contacts' %}">Contacto</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        {% block content %}
+        <h1>Bienvenido a LectoPlay 👋</h1>
+        <p style="font-size: 18px; line-height: 1.6; color: #333;">
+            <strong>LectoPlay</strong> es un sitio web educativo diseñado para ayudar a 
+            <strong>niños con dislexia</strong> a mejorar su lectura de forma divertida y accesible. 
+            Mediante actividades visuales, colores llamativos y herramientas interactivas, 
+            busca convertir el aprendizaje en una experiencia positiva y entretenida.
+        </p>
+
+        <p style="font-size: 18px; line-height: 1.6; color: #333;">
+            Su objetivo es brindar una <strong>plataforma inclusiva</strong> que apoye tanto a los niños 
+            como a docentes, terapeutas del lenguaje y familias, fomentando la confianza 
+            y el gusto por la lectura.
+        </p>
+
+        <p style="font-size: 18px; line-height: 1.6; color: #333;">
+            Con <strong>LectoPlay</strong>, aprender a leer se convierte en una aventura colorida 
+            donde cada palabra cuenta. 💙
+        </p>
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>🐾 &copy; 2025 LectoPlay. Aprende jugando </p>
+    </footer>
+</body>
+</html>
