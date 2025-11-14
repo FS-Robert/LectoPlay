@@ -13,8 +13,9 @@ def about_view(request):
 
 
 def ejercicios(request):
-    # Página de ejercicios: enlaces a los distintos juegos
     return render(request, 'ejercicios.html')
+
+
 
 
 def contacts(request):

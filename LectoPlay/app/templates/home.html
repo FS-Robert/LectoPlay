@@ -54,32 +54,31 @@
         {% endblock %}
     </main>
 
+      <script type="module" src="/static/js/firebase-auth.js"></script>
+  
      <script type="module">
     // --- Detectar usuario guardado ---
+    const userName = localStorage.getItem("userName");
     const userEmail = localStorage.getItem("userEmail");
     const userInfoDiv = document.getElementById("user-info");
 
     if (userEmail) {
       userInfoDiv.innerHTML = `
         <div class="user-avatar">
-          <img src="https://ui-avatars.com/api/?name=${userEmail.charAt(0).toUpperCase()}" 
+          <img src="/static/css/login-avatar.png" width="40px" height="40px" 
                alt="avatar" class="avatar">
-          <span>${userEmail}</span>
+          <span>${userName ? userName : userEmail}</span>
           <button onclick="logoutUser()">Cerrar sesión</button>
         </div>
       `;
     }
 
-    // --- Cerrar sesión ---
-    window.logoutUser = function() {
-      localStorage.removeItem("userEmail");
-      window.location.reload();
-    };
   </script>
 
     <!-- Footer -->
     <footer>
         <p>🐾 &copy; 2025 LectoPlay. Aprende jugando </p>
     </footer>
+
 </body>
 </html>

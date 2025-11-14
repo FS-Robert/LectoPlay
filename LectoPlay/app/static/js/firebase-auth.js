@@ -1,8 +1,17 @@
 // --- Importaciones de Firebase ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  updateProfile,
+  onAuthStateChanged,
+  signOut,
+  browserSessionPersistence, 
+  setPersistence
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// --- Configuración de tu proyecto Firebase ---
+// --- Configuración de Firebase ---
 const firebaseConfig = {
   apiKey: "AIzaSyC104WVyRbn8qqMyXECEurTMDjlH0qKj1I",
   authDomain: "lectorplay-ab1e0.firebaseapp.com",
@@ -12,11 +21,28 @@ const firebaseConfig = {
   appId: "1:577582475679:web:7c1c5f71df45490f9575aa"
 };
 
-// --- Inicialización de Firebase ---
+// --- Inicialización ---
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// --- Función para registrar usuario ---
+// Sesión en pestaña abierta
+setPersistence(auth, browserSessionPersistence);
+
+// ===============================
+// 🔥 LISTENER GLOBAL DE SESIÓN
+// ===============================
+onAuthStateChanged(auth, (user) => {
+  window.currentUser = user;
+
+  if (user) {
+    localStorage.setItem("userEmail", user.email);
+    localStorage.setItem("userName", user.displayName ?? "");
+  }
+});
+
+// ===============================
+// 🔥 Registrar usuario
+// ===============================
 window.registerUser = function() {
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -28,38 +54,49 @@ window.registerUser = function() {
   }
 
   createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(async (userCredential) => {
       const user = userCredential.user;
-      console.log("Usuario creado:", user);
+
+      await updateProfile(user, { displayName: name });
+      await user.reload();
+
       alert(`¡Bienvenido ${name}! Tu cuenta fue creada con éxito.`);
-      window.location.href = "/login"; // redirige al login
+      window.location.href = "/login";
     })
     .catch((error) => {
-      console.error("Error al registrar usuario:", error.message);
-      alert("Error al crear la cuenta: " + error.message);
+      console.error("Error al registrar:", error.message);
+      alert("Error: " + error.message);
     });
 };
 
-// --- Función para iniciar sesión ---
+// ===============================
+// 🔥 Iniciar sesión
+// ===============================
 window.loginUser = function() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
   if (!email || !password) {
-    alert("Por favor, completa todos los campos.");
+    alert("Completa todos los campos.");
     return;
   }
 
   signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(async (userCredential) => {
       const user = userCredential.user;
-      console.log("Inicio de sesión exitoso:", user.email);
+      await user.reload();
 
-      // Guardar sesión localmente
       localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("userName", user.displayName ?? "");
 
-      // Redirigir a la página principal
-      window.location.href = "/";
+      const redirect = localStorage.getItem("redirectAfterLogin");
+
+      if (redirect) {
+        localStorage.removeItem("redirectAfterLogin");
+        window.location.href = redirect;
+      } else {
+        window.location.href = "/";
+      }
     })
     .catch((error) => {
       console.error("Error al iniciar sesión:", error.message);
@@ -67,3 +104,49 @@ window.loginUser = function() {
     });
 };
 
+// ===============================
+// 🔥 Cerrar sesión
+// ===============================
+window.logoutUser = async function() {
+  try {
+    await signOut(auth);
+
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
+
+    window.location.href = "/";
+  } catch (error) {
+    console.error("Error al cerrar sesión:", error);
+  }
+};
+
+// ===================================================
+// 🔥 PROTEGER RUTAS (Versión final, optimizada, sin bugs)
+// ===================================================
+
+// Esperar a que Firebase cargue la sesión real
+function waitForAuthInit() {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      unsub(); // Se ejecuta una sola vez
+      resolve(user);
+    });
+  });
+}
+
+// Usado en /ejercicios, /perfil, etc.
+window.protectRoute = async function(path) {
+  console.log("⏳ protectRoute: Esperando restauración de sesión...");
+
+  const user = await waitForAuthInit();
+
+  console.log("protectRoute — usuario:", user);
+
+  if (!user) {
+    console.log("⚠ No logueado → redirigiendo al login");
+    localStorage.setItem("redirectAfterLogin", path);
+    window.location.href = "/login";
+  } else {
+    console.log("🔐 Usuario autenticado → acceso permitido");
+  }
+};

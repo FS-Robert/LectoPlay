@@ -57,9 +57,10 @@ footer {
     font-weight: 600;
 }
 
-/* Buttons (optional use in other pages) */
+
+/* Buttons inicio */
 button, .btn {
-    background-color: #ffafcc;
+    background-color: #219ebc;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -69,8 +70,9 @@ button, .btn {
     font-size: 1rem;
 }
 
+/* Buttons cerrar */
 button:hover, .btn:hover {
-    background-color: #f28482;
+    background-color: #4f98ec;
 }
 
 /* Extra Fun Touch */
@@ -166,7 +168,7 @@ p {
   margin-left: auto;
 }
 
-.login-btn {
+.btn-login {
   background-color: #219ebc;
   color: white;
   padding: 8px 18px;
@@ -176,7 +178,7 @@ p {
   transition: all 0.3s ease;
 }
 
-.login-btn:hover {
+.btn-login:hover {
   background-color: #023047;
   transform: scale(1.05);
 }
@@ -282,3 +284,31 @@ p {
   outline: none;
   box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.12);
 }
+
+
+.btn-cerrar:hover {
+  background: #d93b59;
+}
+.user-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 10px;
+}
+/* Avatar con borde y sombra */
+.user-avatar img.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+/* Nombre centrado debajo del avatar */
+.user-avatar span {
+  font-weight: bold;
+  color: white;
+  font-size: 1rem;
+}
+
