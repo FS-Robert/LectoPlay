@@ -282,3 +282,64 @@ p {
   outline: none;
   box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.12);
 }
+<<<<<<< HEAD
+=======
+
+
+.btn-cerrar:hover {
+  background: #d93b59;
+}
+.user-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 10px;
+}
+/* Avatar con borde y sombra */
+.user-avatar img.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+/* Nombre centrado debajo del avatar */
+.user-avatar span {
+  font-weight: bold;
+  color: white;
+  font-size: 1rem;
+}
+
+/* --- Pantalla de Lectura Rápida --- */
+.frase-box {
+  background-color: #fffdf8;
+  border-radius: 12px;
+  padding: 10px 15px;
+  border: 2px solid #ffd166;
+  margin: 15px 0;
+  text-align: left;
+}
+
+.opcion-linea {
+  display: block;
+  text-align: left;
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.feedback {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #fb8500;
+}
+
+.score {
+  font-size: 0.95rem;
+  color: #023047;
+  margin-bottom: 8px;
+}
+
+
+>>>>>>> 8e42bcae360d97374c84a8ae9edb9bf18ae134c9

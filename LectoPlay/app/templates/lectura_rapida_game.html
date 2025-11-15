@@ -1,0 +1,73 @@
+{% extends "home.html" %}
+
+{% block title %}Lectura Rápida{% endblock %}
+
+{% block content %}
+<div class="ejercicios">
+    <h1>📖 Lectura Rápida</h1>
+    <p>Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
+
+    {% if not categoria_actual %}
+        <!-- PASO 1: ELEGIR CATEGORÍA -->
+        <h2>Elige una categoría</h2>
+        <div class="cards">
+            {% for cat in categorias %}
+                <div class="card">
+                    <h3>{{ cat }}</h3>
+                    <p>Frases y preguntas relacionadas con <strong>{{ cat }}</strong>.</p>
+                    <form method="get">
+                        <input type="hidden" name="categoria" value="{{ cat }}">
+                        <button type="submit" class="btn">Empezar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <!-- JUEGO EN MARCHA -->
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <p class="score">Aciertos: {{ aciertos }} / {{ intentos }}</p>
+            <h2>Categoría: {{ categoria_actual }}</h2>
+
+            <div class="frase-box">
+                <strong>Frase:</strong>
+                <p>{{ frase }}</p>
+            </div>
+
+            <p><strong>Pregunta:</strong> {{ pregunta }}</p>
+
+            <!-- FORMULARIO PARA RESPONDER -->
+            <form method="post">
+                {% csrf_token %}
+                {% for opcion in opciones %}
+                    <label class="opcion-linea">
+                        <input type="radio" name="respuesta" value="{{ opcion }}" required>
+                        {{ opcion }}
+                    </label>
+                {% endfor %}
+                <input type="hidden" name="correcta" value="{{ correcta }}">
+                <input type="hidden" name="categoria" value="{{ categoria_actual }}">
+                <input type="hidden" name="action" value="responder">
+                <button type="submit" class="btn">Responder</button>
+            </form>
+
+            {% if feedback %}
+                <p class="feedback">{{ feedback }}</p>
+            {% endif %}
+
+            <!-- OTRA FRASE MISMA CATEGORÍA -->
+            <form method="post" style="margin-top: 10px;">
+                {% csrf_token %}
+                <input type="hidden" name="categoria" value="{{ categoria_actual }}">
+                <input type="hidden" name="action" value="otra">
+                <button type="submit" class="btn">Otra frase</button>
+            </form>
+
+            <!-- CAMBIAR DE CATEGORÍA -->
+            <div style="margin-top: 15px;">
+                <a href="{% url 'lectura_rapida_game' %}" class="btn">Cambiar categoría</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
