@@ -57,10 +57,9 @@ footer {
     font-weight: 600;
 }
 
-
-/* Buttons inicio */
+/* Buttons (optional use in other pages) */
 button, .btn {
-    background-color: #219ebc;
+    background-color: #ffafcc;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -70,9 +69,8 @@ button, .btn {
     font-size: 1rem;
 }
 
-/* Buttons cerrar */
 button:hover, .btn:hover {
-    background-color: #4f98ec;
+    background-color: #f28482;
 }
 
 /* Extra Fun Touch */
@@ -163,47 +161,12 @@ p {
     background-color: #f28482;
 }
 
-/*palabaras y colores*/
-.game-container { text-align: center; }
-
-.palabra {
-    font-size: 40px;
-    font-weight: bold;
-    margin: 20px 0;
-}
-
-.colores-opciones {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.color-btn {
-    width: 80px;
-    height: 80px;
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
-}
-
-.btn-nuevo {
-    margin-top: 30px;
-    padding: 10px 20px;
-}
-
-.mensaje {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-
-
 /* --- Botón de iniciar sesión --- */
 .auth-btn-container {
   margin-left: auto;
 }
 
-.btn-login {
+.login-btn {
   background-color: #219ebc;
   color: white;
   padding: 8px 18px;
@@ -213,7 +176,7 @@ p {
   transition: all 0.3s ease;
 }
 
-.btn-login:hover {
+.login-btn:hover {
   background-color: #023047;
   transform: scale(1.05);
 }
@@ -305,7 +268,7 @@ p {
   font-size: 1.4rem;
   cursor: pointer;
   transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
-  color: #023047;
+  color: #0b2938;
   font-weight: 700;
 }
 
@@ -319,31 +282,3 @@ p {
   outline: none;
   box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.12);
 }
-
-
-.btn-cerrar:hover {
-  background: #d93b59;
-}
-.user-avatar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  padding: 10px;
-}
-/* Avatar con borde y sombra */
-.user-avatar img.avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-}
-/* Nombre centrado debajo del avatar */
-.user-avatar span {
-  font-weight: bold;
-  color: white;
-  font-size: 1rem;
-}
-
