@@ -10,28 +10,32 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
 <section class="ejercicios">
     <h1>🧩 Ejercicios Divertidos</h1>
     <p>Aprende y juega con estos ejercicios interactivos.</p>
 
     <div class="cards">
+        
+        <!-- 🔹 Lectura Rápida -->
         <div class="card">
             <h3>📖 Lectura Rápida</h3>
             <p>Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
-            <button class="btn">Empezar</button>
+            <a href="{% url 'lectura_rapida_game' %}" class="btn">Empezar</a>
         </div>
+
+        <!-- 🔸 Palabras y Colores -->
         <div class="card">
             <h3>🎨 Palabras y Colores</h3>
             <p>Asocia palabras con colores y mejora tu memoria visual.</p>
             <button class="btn">Jugar</button>
         </div>
+
+        <!-- 🔹 Encuentra la Letra -->
         <div class="card">
             <h3>🔤 Encuentra la Letra</h3>
             <p>Identifica letras escondidas en palabras divertidas.</p>
             <a href="{% url 'encuentra' %}" class="btn">Jugar</a>
         </div>
-    </div>
 
     </div>
 

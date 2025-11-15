@@ -3,6 +3,8 @@ from django.http import HttpResponse
 import random
 from . import encuentra_game
 from firebase_admin import auth
+from django.shortcuts import render
+from .lectura_rapida_game import get_categorias, get_random_question
 
 def home_view(request):
     return render(request, "home.html")
@@ -102,3 +104,60 @@ def encuentra(request):
 
 
 ## FIN DE ENCUENTRA LA LETRA 
+
+
+
+# JUEGO: LECTURA RÁPIDA
+
+def lectura_rapida_game(request):
+    categorias = get_categorias()
+    categoria = request.GET.get("categoria") or request.POST.get("categoria")
+    action = request.POST.get("action")  # "responder" o "otra"
+
+    # Inicializar marcador en sesión
+    if "aciertos" not in request.session:
+        request.session["aciertos"] = 0
+        request.session["intentos"] = 0
+
+    aciertos = request.session["aciertos"]
+    intentos = request.session["intentos"]
+
+    frase = pregunta = correcta = feedback = None
+    opciones = []
+
+    if request.method == "POST" and categoria:
+        if action == "responder":
+            respuesta_usuario = request.POST.get("respuesta")
+            correcta_anterior = request.POST.get("correcta")
+
+            intentos += 1
+            if respuesta_usuario == correcta_anterior:
+                aciertos += 1
+                feedback = "¡Correcto! 🎉"
+            else:
+                feedback = f"No es correcto. La respuesta era: {correcta_anterior}."
+
+            # Guardar marcador en sesión
+            request.session["aciertos"] = aciertos
+            request.session["intentos"] = intentos
+
+        # En ambos casos cargamos una nueva pregunta
+        frase, pregunta, opciones, correcta = get_random_question(categoria)
+
+    elif categoria:
+        # Primera vez que entra a la categoría
+        frase, pregunta, opciones, correcta = get_random_question(categoria)
+
+    context = {
+        "categorias": categorias,
+        "categoria_actual": categoria,
+        "frase": frase,
+        "pregunta": pregunta,
+        "opciones": opciones,
+        "correcta": correcta,
+        "feedback": feedback,
+        "aciertos": aciertos,
+        "intentos": intentos,
+    }
+    return render(request, "lectura_rapida_game.html", context)
+# FIN DE LECTURA RÁPIDA

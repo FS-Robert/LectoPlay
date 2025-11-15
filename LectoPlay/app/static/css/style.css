@@ -312,3 +312,33 @@ p {
   font-size: 1rem;
 }
 
+/* --- Pantalla de Lectura Rápida --- */
+.frase-box {
+  background-color: #fffdf8;
+  border-radius: 12px;
+  padding: 10px 15px;
+  border: 2px solid #ffd166;
+  margin: 15px 0;
+  text-align: left;
+}
+
+.opcion-linea {
+  display: block;
+  text-align: left;
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.feedback {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #fb8500;
+}
+
+.score {
+  font-size: 0.95rem;
+  color: #023047;
+  margin-bottom: 8px;
+}
+
+
