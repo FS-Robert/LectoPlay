@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import random
 from . import encuentra_game
+from . import palabras_colores_game     
 from firebase_admin import auth
 from django.shortcuts import render
 from .lectura_rapida_game import get_categorias, get_random_question
@@ -30,41 +31,40 @@ def register_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = auth.create_user(
+        auth.create_user(
             email=email,
             password=password,
             display_name=name
         )
         return redirect('login')
-    return render(request, 'register.html')
 
+    return render(request, 'register.html')
 
 
 def login_view(request):
     return render(request, 'login.html')
 
 
+# =========================
+#   JUEGO: ENCUENTRA LETRA
+# =========================
 
-# JUEGO: ENCUENTRA LA LETRA 
 def encuentra(request):
     total = encuentra_game.total_levels()
 
-    # Manejar reinicio solicitado
     if request.method == 'POST' and request.POST.get('reset'):
         request.session.pop('enc_level', None)
         request.session.pop('enc_score', None)
         return redirect('encuentra')
 
-    # Inicializar sesión si es necesario
     if 'enc_level' not in request.session:
         request.session['enc_level'] = 0
         request.session['enc_score'] = 0
 
-    level_idx = request.session.get('enc_level', 0)
-    score = request.session.get('enc_score', 0)
+    level_idx = request.session['enc_level']
+    score = request.session['enc_score']
     message = None
 
-    # Manejar intento del usuario
     if request.method == 'POST' and request.POST.get('choice'):
         choice = request.POST.get('choice')
         level_idx, score, correct, msg = encuentra_game.check_choice(choice, level_idx, score)
@@ -73,36 +73,30 @@ def encuentra(request):
         if not correct:
             message = msg
 
-    # Si terminó el juego
     if level_idx >= total:
-        context = {
+        return render(request, 'encuentra_letra.html', {
             'finished': True,
             'score': score,
             'total': total,
-        }
-        return render(request, 'encuentra_letra.html', context)
+        })
 
-    # Preparar datos para el nivel actual
     lvl = encuentra_game.get_level(level_idx)
-    word = lvl['word']
-    target = lvl['target']
-    choices = encuentra_game.make_choices(word, target, count=6, rng=random)
-    spaced_word = encuentra_game.spaced_word(word)
 
     context = {
         'level_num': level_idx + 1,
         'total': total,
         'score': score,
-        'word': word,
-        'spaced_word': spaced_word,
-        'target': target,
-        'choices': choices,
+        'word': lvl['word'],
+        'spaced_word': encuentra_game.spaced_word(lvl['word']),
+        'target': lvl['target'],
+        'choices': encuentra_game.make_choices(lvl['word'], lvl['target'], count=6, rng=random),
         'message': message,
     }
 
     return render(request, 'encuentra_letra.html', context)
 
 
+<<<<<<< HEAD
 ## FIN DE ENCUENTRA LA LETRA 
 
 
@@ -161,3 +155,61 @@ def lectura_rapida_game(request):
     }
     return render(request, "lectura_rapida_game.html", context)
 # FIN DE LECTURA RÁPIDA
+=======
+# ====================================
+#   JUEGO: PALABRAS Y COLORES
+# ====================================
+
+def palabras_colores(request):
+
+    total = palabras_colores_game.total_levels()
+
+    # Reinicio
+    if request.method == 'POST' and request.POST.get('reset'):
+        request.session.pop('pc_level', None)
+        request.session.pop('pc_score', None)
+        return redirect('palabras_colores')
+
+    # Inicialización
+    if 'pc_level' not in request.session:
+        request.session['pc_level'] = 0
+        request.session['pc_score'] = 0
+
+    level_idx = request.session['pc_level']
+    score = request.session['pc_score']
+    message = None
+
+    # Lógica del intento
+    if request.method == 'POST' and request.POST.get('choice'):
+        choice = request.POST.get('choice')
+        level_idx, score, correct, msg = palabras_colores_game.check_choice(choice, level_idx, score)
+
+        request.session['pc_level'] = level_idx
+        request.session['pc_score'] = score
+        message = msg
+
+    # Juego terminado
+    if level_idx >= total:
+        return render(request, "palabras_colores.html", {
+            "finished": True,
+            "score": score,
+            "total": total,
+        })
+
+    # Cargar nivel
+    lvl = palabras_colores_game.get_level(level_idx)
+    word = lvl["word"]
+    correct_color = lvl["color"]
+    choices = palabras_colores_game.make_choices(correct_color)
+
+    context = {
+        "word": word,
+        "choices": choices,
+        "level_num": level_idx + 1,
+        "total": total,
+        "score": score,
+        "message": message,
+    }
+
+    return render(request, "palabras_colores.html", context)
+>>>>>>> 7dadc2cd959caebd468b97c980cf49954a6b059a

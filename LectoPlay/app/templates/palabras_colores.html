@@ -1,0 +1,63 @@
+{% extends 'home.html' %}
+
+{% block title %}Palabras y Colores | LectoPlay{% endblock %}
+
+{% block content %}
+<section class="ejercicios">
+    <h1>🎨 Palabras y Colores</h1>
+    <p class="descripcion">Asocia la palabra con el color correcto</p>
+
+    {% if finished %}
+        <div class="result">
+            <p>¡Juego completado!</p>
+            <p>Puntuación final: <strong>{{ score }}</strong> / {{ total }} niveles</p>
+
+            <form method="post" style="margin-top:1rem;">
+                {% csrf_token %}
+                <button name="reset" value="1" class="btn">Jugar de nuevo</button>
+            </form>
+        </div>
+
+    {% else %}
+        <div class="game">
+            <p>Nivel {{ level_num }} / {{ total }}</p>
+            <p>Puntos: <strong>{{ score }}</strong></p>
+
+            <!-- PALABRA -->
+            <div id="palabra" class="palabra" style="font-size:2rem; margin:1rem 0;">
+                {{ word }}
+            </div>
+
+            <!-- MENSAJES -->
+            {% if message %}
+                <div style="color:crimson; margin:0.5rem 0; font-weight:bold;">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+            <!-- OPCIONES DE COLORES -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="colores-opciones" style="display:flex; gap:1rem; flex-wrap:wrap;">
+                    {% for c in choices %}
+                        <button name="choice"
+                                value="{{ c }}"
+                                class="color-btn"
+                                style="width:60px; height:60px; border-radius:50%;
+                                       border:none; cursor:pointer;
+                                       background-color: {{ c }};">
+                        </button>
+                    {% endfor %}
+                </div>
+            </form>
+
+            <!-- BOTÓN REINICIAR -->
+            <form method="post" style="margin-top:1rem;">
+                {% csrf_token %}
+                <button name="reset" value="1" class="btn">Reiniciar</button>
+            </form>
+        </div>
+    {% endif %}
+
+</section>
+{% endblock %}
