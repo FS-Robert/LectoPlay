@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import random
 from . import encuentra_game
-from . import palabras_colores_game     # ✅ IMPORTACIÓN NECESARIA
+from . import palabras_colores_game     
 from firebase_admin import auth
 
 def home_view(request):
@@ -15,6 +15,8 @@ def about_view(request):
 
 def ejercicios(request):
     return render(request, 'ejercicios.html')
+
+
 
 
 def contacts(request):
