@@ -96,7 +96,7 @@ def encuentra(request):
     return render(request, 'encuentra_letra.html', context)
 
 
-<<<<<<< HEAD
+
 ## FIN DE ENCUENTRA LA LETRA 
 
 
@@ -155,7 +155,7 @@ def lectura_rapida_game(request):
     }
     return render(request, "lectura_rapida_game.html", context)
 # FIN DE LECTURA RÁPIDA
-=======
+
 # ====================================
 #   JUEGO: PALABRAS Y COLORES
 # ====================================
@@ -212,4 +212,4 @@ def palabras_colores(request):
     }
 
     return render(request, "palabras_colores.html", context)
->>>>>>> 7dadc2cd959caebd468b97c980cf49954a6b059a
+# FIN DE PALABRAS Y COLORES

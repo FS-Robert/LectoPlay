@@ -24,50 +24,64 @@
         </div>
 
     {% else %}
-        <!-- JUEGO EN MARCHA -->
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-            <p class="score">Aciertos: {{ aciertos }} / {{ intentos }}</p>
-            <h2>Categoría: {{ categoria_actual }}</h2>
+    <div class="lectura-bg">
 
-            <div class="frase-box">
+        <div class="score-pretty">
+            Aciertos: {{ aciertos }} / {{ intentos }}
+        </div>
+
+        <div class="lectura-card">
+
+            <h2 class="titulo-categoria">Categoría: {{ categoria_actual }}</h2>
+
+            <div class="frase-box-pretty">
                 <strong>Frase:</strong>
                 <p>{{ frase }}</p>
             </div>
 
             <p><strong>Pregunta:</strong> {{ pregunta }}</p>
 
-            <!-- FORMULARIO PARA RESPONDER -->
+            <!-- ==== FORMULARIO ÚNICO: OPCIONES + BOTONES ==== -->
             <form method="post">
                 {% csrf_token %}
-                {% for opcion in opciones %}
-                    <label class="opcion-linea">
-                        <input type="radio" name="respuesta" value="{{ opcion }}" required>
-                        {{ opcion }}
-                    </label>
-                {% endfor %}
+
+                <!-- Opciones de respuesta -->
+                <div class="opciones-container">
+                    {% for opcion in opciones %}
+                        <label class="opcion-linea">
+                            <input type="radio" name="respuesta" value="{{ opcion }}" required>
+                            {{ opcion }}
+                        </label>
+                    {% endfor %}
+                </div>
+
+                <!-- Datos ocultos -->
                 <input type="hidden" name="correcta" value="{{ correcta }}">
                 <input type="hidden" name="categoria" value="{{ categoria_actual }}">
-                <input type="hidden" name="action" value="responder">
-                <button type="submit" class="btn">Responder</button>
+
+                <!-- Botones en una sola línea -->
+                <div class="btn-row">
+                    <button type="submit" class="btn" name="action" value="responder">
+                        Responder
+                    </button>
+
+                    <button type="submit" class="btn" name="action" value="otra">
+                        Otra frase
+                    </button>
+
+                    <a href="{% url 'lectura_rapida_game' %}" class="btn">
+                        Cambiar categoría
+                    </a>
+                </div>
             </form>
 
             {% if feedback %}
                 <p class="feedback">{{ feedback }}</p>
             {% endif %}
 
-            <!-- OTRA FRASE MISMA CATEGORÍA -->
-            <form method="post" style="margin-top: 10px;">
-                {% csrf_token %}
-                <input type="hidden" name="categoria" value="{{ categoria_actual }}">
-                <input type="hidden" name="action" value="otra">
-                <button type="submit" class="btn">Otra frase</button>
-            </form>
-
-            <!-- CAMBIAR DE CATEGORÍA -->
-            <div style="margin-top: 15px;">
-                <a href="{% url 'lectura_rapida_game' %}" class="btn">Cambiar categoría</a>
-            </div>
         </div>
+
+    </div>
     {% endif %}
 </div>
 {% endblock %}

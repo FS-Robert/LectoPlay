@@ -375,5 +375,90 @@ p {
   color: #023047;
   margin-bottom: 8px;
 }
+/* --- Fondo bonito del juego --- */
+.lectura-bg {
+    background: linear-gradient(180deg, #ffe8f0, #fff6e9);
+    padding: 40px 20px;
+    border-radius: 25px;
+    max-width: 680px;
+    margin: 0 auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+}
+
+/* --- Tarjeta interna donde va la frase y pregunta --- */
+.lectura-card {
+    background-color: #ffcad4;
+    border-radius: 20px;
+    padding: 25px 35px;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* --- Título categoría --- */
+.titulo-categoria {
+    color: #d74b76;
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* --- Caja de la frase con marco más bonito --- */
+.frase-box-pretty {
+    background: #ffffff;
+    border: 3px solid #ffd166;
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    box-shadow: inset 0 0 8px rgba(255,209,102,0.2);
+}
+
+/* --- Botones más redondos para niños --- */
+.btn {
+    border-radius: 12px !important;
+}
+
+/* Aciertos / Intentos */
+.score-pretty {
+    font-size: 1.1rem;
+    color: #0077b6;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+/* Fuerza que el bloque de respuestas quede centrado */
+.opciones-container {
+    width: 100%;
+    text-align: center !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Centra cada opción con radio + texto */
+.opcion-linea {
+    width: 100%;
+    max-width: 300px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px;
+    margin: 8px 0;
+    font-size: 1.1rem;
+}
+/* Contenedor horizontal para los botones */
+.btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Asegurar que todos los botones luzcan iguales */
+.btn-row .btn {
+    min-width: 120px;
+    text-align: center;
+}
+
+/* FIN DE ESTILOS DE LECTURA RÁPIDA */
 
 
