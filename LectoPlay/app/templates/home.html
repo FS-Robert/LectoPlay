@@ -8,51 +8,150 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
+<script>
+let index = 0;
+const slides = document.querySelectorAll(".itemCarrousel");
+
+function autoSlide() {
+    index++;
+    if (index >= slides.length) index = 0;
+
+    // Hacemos scroll automático al ID correcto
+    window.location.hash = slides[index].id;
+}
+
+setInterval(autoSlide, 6000);
+
+</script>
 <body>
+  
     <!-- Header -->
     <header>
         <nav class="navbar">
             <div class="container">
-                <h1 class="logo"><a href="{% url 'home' %}">LectoPlay</a></h1>
-                <ul class="nav-links">
-                    <li><a href="{% url 'home' %}">Inicio</a></li>
-                    <li><a href="{% url 'about' %}">Acerca de</a></li>
-                    <li><a href="{% url 'ejercicios' %}">Ejercicios</a></li> 
-                    <li><a href="{% url 'contacts' %}">Contacto</a></li>
-                </ul>
             </div>
             <div id="user-info">
               <!-- Aquí se mostrará el usuario logueado -->
-              <button id="login-btn" class="btn-login" onclick="window.location.href='/login'">
+              <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
                Iniciar Sesión
               </button>
             </div> 
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="container">
+      <!-- White Navbar -->
+    <div class="white-navbar-container">
+      <nav class="white-navbar">
+        <!-- IZQUIERDA -->
+        <ul class="white-nav-links left-links">
+            <li><a href="{% url 'home' %}" class="active">Inicio</a></li>
+            <li><a href="{% url 'about' %}">Acerca de</a></li>
+        </ul>
+        <!-- LOGO CENTRO -->
+        <h1 class="white-logo">
+            <a href="{% url 'home' %}">
+        <img src="{% static 'css/logo3.png' %}" alt="LectoPlay" class="logo-img">
+      </a>
+        </h1>
+        <!-- DERECHA -->
+        <ul class="white-nav-links right-links">
+            <li><a href="{% url 'ejercicios' %}">Ejercicios</a></li>
+            <li><a href="{% url 'contacts' %}">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+    
+
+    <!-- Carousel Start -->
+  
         {% block content %}
-        <h1>Bienvenido a LectoPlay 👋</h1>
-        <p style="font-size: 18px; line-height: 1.6; color: #333;">
+   <div class="carrousel">
+    <div class="conteCarrousel">
+        <!-- SLIDE 1 -->
+        <div class="itemCarrousel" id="itemCarrousel-1">
+            <div class="itemCarrouselTarjeta">
+                <img src="{% static 'css/carrusel1.png' %}" class="carrousel-img">
+                <div class="carrousel-text">
+                    <h2>LECTURA Y DIVERSIÓN</h2>
+                    <p>Donde las letras son amigas</p>
+                </div>
+            </div>
+
+            <div class="itemCarrouselArrows">
+                <a href="#itemCarrousel-2">
+                    <img src="{% static 'css/flecha1.png' %}" class="arrow">
+                </a>
+                <a href="#itemCarrousel-2">
+                    <img src="{% static 'css/flecha2.png' %}" class="arrow">
+                </a>
+            </div>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="itemCarrousel" id="itemCarrousel-2">
+            <div class="itemCarrouselTarjeta">
+                <img src="{% static 'css/carrusel2.png' %}" class="carrousel-img">
+                <div class="carrousel-text">
+                    <h2>LECTURA Y DIVERSIÓN</h2>
+                    <p>Jugar es tu mejor herramienta</p>
+                </div>
+            </div>
+
+            <div class="itemCarrouselArrows">
+                <a href="#itemCarrousel-1">
+                    <img src="{% static 'css/flecha1.png' %}" class="arrow">
+                </a>
+                <a href="#itemCarrousel-1">
+                    <img src="{% static 'css/flecha2.png' %}" class="arrow">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PUNTOS DE CONTROL -->
+    <div class="conteCarrouselController">
+        <a href="#itemCarrousel-1">•</a>
+        <a href="#itemCarrousel-2">•</a>
+    </div>
+   </div>
+
+
+<!-- Sección Presentación LectoPlay -->
+ <main class="container"> 
+<section class="about-lectoplay">
+    <div class="about-text">
+
+        <h2>¡BIENVENIDOS A LECTOPLAY!</h2>
+        <p>
             <strong>LectoPlay</strong> es un sitio web educativo diseñado para ayudar a 
             <strong>niños con dislexia</strong> a mejorar su lectura de forma divertida y accesible. 
-            Mediante actividades visuales, colores llamativos y herramientas interactivas, 
+            Mediante actividades visuales, colores llamativos y herramientas interactivas,
             busca convertir el aprendizaje en una experiencia positiva y entretenida.
         </p>
 
-        <p style="font-size: 18px; line-height: 1.6; color: #333;">
+        <p>
             Su objetivo es brindar una <strong>plataforma inclusiva</strong> que apoye tanto a los niños 
             como a docentes, terapeutas del lenguaje y familias, fomentando la confianza 
             y el gusto por la lectura.
         </p>
 
-        <p style="font-size: 18px; line-height: 1.6; color: #333;">
+        <p>
             Con <strong>LectoPlay</strong>, aprender a leer se convierte en una aventura colorida 
-            donde cada palabra cuenta. 💙
+            donde cada palabra cuenta.
         </p>
-        {% endblock %}
-    </main>
+
+    </div>
+
+    <div class="about-image">
+        <img src="{% static 'css/osito.png' %}" alt="LectoPlay">
+    </div>
+  </section>
+{% endblock %}
+</main> 
+
+
+   
 
       <script type="module" src="/static/js/firebase-auth.js"></script>
   

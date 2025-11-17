@@ -1,9 +1,13 @@
 /* General */
 body {
     font-family: 'Comic Sans MS', 'Poppins', sans-serif;
-    background-color: #fdf6f0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    background-color: #F3F6FF;
     margin: 0;
-    color: #333;
+    color: #555555;
+    text-align: left;
 }
 
 /* Navbar */
@@ -11,11 +15,266 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffb703;
-  padding: 15px 40px;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  color: white;
+  background-color: #FFAFCC;
+  padding: 2rem 40px;
+  font-family: 'Poppins', cursive, sans-serif;
 }
+
+
+.white-navbar-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: -40px; /* Para que suba como en ICream */
+}
+
+.white-navbar {
+    width: 65%;
+    background: white;
+    padding: 12px 35px;
+    border-radius: 60px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 140px;
+    position: relative;
+}
+
+/* Enlaces laterales */
+.white-nav-links {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+.white-nav-links a {
+    color: #555;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: 0.3s;
+}
+
+.white-nav-links a:hover {
+    color: #d36ba1; 
+}
+
+.white-nav-links .active {
+    color: #d36ba1;
+    font-weight: 700;
+}
+
+/* LOGO CENTRO */
+.white-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+.white-logo a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #d36ba1;
+}
+
+.logo-img {
+    height: 55px;
+    width: auto;
+    display: block;
+}
+
+/*Carrusel*/
+.carrousel {
+    width: 100%;
+    margin-top: 25px;
+}
+
+.conteCarrousel {
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+}
+
+.itemCarrousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.itemCarrouselTarjeta {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carrousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(65%);
+}
+
+/* TEXTOS BLANCOS 100% */
+.carrousel-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    text-shadow: 0px 3px 6px rgba(0,0,0,0.4);
+}
+
+.carrousel-text h2 {
+    font-size: 2.3rem;
+    margin: 0;
+    color: white;
+}
+
+.carrousel-text p {
+    font-size: 1.4rem;
+    margin-top: 10px;
+    color: white;
+}
+
+/* Flechas */
+.itemCarrouselArrows {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.arrow {
+    width: 55px;
+    cursor: pointer;
+    transition: 0.3s;
+    filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.4));
+}
+
+.arrow:hover {
+    transform: scale(1.12);
+}
+
+/* Puntos */
+.conteCarrouselController {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 10px;
+}
+
+.conteCarrouselController a {
+    text-decoration: none;
+    font-size: 2rem;
+    color: #d36ba1;
+}
+
+.conteCarrouselController a:hover {
+    color: #ff70a6;
+}
+
+
+/* Sección About */
+.about-lectoplay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    padding: 60px 40px;
+    margin-top: 40px;
+}
+
+.about-text {
+    width: 50%;
+}
+
+.about-text h2 {
+    color: #219ebc;
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+}
+
+.about-text p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.about-btn {
+    background-color: #ffafcc;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+
+.about-btn:hover {
+    background-color: #f28482;
+    transform: scale(1.05);
+}
+
+.about-image {
+    width: 40%;
+    max-width: 450px;
+}
+
+.about-image img {
+    width: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .about-lectoplay {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .about-text,
+    .about-image {
+        width: 100%;
+    }
+}
+
+
+
+
+
+
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .white-navbar {
+        flex-wrap: wrap;
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .white-logo {
+        position: static;
+        transform: none;
+        margin: 10px auto;
+    }
+}
+
 
 .logo a {
     color: white;
@@ -43,9 +302,11 @@ body {
 
 /* Layout */
 .container {
-    width: 90%;
-    margin: 20px auto;
+    width: 100%;
+    margin: 0px auto;
 }
+
+
 
 /* Footer */
 footer {
@@ -343,3 +604,4 @@ p {
 
 
 >>>>>>> 8e42bcae360d97374c84a8ae9edb9bf18ae134c9
+
