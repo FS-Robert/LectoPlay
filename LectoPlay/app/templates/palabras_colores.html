@@ -38,7 +38,7 @@
             <!-- OPCIONES DE COLORES -->
             <form method="post">
                 {% csrf_token %}
-                <div class="colores-opciones" style="display:flex; gap:1rem; flex-wrap:wrap;">
+                <div class="colores-opciones" style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin:1.5rem 0;">
                     {% for c in choices %}
                         <button name="choice"
                                 value="{{ c }}"

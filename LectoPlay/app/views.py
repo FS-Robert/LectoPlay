@@ -212,4 +212,6 @@ def palabras_colores(request):
     }
 
     return render(request, "palabras_colores.html", context)
+
 # FIN DE PALABRAS Y COLORES
+
