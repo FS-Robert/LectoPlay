@@ -1,0 +1,58 @@
+{% extends "home.html" %}
+
+{% block title %}Escribe la Palabra | LectoPlay{% endblock %}
+
+{% block content %}
+<section class="ejercicios">
+    <h1>✏️ Escribe la palabra</h1>
+    <p>Lee la descripción y escribe la palabra correcta.</p>
+
+    {% if finished %}
+        <div class="lectura-bg">
+            <div class="lectura-card" style="text-align:center;">
+                <p>Has completado el juego.</p>
+                <p>Puntuación final: <strong>{{ score }}</strong> / {{ total }}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="reset" value="1" class="btn">Jugar de nuevo</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="lectura-bg">
+            <div class="score-pretty">
+                Nivel {{ level_num }} / {{ total }} &nbsp; | &nbsp; Puntos: {{ score }}
+            </div>
+
+            <div class="lectura-card">
+                <h2 class="titulo-categoria">Escribe la palabra</h2>
+
+                <div class="frase-box-pretty">
+                    <strong>Descripción:</strong>
+                    <p>{{ descripcion }}</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <label for="respuesta"><strong>Tu respuesta:</strong></label><br>
+                    <input
+                        type="text"
+                        id="respuesta"
+                        name="respuesta"
+                        autocomplete="off"
+                        style="margin-top:6px; padding:8px; border-radius:8px;
+                               border:2px solid #ffd166; width:70%; max-width:260px;">
+
+                    <div class="btn-row">
+                        <button type="submit" class="btn">Comprobar</button>
+                    </div>
+                </form>
+
+                {% if message %}
+                    <p class="feedback">{{ message }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

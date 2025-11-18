@@ -12,4 +12,5 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path("ejercicios/lectura/", views.lectura_rapida_game, name="lectura_rapida_game"),
     path('api/chatbot_ask', views.chatbot_ask, name='chatbot_ask'),
+    path("ejercicios/desc_palabra/", views.desc_palabra, name="desc_palabra"),
 ]

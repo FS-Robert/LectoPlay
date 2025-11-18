@@ -11,6 +11,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from . import chatbot as ai_service
+from . import desc_game
+
+
 
 
 API_KEY = "AIzaSyCW8xp4ZUNP6JevzouY04u_phjEt0pzvqA"
@@ -249,3 +252,51 @@ def palabras_colores(request):
     return render(request, "palabras_colores.html", context)
 
 # FIN DE PALABRAS Y COLORES
+
+
+#descripcion de la palabra
+def desc_palabra(request):
+    total = desc_game.total_levels()
+
+    # Reiniciar juego
+    if request.method == "POST" and request.POST.get("reset"):
+        request.session.pop("desc_level", None)
+        request.session.pop("desc_score", None)
+        return redirect("desc_palabra")
+
+    # Iniciar sesión de juego si no existe
+    if "desc_level" not in request.session:
+        request.session["desc_level"] = 0
+        request.session["desc_score"] = 0
+
+    level_idx = request.session["desc_level"]
+    score = request.session["desc_score"]
+    message = None
+    finished = level_idx >= total
+
+    # Procesar respuesta
+    if request.method == "POST" and request.POST.get("respuesta") and not finished:
+        respuesta = request.POST.get("respuesta")
+        level_idx, score, correct, msg, finished = desc_game.check_answer(
+            respuesta, level_idx, score
+        )
+        request.session["desc_level"] = level_idx
+        request.session["desc_score"] = score
+        message = msg
+
+    finished = level_idx >= total
+
+    descripcion = None
+    if not finished:
+        level = desc_game.get_level(level_idx)
+        descripcion = level["texto"]
+
+    context = {
+        "finished": finished,
+        "total": total,
+        "level_num": level_idx + 1 if not finished else total,
+        "score": score,
+        "descripcion": descripcion,
+        "message": message,
+    }
+    return render(request, "desc_palabra.html", context)
