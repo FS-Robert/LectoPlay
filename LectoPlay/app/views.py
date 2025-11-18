@@ -12,6 +12,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from . import chatbot as ai_service
 from . import desc_game
+from . import pnp_game
+
 
 
 
@@ -300,3 +302,62 @@ def desc_palabra(request):
         "message": message,
     }
     return render(request, "desc_palabra.html", context)
+
+# FIN DE DESCRIPCIÓN DE LA PALABRA
+
+# ==============================
+#   JUEGO: PALABRA O NO PALABRA
+# ==============================
+
+def pnp(request):
+    total = pnp_game.total_levels()
+
+    # Reiniciar juego
+    if request.method == "POST" and request.POST.get("reset"):
+        request.session.pop("pnp_level", None)
+        request.session.pop("pnp_score", None)
+        return redirect("pnp")
+
+    # Inicializar sesión si no existe
+    if "pnp_level" not in request.session:
+        request.session["pnp_level"] = 0
+        request.session["pnp_score"] = 0
+
+    level_idx = request.session["pnp_level"]
+    score = request.session["pnp_score"]
+    message = None
+    finished = level_idx >= total
+
+    opciones = []
+
+    # Cargar nivel actual
+    if not finished:
+        lvl = pnp_game.get_level(level_idx)
+        opciones = pnp_game.make_options(lvl["real"], lvl["fake"])
+
+    # Procesar elección
+    if request.method == "POST" and request.POST.get("choice") and not finished:
+        choice = request.POST.get("choice")
+        level_idx, score, correct, msg, finished = pnp_game.check_choice(
+            choice, level_idx, score
+        )
+        request.session["pnp_level"] = level_idx
+        request.session["pnp_score"] = score
+        message = msg
+
+        if not finished:
+            lvl = pnp_game.get_level(level_idx)
+            opciones = pnp_game.make_options(lvl["real"], lvl["fake"])
+
+    finished = level_idx >= total
+
+    context = {
+        "finished": finished,
+        "total": total,
+        "level_num": level_idx + 1 if not finished else total,
+        "score": score,
+        "opciones": opciones,
+        "message": message,
+    }
+    return render(request, "pnp.html", context)
+# FIN DE PALABRA O NO PALABRA

@@ -1,0 +1,52 @@
+{% extends "home.html" %}
+
+{% block title %}Palabra o no palabra | LectoPlay{% endblock %}
+
+{% block content %}
+<section class="ejercicios">
+    <h1>✅ Palabra o no palabra</h1>
+    <p>Elige cuál de las opciones es una palabra real.</p>
+
+    {% if finished %}
+        <div class="lectura-bg">
+            <div class="lectura-card" style="text-align:center;">
+                <p>Has completado el juego.</p>
+                <p>Puntuación final: <strong>{{ score }}</strong> / {{ total }}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="reset" value="1" class="btn">Jugar de nuevo</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="lectura-bg">
+            <div class="score-pretty">
+                Nivel {{ level_num }} / {{ total }} &nbsp; | &nbsp; Puntos: {{ score }}
+            </div>
+
+            <div class="lectura-card">
+                <h2 class="titulo-categoria">¿Cuál es la palabra real?</h2>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="opciones-container">
+                        {% for palabra in opciones %}
+                            <button type="submit"
+                                    name="choice"
+                                    value="{{ palabra }}"
+                                    class="btn"
+                                    style="margin:6px 0; min-width:160px;">
+                                {{ palabra }}
+                            </button>
+                        {% endfor %}
+                    </div>
+
+                    {% if message %}
+                        <p class="feedback">{{ message }}</p>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
