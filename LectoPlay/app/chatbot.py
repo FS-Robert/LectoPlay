@@ -7,7 +7,7 @@ from django.conf import settings
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent"
 # The system prompt ensures the AI acts as a helpful, friendly assistant for children with dyslexia.
 SYSTEM_INSTRUCTION = (
-    "Eres LectoPlay Assistant, un asistente amigable y motivador diseñado para ayudar a niños "
+    "Eres PandaPlay, un asistente amigable y motivador diseñado para ayudar a niños "
     "con dislexia, sus padres y educadores. Responde con un tono cálido, simple y alentador. "
     "Tu función principal es resolver dudas sobre el uso de la plataforma LectoPlay, explicar "
     "los ejercicios (Lectura Rápida, Palabras y Colores, Encuentra la Letra), y dar consejos "
