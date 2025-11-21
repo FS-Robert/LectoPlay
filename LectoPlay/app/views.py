@@ -13,6 +13,7 @@ from django.views.decorators.http import require_POST
 from . import chatbot as ai_service
 from . import desc_game
 from . import pnp_game
+from .models import Contacto
 
 
 
@@ -361,3 +362,29 @@ def pnp(request):
     }
     return render(request, "pnp.html", context)
 # FIN DE PALABRA O NO PALABRA
+
+#Función del formulario contactos
+def contacto_view(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('name')
+        email = request.POST.get('email')
+        mensaje = request.POST.get('message')
+        fecha = request.POST.get('fecha')
+
+        # Guardar en BD
+        Contacto.objects.create(
+            nombre=nombre,
+            correo=email,
+            mensaje=mensaje,
+            fecha_envio=fecha
+        )
+
+        # Enviar success=True al template
+        return render(request, 'contacto.html', {'success': True})
+
+    return render(request, 'contacto.html')
+
+
+def panel_redirect(request):
+    return redirect('/admin/login/')
+
