@@ -2,10 +2,54 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import random
 from . import encuentra_game
-from . import palabras_colores_game     
+from . import palabras_colores_game 
 from firebase_admin import auth
 from django.shortcuts import render
 from .lectura_rapida_game import get_categorias, get_random_question
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from . import chatbot as ai_service
+from . import desc_game
+from . import pnp_game
+
+
+
+
+
+API_KEY = "AIzaSyCW8xp4ZUNP6JevzouY04u_phjEt0pzvqA"
+
+@csrf_exempt
+@require_POST
+def chatbot_ask(request):
+    """
+    Maneja las solicitudes POST del widget del chatbot.
+    Delega la llamada a la API de Gemini al archivo ai_service.py.
+    """
+    try:
+        # 1. Parsear el mensaje JSON entrante
+        data = json.loads(request.body)
+        user_message = data.get('message', '').strip()
+        
+        
+        if not user_message:
+            return JsonResponse({'error': 'El mensaje no puede estar vacío.'}, status=400)
+
+        # 2. Delegar la llamada de la IA a la capa de servicio
+        ai_response = ai_service.get_ai_response(user_message, API_KEY)
+        
+        # 3. Retornar la respuesta de la IA al frontend
+        return JsonResponse({'response': ai_response})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Formato de solicitud JSON inválido.'}, status=400)
+    except ConnectionError:
+        # Capturar el error de conexión específico lanzado por ai_service
+        return JsonResponse({'error': 'Error de conexión con el servicio de IA.'}, status=500)
+    except Exception as e:
+        print(f"Internal Server Error in views.py: {e}")
+        return JsonResponse({'error': 'Error interno del servidor.'}, status=500)
 
 def home_view(request):
     return render(request, "home.html")
@@ -17,8 +61,6 @@ def about_view(request):
 
 def ejercicios(request):
     return render(request, 'ejercicios.html')
-
-
 
 
 def contacts(request):
@@ -46,7 +88,7 @@ def login_view(request):
 
 
 # =========================
-#   JUEGO: ENCUENTRA LETRA
+#   JUEGO: ENCUENTRA LETRA
 # =========================
 
 def encuentra(request):
@@ -96,9 +138,7 @@ def encuentra(request):
     return render(request, 'encuentra_letra.html', context)
 
 
-
 ## FIN DE ENCUENTRA LA LETRA 
-
 
 
 # JUEGO: LECTURA RÁPIDA
@@ -106,7 +146,7 @@ def encuentra(request):
 def lectura_rapida_game(request):
     categorias = get_categorias()
     categoria = request.GET.get("categoria") or request.POST.get("categoria")
-    action = request.POST.get("action")  # "responder" o "otra"
+    action = request.POST.get("action") # "responder" o "otra"
 
     # Inicializar marcador en sesión
     if "aciertos" not in request.session:
@@ -157,7 +197,7 @@ def lectura_rapida_game(request):
 # FIN DE LECTURA RÁPIDA
 
 # ====================================
-#   JUEGO: PALABRAS Y COLORES
+#   JUEGO: PALABRAS Y COLORES
 # ====================================
 
 def palabras_colores(request):
@@ -215,3 +255,109 @@ def palabras_colores(request):
 
 # FIN DE PALABRAS Y COLORES
 
+
+#descripcion de la palabra
+def desc_palabra(request):
+    total = desc_game.total_levels()
+
+    # Reiniciar juego
+    if request.method == "POST" and request.POST.get("reset"):
+        request.session.pop("desc_level", None)
+        request.session.pop("desc_score", None)
+        return redirect("desc_palabra")
+
+    # Iniciar sesión de juego si no existe
+    if "desc_level" not in request.session:
+        request.session["desc_level"] = 0
+        request.session["desc_score"] = 0
+
+    level_idx = request.session["desc_level"]
+    score = request.session["desc_score"]
+    message = None
+    finished = level_idx >= total
+
+    # Procesar respuesta
+    if request.method == "POST" and request.POST.get("respuesta") and not finished:
+        respuesta = request.POST.get("respuesta")
+        level_idx, score, correct, msg, finished = desc_game.check_answer(
+            respuesta, level_idx, score
+        )
+        request.session["desc_level"] = level_idx
+        request.session["desc_score"] = score
+        message = msg
+
+    finished = level_idx >= total
+
+    descripcion = None
+    if not finished:
+        level = desc_game.get_level(level_idx)
+        descripcion = level["texto"]
+
+    context = {
+        "finished": finished,
+        "total": total,
+        "level_num": level_idx + 1 if not finished else total,
+        "score": score,
+        "descripcion": descripcion,
+        "message": message,
+    }
+    return render(request, "desc_palabra.html", context)
+
+# FIN DE DESCRIPCIÓN DE LA PALABRA
+
+# ==============================
+#   JUEGO: PALABRA O NO PALABRA
+# ==============================
+
+def pnp(request):
+    total = pnp_game.total_levels()
+
+    # Reiniciar juego
+    if request.method == "POST" and request.POST.get("reset"):
+        request.session.pop("pnp_level", None)
+        request.session.pop("pnp_score", None)
+        return redirect("pnp")
+
+    # Inicializar sesión si no existe
+    if "pnp_level" not in request.session:
+        request.session["pnp_level"] = 0
+        request.session["pnp_score"] = 0
+
+    level_idx = request.session["pnp_level"]
+    score = request.session["pnp_score"]
+    message = None
+    finished = level_idx >= total
+
+    opciones = []
+
+    # Cargar nivel actual
+    if not finished:
+        lvl = pnp_game.get_level(level_idx)
+        opciones = pnp_game.make_options(lvl["real"], lvl["fake"])
+
+    # Procesar elección
+    if request.method == "POST" and request.POST.get("choice") and not finished:
+        choice = request.POST.get("choice")
+        level_idx, score, correct, msg, finished = pnp_game.check_choice(
+            choice, level_idx, score
+        )
+        request.session["pnp_level"] = level_idx
+        request.session["pnp_score"] = score
+        message = msg
+
+        if not finished:
+            lvl = pnp_game.get_level(level_idx)
+            opciones = pnp_game.make_options(lvl["real"], lvl["fake"])
+
+    finished = level_idx >= total
+
+    context = {
+        "finished": finished,
+        "total": total,
+        "level_num": level_idx + 1 if not finished else total,
+        "score": score,
+        "opciones": opciones,
+        "message": message,
+    }
+    return render(request, "pnp.html", context)
+# FIN DE PALABRA O NO PALABRA

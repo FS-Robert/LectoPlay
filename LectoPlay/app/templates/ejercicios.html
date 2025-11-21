@@ -28,7 +28,6 @@ window.addEventListener("DOMContentLoaded", () => {
             <h3>🎨 Palabras y Colores</h3>
             <p>Asocia palabras con colores y mejora tu memoria visual.</p>
             <a href="{% url 'palabras_colores' %}" class="btn">Jugar</a>
-
         </div>
 
         <!-- 🔹 Encuentra la Letra -->
@@ -37,6 +36,21 @@ window.addEventListener("DOMContentLoaded", () => {
             <p>Identifica letras escondidas en palabras divertidas.</p>
             <a href="{% url 'encuentra' %}" class="btn">Jugar</a>
         </div>
+
+        <!-- ✏️ Escribe la Palabra -->
+        <div class="card">
+        <h3>✏️ Escribe la Palabra</h3>
+        <p>Lee una descripción y escribe la palabra correcta.</p>
+        <a href="{% url 'desc_palabra' %}" class="btn">Jugar</a>
+        </div>
+
+        <!-- ✅ Palabra o no palabra -->
+        <div class="card">
+        <h3>✅ Palabra o no palabra</h3>
+        <p>Diferencia entre palabras reales y palabras inventadas.</p>
+        <a href="{% url 'pnp' %}" class="btn">Jugar</a>
+        </div>
+ 
 
     </div>
 

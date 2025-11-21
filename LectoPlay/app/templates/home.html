@@ -7,25 +7,184 @@
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Load Tailwind CSS for utility classes used by the chatbot widget -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Custom styles for the LectoPlay Chatbot (Copied from chatbot_widget.html) */
+        :root {
+            --primary-pink: #f7d2e4; /* Pastel Pink (from LectoPlay design) */
+            --primary-blue: #a3c4f3; /* Pastel Blue */
+            --dark-gray: #374151;
+            --light-gray: #f3f4f6;
+        }
+
+        /* 1. Floating Button */
+        #chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
+            z-index: 1000;
+        }
+
+        #chatbot-toggle:hover {
+            background-color: #f5b9d3;
+            transform: scale(1.05);
+        }
+
+        /* Chat Icon (A speech bubble or similar friendly icon) */
+        #chat-icon {
+            fill: var(--dark-gray);
+            width: 30px;
+            height: 30px;
+        }
+
+        /* 2. Chat Window */
+        #chatbot-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            max-height: 80vh;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        /* Header */
+        #chat-header {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 12px 16px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Message Area */
+        #chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: var(--light-gray);
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+            /* Scrollbar styling for a cleaner look */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-pink) var(--light-gray);
+        }
+        #chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: var(--primary-pink);
+            border-radius: 10px;
+        }
+
+        /* Input Area */
+        #chat-input-form {
+            display: flex;
+            padding: 10px;
+            background-color: white;
+        }
+        #chat-input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        #chat-send-btn {
+            background-color: var(--primary-pink);
+            color: var(--dark-gray);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.15s;
+        }
+        #chat-send-btn:hover:not(:disabled) {
+            background-color: #f5b9d3;
+        }
+        #chat-send-btn:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Message Bubbles */
+        .message-bubble {
+            margin-bottom: 10px;
+            max-width: 85%;
+            padding: 10px;
+            border-radius: 12px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background-color: var(--primary-blue);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 3px;
+        }
+        .bot-message {
+            background-color: white;
+            color: var(--dark-gray);
+            margin-right: auto;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 3px;
+        }
+        .loading-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--primary-pink);
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: dot-fading 1.5s infinite ease-in-out;
+        }
+        .loading-dot:nth-child(2) { animation-delay: 0.5s; }
+        .loading-dot:nth-child(3) { animation-delay: 1s; }
+        @keyframes dot-fading {
+            0%, 80%, 100% { opacity: 0; }
+            40% { opacity: 1; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 450px) {
+            #chatbot-window {
+                width: 90%;
+                right: 5%;
+                bottom: 80px;
+            }
+        }
+
+       
+        .hidden { display: none !important; }
+    </style>
 </head>
 
-<script>
-let index = 0;
-const slides = document.querySelectorAll(".itemCarrousel");
 
-function autoSlide() {
-    index++;
-    if (index >= slides.length) index = 0;
-
-    // Hacemos scroll automático al ID correcto
-    window.location.hash = slides[index].id;
-}
-
-setInterval(autoSlide, 6000);
-
-</script>
 <body>
-  
+    
+    <!-- Django CSRF Token (Needs to be here for security across all pages) -->
+    {% csrf_token %}
+    
     <!-- Header -->
     <header>
         <nav class="navbar">
@@ -34,44 +193,53 @@ setInterval(autoSlide, 6000);
             <div id="user-info">
               <!-- Aquí se mostrará el usuario logueado -->
               <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
-               Iniciar Sesión
+                Iniciar Sesión
               </button>
             </div> 
         </nav>
     </header>
 
-      <!-- White Navbar -->
-    <div class="white-navbar-container">
-      <nav class="white-navbar">
-        <!-- IZQUIERDA -->
-        <ul class="white-nav-links left-links">
-            <li><a href="{% url 'home' %}" class="active">Inicio</a></li>
-            <li><a href="{% url 'about' %}">Acerca de</a></li>
-        </ul>
-        <!-- LOGO CENTRO -->
-        <h1 class="white-logo">
-            <a href="{% url 'home' %}">
-        <img src="{% static 'css/logo3.png' %}" alt="LectoPlay" class="logo-img">
-      </a>
-        </h1>
-        <!-- DERECHA -->
-        <ul class="white-nav-links right-links">
-            <li><a href="{% url 'ejercicios' %}">Ejercicios</a></li>
-            <li><a href="{% url 'contacts' %}">Contacto</a></li>
-        </ul>
-      </nav>
-    </div>
+  <!-- White Navbar -->
+<div class="white-navbar-container">
+  <nav class="white-navbar">
+    
+    <!-- IZQUIERDA -->
+    <ul class="white-nav-links left-links">
+        <li><a href="{% url 'home' %}" class="active" style="padding: 10px 16px;  display: flex; gap: 100px;">Inicio</a></li>
+        <li><a href="{% url 'about' %}" style="padding: 10px 16px; display: flex; gap: 0px;">Acerca de</a></li>
+    </ul>
+
+    <!-- LOGO CENTRO -->
+    <h1 class="white-logo">
+        <a href="{% url 'home' %}">
+          <img src="{% static 'css/logo3.png' %}" alt="LectoPlay" class="logo-img">
+        </a>
+    </h1>
+
+    <!-- DERECHA -->
+   <ul class="white-nav-links right-links" 
+    style="display: flex; gap: 60px; margin-left: 80px;">
+    <li><a href="{% url 'ejercicios' %}" style="padding: 10px 16px;">Ejercicios</a></li>
+    <li><a href="{% url 'contacts' %}" style="padding: 10px 16px;">Contacto</a></li>
+</ul>
+
+
+  </nav>
+</div>
+
+
     
 
-    <!-- Carousel Start -->
-  
-        {% block content %}
-   <div class="carrousel">
+    <!-- CONTENT BLOCK START: This is the only part that changes per page -->
+    {% block content %}
+    <!-- Carousel Start (Default content for home page) -->
+<div class="carrousel">
     <div class="conteCarrousel">
+
         <!-- SLIDE 1 -->
         <div class="itemCarrousel" id="itemCarrousel-1">
             <div class="itemCarrouselTarjeta">
-                <img src="{% static 'css/carrusel1.png' %}" class="carrousel-img">
+                <img src="{% static 'css/carrusel1.png' %}" class="carrousel-img" alt="Carrusel 1">
                 <div class="carrousel-text">
                     <h2>LECTURA Y DIVERSIÓN</h2>
                     <p>Donde las letras son amigas</p>
@@ -80,10 +248,10 @@ setInterval(autoSlide, 6000);
 
             <div class="itemCarrouselArrows">
                 <a href="#itemCarrousel-2">
-                    <img src="{% static 'css/flecha1.png' %}" class="arrow">
+                    <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Siguiente">
                 </a>
                 <a href="#itemCarrousel-2">
-                    <img src="{% static 'css/flecha2.png' %}" class="arrow">
+                    <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Siguiente">
                 </a>
             </div>
         </div>
@@ -91,7 +259,7 @@ setInterval(autoSlide, 6000);
         <!-- SLIDE 2 -->
         <div class="itemCarrousel" id="itemCarrousel-2">
             <div class="itemCarrouselTarjeta">
-                <img src="{% static 'css/carrusel2.png' %}" class="carrousel-img">
+                <img src="{% static 'css/carrusel2.png' %}" class="carrousel-img" alt="Carrusel 2">
                 <div class="carrousel-text">
                     <h2>LECTURA Y DIVERSIÓN</h2>
                     <p>Jugar es tu mejor herramienta</p>
@@ -100,13 +268,14 @@ setInterval(autoSlide, 6000);
 
             <div class="itemCarrouselArrows">
                 <a href="#itemCarrousel-1">
-                    <img src="{% static 'css/flecha1.png' %}" class="arrow">
+                    <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Anterior">
                 </a>
                 <a href="#itemCarrousel-1">
-                    <img src="{% static 'css/flecha2.png' %}" class="arrow">
+                    <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Anterior">
                 </a>
             </div>
         </div>
+
     </div>
 
     <!-- PUNTOS DE CONTROL -->
@@ -114,7 +283,8 @@ setInterval(autoSlide, 6000);
         <a href="#itemCarrousel-1">•</a>
         <a href="#itemCarrousel-2">•</a>
     </div>
-   </div>
+</div>
+
 
 
 <!-- Sección Presentación LectoPlay -->
@@ -144,18 +314,59 @@ setInterval(autoSlide, 6000);
     </div>
 
     <div class="about-image">
-        <img src="{% static 'css/osito.png' %}" alt="LectoPlay">
+        <img src="{% static 'css/osito.png' %}" alt="LectoPlay" />
     </div>
   </section>
-{% endblock %}
 </main> 
+    {% endblock %}
+    <!-- CONTENT BLOCK END -->
 
+    <!-- CHATBOT WIDGET START (Placed outside block content for persistence) -->
+    
+    <!-- Chatbot Toggle Button (Circular Floating Icon) -->
+    <div id="chatbot-toggle" role="button" aria-label="Abrir chat">
+        <!-- SVG for a friendly chat icon -->
+        <svg id="chat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22H6C4.89543 22 4 21.1046 4 20V18C4 16.8954 3.10457 16 2 16V12ZM6 18H8V20H6V18ZM12 4C7.58172 4 4 7.58172 4 12V16H20V12C20 7.58172 16.4183 4 12 4Z" fill="currentColor"/>
+            <path d="M10 10C10 11.1046 9.10457 12 8 12C6.89543 12 6 11.1046 6 10C6 8.89543 6.89543 8 8 8C9.10457 8 10 8.89543 10 10Z" fill="currentColor"/>
+            <path d="M18 10C18 11.1046 17.1046 12 16 12C14.8954 12 14 11.1046 14 10C14 8.89543 14.8954 8 16 8C17.1046 8 18 8.89543 18 10Z" fill="currentColor"/>
+        </svg>
+    </div>
 
-   
+    <!-- Chatbot Conversation Window -->
+    <div id="chatbot-window" class="hidden" role="dialog" aria-label="Asistente LectoPlay">
+        <div id="chat-header" role="banner">
+            <span>Asistente PandaPlay 🐼</span>
+            <!-- NOTE: type="button" prevents submitting forms by accident -->
+            <button id="close-chat-btn" type="button" class="text-white hover:text-gray-200" aria-label="Cerrar chat">
+                <!-- svg won't capture pointer events so clicks reach the button -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x pointer-events-none" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
 
-      <script type="module" src="/static/js/firebase-auth.js"></script>
-  
-     <script type="module">
+        <div id="chat-messages" aria-live="polite">
+            <!-- Initial Greeting Message -->
+            <div class="message-bubble bot-message">
+                ¡Hola! Soy tu asistente de LectoPlay. Estoy aquí para ayudarte con las reglas de los ejercicios, la dislexia, o cómo usar la plataforma. ¿En qué puedo ayudarte hoy?
+            </div>
+            <!-- Messages will be appended here -->
+        </div>
+
+        <form id="chat-input-form" aria-label="Formulario de chat">
+            <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." required aria-label="Escribe tu mensaje">
+            <button type="submit" id="chat-send-btn" aria-label="Enviar mensaje">Enviar</button>
+        </form>
+    </div>
+
+    <!-- CHATBOT WIDGET FINAL -->
+
+    <!-- Logica de Firebasde Auth-->
+    <script type="module" src="{% static 'js/firebase-auth.js' %}"></script>
+    
+    <script type="module">
     // --- Detectar usuario guardado ---
     const userName = localStorage.getItem("userName");
     const userEmail = localStorage.getItem("userEmail");
@@ -164,15 +375,236 @@ setInterval(autoSlide, 6000);
     if (userEmail) {
       userInfoDiv.innerHTML = `
         <div class="user-avatar">
-          <img src="/static/css/login-avatar.png" width="40px" height="40px" 
-               alt="avatar" class="avatar">
+          <img src="{% static 'css/login-avatar.png' %}" width="40" height="40" 
+                alt="avatar" class="avatar">
           <span>${userName ? userName : userEmail}</span>
           <button onclick="logoutUser()">Cerrar sesión</button>
         </div>
       `;
     }
+    </script>
+    
+    <!-- CHATBOT JAVASCRIPT LOGICA -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('chatbot-toggle');
+            const closeBtn = document.getElementById('close-chat-btn');
+            const chatWindow = document.getElementById('chatbot-window');
+            const chatForm = document.getElementById('chat-input-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const sendBtn = document.getElementById('chat-send-btn');
+            
+            // Function to retrieve the Django CSRF token from cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            // Retrieve the token once on load
+            const CSRF_TOKEN = getCookie('csrftoken');
 
-  </script>
+            let isChatOpen = false;
+            let isLoading = false;
+
+            // Define the API endpoint that your Django view will handle
+            const API_ENDPOINT = '/api/chatbot_ask';
+            
+            // --- UI Handlers ---
+
+            function openChat() {
+                isChatOpen = true;
+                chatWindow.classList.remove('hidden');
+                chatInput.focus();
+                scrollToBottom();
+            }
+
+            function closeChat() {
+                isChatOpen = false;
+                chatWindow.classList.add('hidden');
+                // move focus back to the floating button for accessibility
+                if (toggleBtn) toggleBtn.focus();
+            }
+
+            function toggleChat() {
+                if (isChatOpen) {
+                    closeChat();
+                } else {
+                    openChat();
+                }
+            }
+
+            // Ensure the toggle button exists (safety)
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', toggleChat);
+                // allow keyboard opening
+                toggleBtn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleChat();
+                    }
+                });
+            }
+
+           // Boton para cerrar el chat
+            if (closeBtn) {
+                closeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeChat();
+                });
+                // allow keyboard closing
+                closeBtn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        closeChat();
+                    }
+                });
+            }
+
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addMessage(text, sender) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('message-bubble', sender === 'user' ? 'user-message' : 'bot-message');
+                // Simple markdown conversion for bold text (e.g., **word**)
+                const formattedText = String(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                bubble.innerHTML = formattedText;
+                chatMessages.appendChild(bubble);
+                scrollToBottom();
+            }
+
+            function showLoadingIndicator() {
+                const existing = document.getElementById('loading-indicator');
+                if (existing) return;
+                const loadingBubble = document.createElement('div');
+                loadingBubble.id = 'loading-indicator';
+                loadingBubble.classList.add('message-bubble', 'bot-message');
+                loadingBubble.innerHTML = `
+                    <div class="flex items-center space-x-1">
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                    </div>
+                `;
+                chatMessages.appendChild(loadingBubble);
+                scrollToBottom();
+            }
+
+            function removeLoadingIndicator() {
+                const indicator = document.getElementById('loading-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+            
+            function setFormState(disabled) {
+                isLoading = disabled;
+                chatInput.disabled = disabled;
+                sendBtn.disabled = disabled;
+                sendBtn.textContent = disabled ? '...' : 'Enviar';
+            }
+
+            // --- API Call and Exponential Backoff ---
+
+            async function fetchGeminiResponse(userQuery, retries = 0) {
+                const maxRetries = 5;
+                const delay = Math.pow(2, retries) * 1000 + (Math.random() * 1000); // 2s, 4s, 8s... + jitter
+                
+                try {
+                    const response = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Use the retrieved CSRF token
+                            'X-CSRFToken': CSRF_TOKEN 
+                        },
+                        body: JSON.stringify({ message: userQuery })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        return `Lo siento, hubo un error al procesar tu solicitud: ${data.error}`;
+                    }
+
+                    // return the assistant text
+                    return data.response || "Lo siento, recibí una respuesta vacía.";
+                    
+                } catch (error) {
+                    if (retries < maxRetries) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchGeminiResponse(userQuery, retries + 1);
+                    } else {
+                        console.error('API call failed after max retries:', error);
+                        return "Lo siento, el asistente no pudo conectarse. Por favor, inténtalo de nuevo más tarde.";
+                    }
+                }
+            }
+
+            // --- Form Submission Handler ---
+
+            if (chatForm) {
+                chatForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if (isLoading) return;
+
+                    const userQuery = chatInput.value.trim();
+                    if (!userQuery) return;
+
+                    // 1. Display user message
+                    addMessage(userQuery, 'user');
+                    chatInput.value = '';
+
+                    // 2. Disable input and show loading
+                    setFormState(true);
+                    showLoadingIndicator();
+
+                    // 3. Get AI response
+                    const botResponse = await fetchGeminiResponse(userQuery);
+
+                    // 4. Remove loading, display bot response, re-enable input
+                    removeLoadingIndicator();
+                    addMessage(botResponse, 'bot');
+                    setFormState(false);
+                });
+            }
+
+            // Accessibility: close chat when pressing Escape while open
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isChatOpen) {
+                    closeChat();
+                }
+            });
+
+        });
+    </script>
+    <!-- END CHATBOT JAVASCRIPT LOGIC -->
+
+  <!-- CAROUSEL JAVASCRIPT LOGICA -->
+<script>
+    // Carrusel sin auto-slide (solo navegación manual con flechas)
+    document.addEventListener('DOMContentLoaded', () => {
+        
+    });
+</script>
+<!-- END CAROUSEL JAVASCRIPT LOGIC -->
 
     <!-- Footer -->
     <footer>
