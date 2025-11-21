@@ -14,12 +14,13 @@ from . import chatbot as ai_service
 from . import desc_game
 from . import pnp_game
 from .models import Contacto
+from django.conf import settings
 
 
 
 
 
-API_KEY = "AIzaSyCW8xp4ZUNP6JevzouY04u_phjEt0pzvqA"
+API_KEY = "AIzaSyCvOuSQVaB8oW2Jt1GCN_AwZViPNrJST84"
 
 @csrf_exempt
 @require_POST
@@ -33,20 +34,24 @@ def chatbot_ask(request):
         data = json.loads(request.body)
         user_message = data.get('message', '').strip()
         
-        
         if not user_message:
             return JsonResponse({'error': 'El mensaje no puede estar vacío.'}, status=400)
 
-        # 2. Delegar la llamada de la IA a la capa de servicio
-        ai_response = ai_service.get_ai_response(user_message, API_KEY)
+        # 2. Obtener la API KEY de forma segura desde settings
+        api_key = settings.GEMINI_API_KEY 
+
+        if not api_key:
+            return JsonResponse({'error': 'Configuración del servidor incompleta (API Key).'}, status=500)
+
+        # 3. Delegar la llamada de la IA a la capa de servicio
+        ai_response = ai_service.get_ai_response(user_message, api_key)
         
-        # 3. Retornar la respuesta de la IA al frontend
+        # 4. Retornar la respuesta de la IA al frontend
         return JsonResponse({'response': ai_response})
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Formato de solicitud JSON inválido.'}, status=400)
     except ConnectionError:
-        # Capturar el error de conexión específico lanzado por ai_service
         return JsonResponse({'error': 'Error de conexión con el servicio de IA.'}, status=500)
     except Exception as e:
         print(f"Internal Server Error in views.py: {e}")

@@ -1,212 +1,214 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('chatbot-toggle');
+    const closeBtn = document.getElementById('close-chat-btn');
+    const chatWindow = document.getElementById('chatbot-window');
+    const chatForm = document.getElementById('chat-input-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const sendBtn = document.getElementById('chat-send-btn');
     
+    // --- CORRECCIÓN CSRF ---
+    // En lugar de leer cookies, leemos el token que Django generó en el HTML.
+    // Esto es mucho más robusto para archivos JS externos.
+    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    const CSRF_TOKEN = csrfInput ? csrfInput.value : '';
+
+    if (!CSRF_TOKEN) {
+        console.error("No se encontró el token CSRF. Asegúrate de tener {% csrf_token %} en tu HTML.");
+    }
+    // -----------------------
+
+    let isChatOpen = false;
+    let isLoading = false;
+
+    // Define la ruta de la API.
+    // NOTA: Si en tu urls.py la ruta termina en /, agrega la / aquí también (ej: /api/chatbot_ask/)
+    const API_ENDPOINT = '/api/chatbot_ask'; 
     
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleBtn = document.getElementById('chatbot-toggle');
-            const closeBtn = document.getElementById('close-chat-btn');
-            const chatWindow = document.getElementById('chatbot-window');
-            const chatForm = document.getElementById('chat-input-form');
-            const chatInput = document.getElementById('chat-input');
-            const chatMessages = document.getElementById('chat-messages');
-            const sendBtn = document.getElementById('chat-send-btn');
-            
-            // Function to retrieve the Django CSRF token from cookies
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
+    // --- UI Handlers ---
+
+    function openChat() {
+        isChatOpen = true;
+        chatWindow.classList.remove('hidden');
+        chatInput.focus();
+        scrollToBottom();
+    }
+
+    function closeChat() {
+        isChatOpen = false;
+        chatWindow.classList.add('hidden');
+        // devolver el foco al botón flotante por accesibilidad
+        if (toggleBtn) toggleBtn.focus();
+    }
+
+    function toggleChat() {
+        if (isChatOpen) {
+            closeChat();
+        } else {
+            openChat();
+        }
+    }
+
+    // Asegurarse de que el botón existe
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleChat);
+        // permitir abrir con teclado
+        toggleBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleChat();
             }
-            
-            // Retrieve the token once on load
-            const CSRF_TOKEN = getCookie('csrftoken');
+        });
+    }
 
-            let isChatOpen = false;
-            let isLoading = false;
-
-            // Define the API endpoint that your Django view will handle
-            const API_ENDPOINT = '/api/chatbot_ask';
-            
-            // --- UI Handlers ---
-
-            function openChat() {
-                isChatOpen = true;
-                chatWindow.classList.remove('hidden');
-                chatInput.focus();
-                scrollToBottom();
+    // Botón para cerrar el chat
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeChat();
+        });
+        // permitir cerrar con teclado
+        closeBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                closeChat();
             }
+        });
+    }
 
-            function closeChat() {
-                isChatOpen = false;
-                chatWindow.classList.add('hidden');
-                // move focus back to the floating button for accessibility
-                if (toggleBtn) toggleBtn.focus();
-            }
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-            function toggleChat() {
-                if (isChatOpen) {
-                    closeChat();
-                } else {
-                    openChat();
-                }
-            }
+    function addMessage(text, sender) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('message-bubble', sender === 'user' ? 'user-message' : 'bot-message');
+        
+        // Conversión simple de markdown (negritas)
+        // Convierte **texto** en <strong>texto</strong>
+        const formattedText = String(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        bubble.innerHTML = formattedText;
+        chatMessages.appendChild(bubble);
+        scrollToBottom();
+    }
 
-            // Ensure the toggle button exists (safety)
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', toggleChat);
-                // allow keyboard opening
-                toggleBtn.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleChat();
-                    }
-                });
-            }
+    function showLoadingIndicator() {
+        const existing = document.getElementById('loading-indicator');
+        if (existing) return;
+        const loadingBubble = document.createElement('div');
+        loadingBubble.id = 'loading-indicator';
+        loadingBubble.classList.add('message-bubble', 'bot-message');
+        loadingBubble.innerHTML = `
+            <div class="flex items-center space-x-1">
+                <span class="loading-dot"></span>
+                <span class="loading-dot"></span>
+                <span class="loading-dot"></span>
+            </div>
+        `;
+        chatMessages.appendChild(loadingBubble);
+        scrollToBottom();
+    }
 
-           // Boton para cerrar el chat
-            if (closeBtn) {
-                closeBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    closeChat();
-                });
-                // allow keyboard closing
-                closeBtn.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        closeChat();
-                    }
-                });
-            }
+    function removeLoadingIndicator() {
+        const indicator = document.getElementById('loading-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+    
+    function setFormState(disabled) {
+        isLoading = disabled;
+        chatInput.disabled = disabled;
+        sendBtn.disabled = disabled;
+        sendBtn.textContent = disabled ? '...' : 'Enviar';
+    }
 
-            function scrollToBottom() {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
+    // --- Llamada a la API y Reintentos (Exponential Backoff) ---
 
-            function addMessage(text, sender) {
-                const bubble = document.createElement('div');
-                bubble.classList.add('message-bubble', sender === 'user' ? 'user-message' : 'bot-message');
-                // Simple markdown conversion for bold text (e.g., **word**)
-                const formattedText = String(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                bubble.innerHTML = formattedText;
-                chatMessages.appendChild(bubble);
-                scrollToBottom();
-            }
-
-            function showLoadingIndicator() {
-                const existing = document.getElementById('loading-indicator');
-                if (existing) return;
-                const loadingBubble = document.createElement('div');
-                loadingBubble.id = 'loading-indicator';
-                loadingBubble.classList.add('message-bubble', 'bot-message');
-                loadingBubble.innerHTML = `
-                    <div class="flex items-center space-x-1">
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                    </div>
-                `;
-                chatMessages.appendChild(loadingBubble);
-                scrollToBottom();
-            }
-
-            function removeLoadingIndicator() {
-                const indicator = document.getElementById('loading-indicator');
-                if (indicator) {
-                    indicator.remove();
-                }
-            }
-            
-            function setFormState(disabled) {
-                isLoading = disabled;
-                chatInput.disabled = disabled;
-                sendBtn.disabled = disabled;
-                sendBtn.textContent = disabled ? '...' : 'Enviar';
-            }
-
-            // --- API Call and Exponential Backoff ---
-
-            async function fetchGeminiResponse(userQuery, retries = 0) {
-                const maxRetries = 5;
-                const delay = Math.pow(2, retries) * 1000 + (Math.random() * 1000); // 2s, 4s, 8s... + jitter
-                
-                try {
-                    const response = await fetch(API_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // Use the retrieved CSRF token
-                            'X-CSRFToken': CSRF_TOKEN 
-                        },
-                        body: JSON.stringify({ message: userQuery })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    
-                    if (data.error) {
-                        return `Lo siento, hubo un error al procesar tu solicitud: ${data.error}`;
-                    }
-
-                    // return the assistant text
-                    return data.response || "Lo siento, recibí una respuesta vacía.";
-                    
-                } catch (error) {
-                    if (retries < maxRetries) {
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        return fetchGeminiResponse(userQuery, retries + 1);
-                    } else {
-                        console.error('API call failed after max retries:', error);
-                        return "Lo siento, el asistente no pudo conectarse. Por favor, inténtalo de nuevo más tarde.";
-                    }
-                }
-            }
-
-            // --- Form Submission Handler ---
-
-            if (chatForm) {
-                chatForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    if (isLoading) return;
-
-                    const userQuery = chatInput.value.trim();
-                    if (!userQuery) return;
-
-                    // 1. Display user message
-                    addMessage(userQuery, 'user');
-                    chatInput.value = '';
-
-                    // 2. Disable input and show loading
-                    setFormState(true);
-                    showLoadingIndicator();
-
-                    // 3. Get AI response
-                    const botResponse = await fetchGeminiResponse(userQuery);
-
-                    // 4. Remove loading, display bot response, re-enable input
-                    removeLoadingIndicator();
-                    addMessage(botResponse, 'bot');
-                    setFormState(false);
-                });
-            }
-
-            // Accessibility: close chat when pressing Escape while open
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && isChatOpen) {
-                    closeChat();
-                }
+    async function fetchGeminiResponse(userQuery, retries = 0) {
+        const maxRetries = 5;
+        const delay = Math.pow(2, retries) * 1000 + (Math.random() * 1000); // 2s, 4s, 8s... + jitter
+        
+        try {
+            const response = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Usamos el token recuperado del input
+                    'X-CSRFToken': CSRF_TOKEN 
+                },
+                body: JSON.stringify({ message: userQuery })
             });
 
+            if (!response.ok) {
+                // Manejo específico de errores HTTP
+                if (response.status === 403) {
+                     return "Error de permiso (CSRF). Intenta recargar la página.";
+                }
+                if (response.status === 404) {
+                     return "Error de conexión: No encuentro la ruta de la API.";
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.error) {
+                return `Lo siento, hubo un error al procesar tu solicitud: ${data.error}`;
+            }
+
+            // devolver el texto del asistente
+            return data.response || "Lo siento, recibí una respuesta vacía.";
+            
+        } catch (error) {
+            if (retries < maxRetries) {
+                // Si falla, espera y reintenta
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return fetchGeminiResponse(userQuery, retries + 1);
+            } else {
+                console.error('La llamada a la API falló tras varios intentos:', error);
+                return "Lo siento, el asistente no pudo conectarse. Por favor, revisa tu conexión o inténtalo más tarde.";
+            }
+        }
+    }
+
+    // --- Manejo del envío del formulario ---
+
+    if (chatForm) {
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isLoading) return;
+
+            const userQuery = chatInput.value.trim();
+            if (!userQuery) return;
+
+            // 1. Mostrar mensaje del usuario
+            addMessage(userQuery, 'user');
+            chatInput.value = '';
+
+            // 2. Deshabilitar input y mostrar cargando
+            setFormState(true);
+            showLoadingIndicator();
+
+            // 3. Obtener respuesta de la IA
+            const botResponse = await fetchGeminiResponse(userQuery);
+
+            // 4. Quitar cargando, mostrar respuesta, rehabilitar input
+            removeLoadingIndicator();
+            addMessage(botResponse, 'bot');
+            setFormState(false);
+            
+            // Foco de nuevo en el input para seguir escribiendo rápido
+            chatInput.focus();
         });
-   
-        
+    }
+
+    // Accesibilidad: cerrar chat con Escape si está abierto
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isChatOpen) {
+            closeChat();
+        }
+    });
+
+});
