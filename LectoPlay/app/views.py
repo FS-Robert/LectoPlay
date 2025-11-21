@@ -17,11 +17,6 @@ from .models import Contacto
 from django.conf import settings
 
 
-
-
-
-API_KEY = "AIzaSyCvOuSQVaB8oW2Jt1GCN_AwZViPNrJST84"
-
 @csrf_exempt
 @require_POST
 def chatbot_ask(request):
