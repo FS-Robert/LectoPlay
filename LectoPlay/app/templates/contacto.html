@@ -1,0 +1,46 @@
+{% extends 'home.html' %}
+
+{% block title %}Contacto | LectoPlay{% endblock %}
+{% block content %}
+<h1>Contáctanos 💌</h1>
+
+{% if error %}
+  <p style="color: red;">{{ error }}</p>
+{% endif %}
+
+<form action="{% url 'contacto' %}" method="post" class="contact-form">
+    {% csrf_token %}
+    
+    <label for="name">👦 Nombre:</label><br>
+    <input type="text" id="name" name="name" required value="{{ prefill.name|default:'' }}"><br><br>
+
+    <label for="email">📧 Correo electrónico:</label><br>
+    <input type="email" id="email" name="email" required value="{{ prefill.email|default:'' }}"><br><br>
+
+    <label for="message">💬 Mensaje:</label><br>
+    <textarea id="message" name="message" rows="5" required>{{ prefill.message|default:'' }}</textarea><br><br>
+
+    <!-- Fecha que debe seleccionar el usuario -->
+    <label for="fecha">📅 Fecha de envío:</label><br>
+    <input type="date" id="fecha" name="fecha" required value="{{ prefill.fecha|default:'' }}"><br><br>
+
+    <button type="submit" class="btn">Enviar mensaje</button>
+</form>
+
+{% if success %}
+<div id="modal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <h2>¡Mensaje enviado! 🎉</h2>
+        <p>Gracias por contactarnos. Te responderemos pronto.</p>
+        <button onclick="closeModal()" class="modal-btn">Cerrar</button>
+    </div>
+</div>
+{% endif %}
+
+    <script>
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
+
+{% endblock %}
