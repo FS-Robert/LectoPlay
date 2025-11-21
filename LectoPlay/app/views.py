@@ -15,6 +15,43 @@ from . import desc_game
 from . import pnp_game
 from .models import Contacto
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required # Para seguridad
+from django.contrib.auth.models import User # Importar modelo de Usuarios de Django
+
+
+# ==========================================
+#  PANEL DE ADMINISTRADOR (DASHBOARD)
+# ==========================================
+
+@staff_member_required(login_url='/login/') # Si no es admin, lo manda al login
+def admin_dashboard(request):
+    # 1. Contar datos reales
+    total_usuarios = User.objects.count()
+    total_consultas = Contacto.objects.count()
+    
+    # Lógica simple: asumimos que todos están sin responder por ahora
+    # (Podrías mejorar esto agregando un campo 'leido' a tu modelo Contacto después)
+    consultas_sin_responder = total_consultas 
+
+    stats = {
+        'total_usuarios': total_usuarios,
+        'total_consultas': total_consultas,
+        'consultas_sin_responder': consultas_sin_responder
+    }
+
+    return render(request, 'admin/admin_dashboard.html', {'stats': stats})
+
+# --- Vistas vacías para que los botones no den error (Placeholders) ---
+@staff_member_required(login_url='/login/')
+def admin_usuarios(request):
+    usuarios = User.objects.all()
+    return render(request, 'admin/admin_usuarios.html', {'usuarios': usuarios})
+
+@staff_member_required(login_url='/login/')
+def admin_consultas(request):
+    # Aquí mostraremos los mensajes más adelante
+    mensajes = Contacto.objects.all().order_by('-fecha_envio')
+    return render(request, 'admin/admin_consultas.html', {'mensajes': mensajes})
 
 
 @csrf_exempt

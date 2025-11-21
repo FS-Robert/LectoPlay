@@ -743,7 +743,202 @@ p {
 }
 /*  FIN estilo tarjeta de contacto */
 
+/* =========================================
+   PANEL DE ADMINISTRADOR (DASHBOARD)
+   ========================================= */
 
+.admin-header-container {
+    text-align: center;
+    margin-bottom: 40px;
+    margin-top: 30px;
+}
+
+.admin-title {
+    color: #219ebc; /* Azul LectoPlay */
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.admin-subtitle {
+    color: #555;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* --- Contenedor de Estadísticas (Estilo Tarjetas de Juego) --- */
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 25px; /* Bordes muy redondos */
+    padding: 25px 30px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    border: 3px solid; /* Borde grueso tipo cartoon */
+    min-width: 220px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+}
+
+.stat-icon-wrapper {
+    margin-bottom: 15px;
+}
+
+.icon-bg {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto;
+}
+
+.stat-label {
+    font-weight: bold;
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.stat-num {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+/* --- Variantes de Color para las Tarjetas --- */
+
+/* Usuarios (Rosa) */
+.stat-users {
+    border-color: #ffafcc;
+}
+.stat-users .icon-bg { background: #ffafcc; color: white; }
+.stat-users .stat-num { color: #d36ba1; }
+
+/* Mensajes (Amarillo/Naranja) */
+.stat-msgs {
+    border-color: #ffd166;
+}
+.stat-msgs .icon-bg { background: #ffd166; color: white; }
+.stat-msgs .stat-num { color: #fb8500; }
+
+/* Pendientes (Azul Claro) */
+.stat-pending {
+    border-color: #a2d2ff;
+}
+.stat-pending .icon-bg { background: #a2d2ff; color: white; }
+.stat-pending .stat-num { color: #023047; }
+
+
+/* --- Sección de Acciones (Botones Grandes) --- */
+.actions-section {
+    max-width: 850px;
+    margin: 0 auto 80px auto;
+}
+
+.section-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    color: #219ebc;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.section-separator::before, .section-separator::after {
+    content: "";
+    height: 4px;
+    background-color: #ffafcc; /* Línea rosa */
+    flex-grow: 1;
+    margin: 0 20px;
+    border-radius: 10px;
+    opacity: 0.6;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.action-big-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
+    border-radius: 20px;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.action-content h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.action-content p {
+    margin: 5px 0 0 0;
+    color: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.action-icon {
+    font-size: 3rem;
+    color: rgba(255,255,255,0.5);
+    transform: rotate(-15deg);
+    transition: 0.3s;
+}
+
+.action-big-btn:hover .action-icon {
+    color: white;
+    transform: rotate(0deg) scale(1.2);
+}
+
+/* Botón Gestión Usuarios (Azul) */
+.btn-users {
+    background: linear-gradient(135deg, #a2d2ff 0%, #90e0ef 100%);
+    border: 3px solid white;
+}
+.btn-users:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(162, 210, 255, 0.6);
+}
+
+/* Botón Ver Consultas (Rosa) */
+.btn-consultas {
+    background: linear-gradient(135deg, #ffafcc 0%, #ffc8dd 100%);
+    border: 3px solid white;
+}
+.btn-consultas:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(255, 175, 204, 0.6);
+}
 
 
 

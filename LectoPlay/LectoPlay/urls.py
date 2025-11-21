@@ -21,7 +21,7 @@ from app.views import panel_redirect
 
 urlpatterns = [
     path('panel/', panel_redirect, name='panel_redirect'),
-    path('admin/', admin.site.urls),
+    path('admin-django/', admin.site.urls),
     path('', include('app.urls')),
  
 ]

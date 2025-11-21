@@ -7,24 +7,19 @@
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <!-- Load Tailwind CSS for utility classes used by the chatbot widget -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
 </head>
 
-
 <body>
     
-    <!-- Django CSRF Token (Needs to be here for security across all pages) -->
     {% csrf_token %}
     
-    <!-- Header -->
     <header>
-        <nav class="navbar">
+        <nav class="navbar" style="padding: 10px 0; display: flex; align-items: center;">
             <div class="container">
             </div>
             <div id="user-info">
-              <!-- Aquí se mostrará el usuario logueado -->
               <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
                 Iniciar Sesión
               </button>
@@ -32,170 +27,189 @@
         </nav>
     </header>
 
-    <!-- Botón oculto para acceder al panel admin -->
-<a id="admin-secret-btn" href="/admin/login/" 
-   style="
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: #333;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 14px;
-      display: none; 
-      z-index: 9999;">
-  ⚙ Panel Admin
-</a>
+    <a id="admin-secret-btn" href="/admin/login/" 
+       style="
+          position: fixed;
+          bottom: 20px;
+          left: 20px;
+          background: #333;
+          color: white;
+          padding: 10px 18px;
+          border-radius: 8px;
+          font-size: 14px;
+          display: none; 
+          z-index: 9999;">
+      ⚙ Panel Admin (Secreto)
+    </a>
 
-<script>
-document.addEventListener("keydown", function(e) {
-
-    // Detectar Shift + A + D
-    if (e.shiftKey && e.key.toLowerCase() === "a") {
-        // Esperar siguiente tecla "D"
-        document.addEventListener("keydown", function secondKey(ev) {
-            if (ev.key.toLowerCase() === "d") {
-                const adminBtn = document.getElementById("admin-secret-btn");
-                adminBtn.style.display = "block";
-
-                // Quitar listener para evitar repeticiones
-                document.removeEventListener("keydown", secondKey);
-            }
-        });
-    }
-
-});
-</script>
+    <script>
+    document.addEventListener("keydown", function(e) {
+        // Detectar Shift + A + D
+        if (e.shiftKey && e.key.toLowerCase() === "a") {
+            document.addEventListener("keydown", function secondKey(ev) {
+                if (ev.key.toLowerCase() === "d") {
+                    const adminBtn = document.getElementById("admin-secret-btn");
+                    adminBtn.style.display = "block";
+                    document.removeEventListener("keydown", secondKey);
+                }
+            });
+        }
+    });
+    </script>
 
 
-  <!-- White Navbar -->
-<div class="white-navbar-container">
-  <nav class="white-navbar">
-    
-    <!-- IZQUIERDA -->
-    <ul class="white-nav-links left-links">
-        <li><a href="{% url 'home' %}" class="active" style="padding: 10px 16px;  display: flex; gap: 100px;">Inicio</a></li>
-        <li><a href="{% url 'about' %}" style="padding: 10px 16px; display: flex; gap: 0px;">Acerca de</a></li>
-    </ul>
+    <div class="white-navbar-container" style="width: 100%; background-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; z-index: 50;">
+        
+        <nav class="white-navbar" style="width: 100%; max-width: none; display: flex; align-items: center; justify-content: flex-start; padding: 10px 60px; gap: 80px;">
+        
+            <a href="{% url 'home' %}" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="{% static 'css/logo3.png' %}" alt="LectoPlay" class="logo-img" 
+                     style="height: 65px; width: auto; object-fit: contain; transition: transform 0.3s ease;" 
+                     onmouseover="this.style.transform='scale(1.05)'" 
+                     onmouseout="this.style.transform='scale(1)'">
+            </a>
 
-    <!-- LOGO CENTRO -->
-    <h1 class="white-logo">
-        <a href="{% url 'home' %}">
-          <img src="{% static 'css/logo3.png' %}" alt="LectoPlay" class="logo-img">
-        </a>
-    </h1>
+            <ul class="nav-links" style="display: flex; align-items: center; list-style: none; gap: 50px; margin: 0; padding: 0;">
+                
+                <li>
+                    <a href="{% url 'home' %}" class="active" 
+                       style="text-decoration: none; color: #333; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
+                       onmouseover="this.style.color='#ffafcc'" 
+                       onmouseout="this.style.color='#333'">
+                        Inicio
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="{% url 'about' %}" 
+                       style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
+                       onmouseover="this.style.color='#ffafcc'" 
+                       onmouseout="this.style.color='#555'">
+                        Acerca de
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="{% url 'ejercicios' %}" 
+                       style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
+                       onmouseover="this.style.color='#ffafcc'" 
+                       onmouseout="this.style.color='#555'">
+                        Ejercicios
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="{% url 'contacto' %}" 
+                       style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
+                       onmouseover="this.style.color='#ffafcc'" 
+                       onmouseout="this.style.color='#555'">
+                        Contacto
+                    </a>
+                </li>
 
-    <!-- DERECHA -->
-   <ul class="white-nav-links right-links" 
-    style="display: flex; gap: 60px; margin-left: 80px;">
-    <li><a href="{% url 'ejercicios' %}" style="padding: 10px 16px;">Ejercicios</a></li>
-    <li><a href="{% url 'contacto' %}" style="padding: 10px 16px;">Contacto</a></li>
-</ul>
+                {% if user.is_authenticated and user.is_staff %}
+                    <li style="margin-left: 20px;">
+                        <a href="{% url 'admin_dashboard' %}" 
+                           style="
+                               color: #fff; 
+                               background-color: #ffafcc; 
+                               padding: 8px 24px; 
+                               border-radius: 50px; 
+                               font-weight: 800; 
+                               font-size: 13px; 
+                               border: 2px solid #fff;
+                               box-shadow: 0 4px 8px rgba(255, 175, 204, 0.5);
+                               transition: all 0.3s ease;
+                               text-decoration: none;
+                               display: flex;
+                               align-items: center;
+                               gap: 6px;
+                               
+                           "
+                           onmouseover="this.style.backgroundColor='#f28482'; this.style.transform='translateY(-2px) scale(1.05)';"
+                           onmouseout="this.style.backgroundColor='#ffafcc'; this.style.transform='translateY(0) scale(1)';">
+                           🐼 Admin
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 
-
-  </nav>
-</div>
-
-
-    
-
-    <!-- CONTENT BLOCK START: This is the only part that changes per page -->
     {% block content %}
-    <!-- Carousel Start (Default content for home page) -->
-<div class="carrousel">
-    <div class="conteCarrousel">
-
-        <!-- SLIDE 1 -->
-        <div class="itemCarrousel" id="itemCarrousel-1">
-            <div class="itemCarrouselTarjeta">
-                <img src="{% static 'css/carrusel1.png' %}" class="carrousel-img" alt="Carrusel 1">
-                <div class="carrousel-text">
-                    <h2>LECTURA Y DIVERSIÓN</h2>
-                    <p>Donde las letras son amigas</p>
-                </div>
-            </div>
-
-            <div class="itemCarrouselArrows">
-                <a href="#itemCarrousel-2">
-                    <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Siguiente">
-                </a>
-                <a href="#itemCarrousel-2">
-                    <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Siguiente">
-                </a>
-            </div>
-        </div>
-
-        <!-- SLIDE 2 -->
-        <div class="itemCarrousel" id="itemCarrousel-2">
-            <div class="itemCarrouselTarjeta">
-                <img src="{% static 'css/carrusel2.png' %}" class="carrousel-img" alt="Carrusel 2">
-                <div class="carrousel-text">
-                    <h2>LECTURA Y DIVERSIÓN</h2>
-                    <p>Jugar es tu mejor herramienta</p>
-                </div>
-            </div>
-
-            <div class="itemCarrouselArrows">
-                <a href="#itemCarrousel-1">
-                    <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Anterior">
-                </a>
-                <a href="#itemCarrousel-1">
-                    <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Anterior">
-                </a>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- PUNTOS DE CONTROL -->
-    <div class="conteCarrouselController">
-        <a href="#itemCarrousel-1">•</a>
-        <a href="#itemCarrousel-2">•</a>
-    </div>
-</div>
-
-
-
-<!-- Sección Presentación LectoPlay -->
- <main class="container"> 
-<section class="about-lectoplay">
-    <div class="about-text">
-
-        <h2>¡BIENVENIDOS A LECTOPLAY!</h2>
-        <p>
-            <strong>LectoPlay</strong> es un sitio web educativo diseñado para ayudar a 
-            <strong>niños con dislexia</strong> a mejorar su lectura de forma divertida y accesible. 
-            Mediante actividades visuales, colores llamativos y herramientas interactivas,
-            busca convertir el aprendizaje en una experiencia positiva y entretenida.
-        </p>
-
-        <p>
-            Su objetivo es brindar una <strong>plataforma inclusiva</strong> que apoye tanto a los niños 
-            como a docentes, terapeutas del lenguaje y familias, fomentando la confianza 
-            y el gusto por la lectura.
-        </p>
-
-        <p>
-            Con <strong>LectoPlay</strong>, aprender a leer se convierte en una aventura colorida 
-            donde cada palabra cuenta.
-        </p>
-
-    </div>
-
-    <div class="about-image">
-        <img src="{% static 'css/osito.png' %}" alt="LectoPlay" />
-    </div>
-  </section>
-</main> 
-    {% endblock %}
-    <!-- CONTENT BLOCK END -->
-
-    <!-- CHATBOT WIDGET START (Placed outside block content for persistence) -->
     
-    <!-- Chatbot Toggle Button (Circular Floating Icon) -->
+    <div class="carrousel">
+        <div class="conteCarrousel">
+            <div class="itemCarrousel" id="itemCarrousel-1">
+                <div class="itemCarrouselTarjeta">
+                    <img src="{% static 'css/carrusel1.png' %}" class="carrousel-img" alt="Carrusel 1">
+                    <div class="carrousel-text">
+                        <h2>LECTURA Y DIVERSIÓN</h2>
+                        <p>Donde las letras son amigas</p>
+                    </div>
+                </div>
+                <div class="itemCarrouselArrows">
+                    <a href="#itemCarrousel-2">
+                        <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Siguiente">
+                    </a>
+                    <a href="#itemCarrousel-2">
+                        <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Siguiente">
+                    </a>
+                </div>
+            </div>
+
+            <div class="itemCarrousel" id="itemCarrousel-2">
+                <div class="itemCarrouselTarjeta">
+                    <img src="{% static 'css/carrusel2.png' %}" class="carrousel-img" alt="Carrusel 2">
+                    <div class="carrousel-text">
+                        <h2>LECTURA Y DIVERSIÓN</h2>
+                        <p>Jugar es tu mejor herramienta</p>
+                    </div>
+                </div>
+                <div class="itemCarrouselArrows">
+                    <a href="#itemCarrousel-1">
+                        <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Anterior">
+                    </a>
+                    <a href="#itemCarrousel-1">
+                        <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Anterior">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="conteCarrouselController">
+            <a href="#itemCarrousel-1">•</a>
+            <a href="#itemCarrousel-2">•</a>
+        </div>
+    </div>
+
+    <main class="container"> 
+        <section class="about-lectoplay">
+            <div class="about-text">
+                <h2>¡BIENVENIDOS A LECTOPLAY!</h2>
+                <p>
+                    <strong>LectoPlay</strong> es un sitio web educativo diseñado para ayudar a 
+                    <strong>niños con dislexia</strong> a mejorar su lectura de forma divertida y accesible. 
+                    Mediante actividades visuales, colores llamativos y herramientas interactivas,
+                    busca convertir el aprendizaje en una experiencia positiva y entretenida.
+                </p>
+                <p>
+                    Su objetivo es brindar una <strong>plataforma inclusiva</strong> que apoye tanto a los niños 
+                    como a docentes, terapeutas del lenguaje y familias, fomentando la confianza 
+                    y el gusto por la lectura.
+                </p>
+                <p>
+                    Con <strong>LectoPlay</strong>, aprender a leer se convierte en una aventura colorida 
+                    donde cada palabra cuenta.
+                </p>
+            </div>
+            <div class="about-image">
+                <img src="{% static 'css/osito.png' %}" alt="LectoPlay" />
+            </div>
+        </section>
+    </main> 
+    {% endblock %}
+    
     <div id="chatbot-toggle" role="button" aria-label="Abrir chat">
-        <!-- SVG for a friendly chat icon -->
         <svg id="chat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22H6C4.89543 22 4 21.1046 4 20V18C4 16.8954 3.10457 16 2 16V12ZM6 18H8V20H6V18ZM12 4C7.58172 4 4 7.58172 4 12V16H20V12C20 7.58172 16.4183 4 12 4Z" fill="currentColor"/>
             <path d="M10 10C10 11.1046 9.10457 12 8 12C6.89543 12 6 11.1046 6 10C6 8.89543 6.89543 8 8 8C9.10457 8 10 8.89543 10 10Z" fill="currentColor"/>
@@ -203,13 +217,10 @@ document.addEventListener("keydown", function(e) {
         </svg>
     </div>
 
-    <!-- Chatbot Conversation Window -->
     <div id="chatbot-window" class="hidden" role="dialog" aria-label="Asistente LectoPlay">
         <div id="chat-header" role="banner">
             <span>Asistente PandaPlay 🐼</span>
-            <!-- NOTE: type="button" prevents submitting forms by accident -->
             <button id="close-chat-btn" type="button" class="text-white hover:text-gray-200" aria-label="Cerrar chat">
-                <!-- svg won't capture pointer events so clicks reach the button -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x pointer-events-none" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -218,11 +229,9 @@ document.addEventListener("keydown", function(e) {
         </div>
 
         <div id="chat-messages" aria-live="polite">
-            <!-- Initial Greeting Message -->
             <div class="message-bubble bot-message">
                 ¡Hola! Soy tu asistente de LectoPlay. Estoy aquí para ayudarte con las reglas de los ejercicios, la dislexia, o cómo usar la plataforma. ¿En qué puedo ayudarte hoy?
             </div>
-            <!-- Messages will be appended here -->
         </div>
 
         <form id="chat-input-form" aria-label="Formulario de chat">
@@ -230,14 +239,11 @@ document.addEventListener("keydown", function(e) {
             <button type="submit" id="chat-send-btn" aria-label="Enviar mensaje">Enviar</button>
         </form>
     </div>
-
-    <!-- CHATBOT WIDGET FINAL -->
-
-    <!-- Logica de Firebasde Auth-->
+    
     <script type="module" src="{% static 'js/firebase-auth.js' %}"></script>
     
     <script type="module">
-    // --- Detectar usuario guardado ---
+    // --- Detectar usuario guardado (Firebase) ---
     const userName = localStorage.getItem("userName");
     const userEmail = localStorage.getItem("userEmail");
     const userInfoDiv = document.getElementById("user-info");
@@ -246,7 +252,7 @@ document.addEventListener("keydown", function(e) {
       userInfoDiv.innerHTML = `
         <div class="user-avatar">
           <img src="{% static 'css/login-avatar.png' %}" width="40" height="40" 
-                alt="avatar" class="avatar">
+               alt="avatar" class="avatar">
           <span>${userName ? userName : userEmail}</span>
           <button onclick="logoutUser()">Cerrar sesión</button>
         </div>
@@ -254,19 +260,14 @@ document.addEventListener("keydown", function(e) {
     }
     </script>
     
-    <!-- Chatbot JavaScript -->
-   <script src="{% static 'js/chatbot.js' %}"></script>
+    <script src="{% static 'js/chatbot.js' %}"></script>
 
-  <!-- CAROUSEL JAVASCRIPT LOGICA -->
-<script>
-    // Carrusel sin auto-slide (solo navegación manual con flechas)
-    document.addEventListener('DOMContentLoaded', () => {
-        
-    });
-</script>
-<!-- END CAROUSEL JAVASCRIPT LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lógica extra para el carrusel si fuera necesaria
+        });
+    </script>
 
-    <!-- Footer -->
     <footer>
         <p>🐾 &copy; 2025 LectoPlay. Aprende jugando </p>
     </footer>

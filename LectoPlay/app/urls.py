@@ -14,5 +14,9 @@ urlpatterns = [
     path("ejercicios/desc_palabra/", views.desc_palabra, name="desc_palabra"),
     path("ejercicios/pnp/", views.pnp, name="pnp"),
     path('contacto/', views.contacto_view, name='contacto'),
+    # RUTAS DEL PANEL ADMIN
+    path('panel-admin/', views.admin_dashboard, name='admin_dashboard'),
+    path('panel-admin/usuarios/', views.admin_usuarios, name='admin_usuarios'),
+    path('panel-admin/consultas/', views.admin_consultas, name='admin_consultas'),
     
 ]
