@@ -15,8 +15,23 @@ urlpatterns = [
     path("ejercicios/pnp/", views.pnp, name="pnp"),
     path('contacto/', views.contacto_view, name='contacto'),
     # RUTAS DEL PANEL ADMIN
-    path('panel-admin/', views.admin_dashboard, name='admin_dashboard'),
-    path('panel-admin/usuarios/', views.admin_usuarios, name='admin_usuarios'),
-    path('panel-admin/consultas/', views.admin_consultas, name='admin_consultas'),
+    path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
+    path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),
+    path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
+
+    # LISTADO
+    path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),
+
+    # CREAR
+    path("panel-admin/usuarios/nuevo/", views.admin_usuario_nuevo, name="admin_usuario_nuevo"),
+
+    # EDITAR
+    path("panel-admin/usuarios/editar/<int:user_id>/", views.admin_usuario_editar, name="admin_usuario_editar"),
+
+    # ELIMINAR
+    path("panel-admin/usuarios/eliminar/<int:user_id>/", views.admin_usuario_eliminar, name="admin_usuario_eliminar"),
+
+    # …tus otras rutas (juegos, etc.) …
+    path("panel-admin/consultas/", views.admin_consultas, name="admin_consultas"),
     
 ]

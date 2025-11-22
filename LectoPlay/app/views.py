@@ -17,6 +17,7 @@ from .models import Contacto
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required # Para seguridad
 from django.contrib.auth.models import User # Importar modelo de Usuarios de Django
+from django.shortcuts import render, redirect, get_object_or_404
 
 
 # ==========================================
@@ -44,14 +45,78 @@ def admin_dashboard(request):
 # --- Vistas vacías para que los botones no den error (Placeholders) ---
 @staff_member_required(login_url='/login/')
 def admin_usuarios(request):
-    usuarios = User.objects.all()
-    return render(request, 'admin/admin_usuarios.html', {'usuarios': usuarios})
+    usuarios = User.objects.all().order_by("username")
+    context = {
+        "usuarios": usuarios
+    }
+    return render(request, "admin/admin_usuarios.html", context)
+
+
+@staff_member_required(login_url='/login/')
+def admin_usuario_nuevo(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        is_staff = bool(request.POST.get("is_staff"))
+        is_superuser = bool(request.POST.get("is_superuser"))
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+        )
+        user.is_staff = is_staff
+        user.is_superuser = is_superuser
+        user.save()
+
+        return redirect("admin_usuarios")
+
+    return render(request, "admin/admin_usuario_form.html", {"modo": "crear"})
+
+
+@staff_member_required(login_url='/login/')
+def admin_usuario_editar(request, user_id):
+    usuario = get_object_or_404(User, pk=user_id)
+
+    if request.method == "POST":
+        usuario.username = request.POST.get("username")
+        usuario.email = request.POST.get("email")
+        usuario.is_staff = bool(request.POST.get("is_staff"))
+        usuario.is_superuser = bool(request.POST.get("is_superuser"))
+
+        # Si se escribe una nueva contraseña, la cambiamos
+        password = request.POST.get("password")
+        if password:
+            usuario.set_password(password)
+
+        usuario.save()
+        return redirect("admin_usuarios")
+
+    context = {
+        "modo": "editar",
+        "usuario": usuario,
+    }
+    return render(request, "admin/admin_usuario_form.html", context)
+
+
+@staff_member_required(login_url='/login/')
+def admin_usuario_eliminar(request, user_id):
+    usuario = get_object_or_404(User, pk=user_id)
+
+    if request.method == "POST":
+        usuario.delete()
+        return redirect("admin_usuarios")
+
+    # Pequeña pantalla de confirmación
+    return render(request, "admin/admin_usuario_eliminar.html", {"usuario": usuario})
+
+# --- FIN DE Vistas de gestión de usuarios ---
 
 @staff_member_required(login_url='/login/')
 def admin_consultas(request):
-    # Aquí mostraremos los mensajes más adelante
-    mensajes = Contacto.objects.all().order_by('-fecha_envio')
-    return render(request, 'admin/admin_consultas.html', {'mensajes': mensajes})
+    # 👇 CAMBIADO: también dentro de templates/admin/
+    return render(request, "admin/admin_consultas.html")
 
 
 @csrf_exempt
@@ -126,7 +191,7 @@ def login_view(request):
 
 
 # =========================
-#   JUEGO: ENCUENTRA LETRA
+#   JUEGO: ENCUENTRA LETRA
 # =========================
 
 def encuentra(request):
@@ -235,7 +300,7 @@ def lectura_rapida_game(request):
 # FIN DE LECTURA RÁPIDA
 
 # ====================================
-#   JUEGO: PALABRAS Y COLORES
+#   JUEGO: PALABRAS Y COLORES
 # ====================================
 
 def palabras_colores(request):
@@ -424,4 +489,3 @@ def contacto_view(request):
 
 def panel_redirect(request):
     return redirect('/admin/login/')
-

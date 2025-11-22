@@ -1,0 +1,50 @@
+{% extends "home.html" %}
+
+{% block title %}
+  {% if modo == "crear" %}Nuevo Usuario{% else %}Editar Usuario{% endif %} | LectoPlay
+{% endblock %}
+
+{% block content %}
+<h1>
+  {% if modo == "crear" %}Crear nuevo usuario{% else %}Editar usuario{% endif %}
+</h1>
+
+<form method="post" style="max-width:400px; background:white; padding:20px; border-radius:15px;">
+  {% csrf_token %}
+
+  <label>Nombre de usuario:</label><br>
+  <input type="text" name="username" required
+         value="{% if usuario %}{{ usuario.username }}{% endif %}"><br><br>
+
+  <label>Correo electrónico:</label><br>
+  <input type="email" name="email"
+         value="{% if usuario %}{{ usuario.email }}{% endif %}"><br><br>
+
+  <label>Contraseña:
+    <small>
+      {% if modo == "editar" %}(déjalo vacío para no cambiarla){% endif %}
+    </small>
+  </label><br>
+  <input type="password" name="password"><br><br>
+
+  <label>
+    <input type="checkbox" name="is_staff"
+           {% if usuario and usuario.is_staff %}checked{% endif %}>
+    ¿Es staff (puede administrar)?
+  </label><br>
+
+  <label>
+    <input type="checkbox" name="is_superuser"
+           {% if usuario and usuario.is_superuser %}checked{% endif %}>
+    ¿Es superusuario?
+  </label><br><br>
+
+  <button type="submit" class="btn">
+    {% if modo == "crear" %}Crear usuario{% else %}Guardar cambios{% endif %}
+  </button>
+
+  <a href="{% url 'admin_usuarios' %}" class="btn" style="margin-left:10px;">
+    Cancelar
+  </a>
+</form>
+{% endblock %}

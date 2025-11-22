@@ -1,0 +1,15 @@
+{% extends "home.html" %}
+
+{% block title %}Eliminar Usuario | LectoPlay{% endblock %}
+
+{% block content %}
+<h1>Eliminar usuario</h1>
+
+<p>¿Seguro que quieres eliminar al usuario <strong>{{ usuario.username }}</strong>?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn" style="background:#ff6b6b;">Sí, eliminar</button>
+  <a href="{% url 'admin_usuarios' %}" class="btn" style="margin-left:10px;">Cancelar</a>
+</form>
+{% endblock %}

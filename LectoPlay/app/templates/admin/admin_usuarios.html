@@ -1,0 +1,57 @@
+{% extends "home.html" %}
+
+{% block title %}Gestionar Usuarios | LectoPlay{% endblock %}
+
+{% block content %}
+<h1>Gestionar Usuarios</h1>
+<p>Aquí puedes ver y administrar los usuarios del sistema.</p>
+
+<!-- Botón para crear nuevo usuario -->
+<p style="margin-top:15px;">
+  <a href="{% url 'admin_usuario_nuevo' %}" class="btn">➕ Nuevo usuario</a>
+</p>
+
+<table border="1" cellpadding="8" cellspacing="0"
+       style="background:white; border-radius:10px; margin-top:10px; width:100%; max-width:900px;">
+  <tr>
+    <th>ID</th>
+    <th>Nombre de usuario</th>
+    <th>Correo</th>
+    <th>Es staff</th>
+    <th>Es superusuario</th>
+    <th>Acciones</th>
+  </tr>
+
+  {% for u in usuarios %}
+  <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.username }}</td>
+    <td>{{ u.email }}</td>
+    <td>{% if u.is_staff %}Sí{% else %}No{% endif %}</td>
+    <td>{% if u.is_superuser %}Sí{% else %}No{% endif %}</td>
+    <td>
+      <!-- Editar -->
+      <a href="{% url 'admin_usuario_editar' u.id %}"
+         class="btn"
+         style="padding:4px 8px; font-size:0.85rem;">
+         ✏️ Editar
+      </a>
+
+      <!-- Eliminar (form POST) -->
+      <form action="{% url 'admin_usuario_eliminar' u.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit"
+                class="btn"
+                style="background:#ff6b6b; padding:4px 8px; font-size:0.85rem;">
+          🗑️ Eliminar
+        </button>
+      </form>
+    </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="6">No hay usuarios registrados.</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
