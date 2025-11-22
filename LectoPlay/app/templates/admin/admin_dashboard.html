@@ -1,0 +1,78 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Panel Admin - LectoPlay{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="admin-header-container">
+        <h1 class="admin-title">Panel de Control 🐼</h1>
+        <p class="admin-subtitle">Bienvenido, Administrador. ¡Todo está bajo control!</p>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card stat-users">
+            <div class="stat-icon-wrapper">
+                <div class="icon-bg">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+            </div>
+            <div class="stat-label">Jugadores</div>
+            <div class="stat-num">{{ stats.total_usuarios }}</div>
+        </div>
+
+        <div class="stat-card stat-msgs">
+            <div class="stat-icon-wrapper">
+                <div class="icon-bg">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+            </div>
+            <div class="stat-label">Mensajes</div>
+            <div class="stat-num">{{ stats.total_consultas }}</div>
+        </div>
+
+        <div class="stat-card stat-pending">
+            <div class="stat-icon-wrapper">
+                <div class="icon-bg">
+                    <i class="fas fa-bell"></i>
+                </div>
+            </div>
+            <div class="stat-label">Sin Leer</div>
+            <div class="stat-num">{{ stats.consultas_sin_responder }}</div>
+        </div>
+    </div>
+
+    <div class="actions-section">
+        <div class="section-separator">
+            <i class="fas fa-rocket" style="margin-right: 10px;"></i> ¿Qué quieres hacer hoy?
+        </div>
+
+        <div class="actions-grid">
+            <a href="{% url 'admin_usuarios' %}" class="action-big-btn btn-users">
+                <div class="action-content">
+                    <h3>Gestionar Usuarios</h3>
+                    <p>Ver lista de jugadores registrados</p>
+                </div>
+                <div class="action-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_consultas' %}" class="action-big-btn btn-consultas">
+                <div class="action-content">
+                    <h3>Ver Consultas</h3>
+                    <p>Leer mensajes de contacto</p>
+                </div>
+                <div class="action-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}
