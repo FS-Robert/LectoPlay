@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title>Registrarse - LectoPlay</title>
-   {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="auth-body">
 
@@ -12,16 +12,46 @@
     <h2>🧩 Crea tu cuenta en <span class="lectoplay">LectoPlay</span></h2>
     <p class="auth-subtitle">¡Comienza tu aventura de lectura divertida! 🌈</p>
 
-    <input id="name" type="text" placeholder="Nombre completo" required>
-    <input id="email" type="email" placeholder="Correo electrónico" required>
-    <input id="password" type="password" placeholder="Contraseña" required>
-    <button class="auth-btn" onclick="registerUser()">Registrarse</button>
+    <!-- 🔹 Formulario Django -->
+    <form method="post" action="{% url 'register' %}">
+      {% csrf_token %}
+
+      <input 
+        type="text" 
+        name="name" 
+        placeholder="Nombre completo" 
+        required
+      >
+
+      <input 
+        type="email" 
+        name="email" 
+        placeholder="Correo electrónico" 
+        required
+      >
+
+      <input 
+        type="password" 
+        name="password" 
+        placeholder="Contraseña" 
+        required
+      >
+
+      <button type="submit" class="auth-btn">Registrarse</button>
+
+      {% if messages %}
+        <ul style="margin-top:10px;">
+          {% for message in messages %}
+            <li style="color:red; font-size:0.9rem;">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </form>
 
     <p class="auth-link">¿Ya tienes cuenta? 
       <a href="{% url 'login' %}">Inicia sesión</a>
     </p>
   </div>
 
-  <script type="module" src="{% static 'js/firebase-auth.js' %}"></script>
 </body>
 </html>

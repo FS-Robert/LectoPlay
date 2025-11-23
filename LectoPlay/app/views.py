@@ -3,7 +3,6 @@ from django.http import HttpResponse
 import random
 from . import encuentra_game
 from . import palabras_colores_game 
-from firebase_admin import auth
 from django.shortcuts import render
 from .lectura_rapida_game import get_categorias, get_random_question
 import json
@@ -13,18 +12,22 @@ from django.views.decorators.http import require_POST
 from . import chatbot as ai_service
 from . import desc_game
 from . import pnp_game
-from .models import Contacto
+from .models import Contacto, Ticket, Message
 from django.conf import settings
-from django.contrib.admin.views.decorators import staff_member_required # Para seguridad
-from django.contrib.auth.models import User # Importar modelo de Usuarios de Django
+from django.contrib.admin.views.decorators import staff_member_required  # Para seguridad
+from django.contrib.auth.models import User  # Importar modelo de Usuarios de Django
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 # ==========================================
 #  PANEL DE ADMINISTRADOR (DASHBOARD)
 # ==========================================
 
-@staff_member_required(login_url='/login/') # Si no es admin, lo manda al login
+@staff_member_required(login_url='/login/')  # Si no es admin, lo manda al login
 def admin_dashboard(request):
     # 1. Contar datos reales
     total_usuarios = User.objects.count()
@@ -32,7 +35,7 @@ def admin_dashboard(request):
     
     # Lógica simple: asumimos que todos están sin responder por ahora
     # (Podrías mejorar esto agregando un campo 'leido' a tu modelo Contacto después)
-    consultas_sin_responder = total_consultas 
+    consultas_sin_responder = total_consultas
 
     stats = {
         'total_usuarios': total_usuarios,
@@ -42,7 +45,9 @@ def admin_dashboard(request):
 
     return render(request, 'admin/admin_dashboard.html', {'stats': stats})
 
-# --- Vistas vacías para que los botones no den error (Placeholders) ---
+
+# --- Vistas de gestión de usuarios ---
+
 @staff_member_required(login_url='/login/')
 def admin_usuarios(request):
     usuarios = User.objects.all().order_by("username")
@@ -58,16 +63,15 @@ def admin_usuario_nuevo(request):
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
-        is_staff = bool(request.POST.get("is_staff"))
-        is_superuser = bool(request.POST.get("is_superuser"))
 
         user = User.objects.create_user(
             username=username,
             email=email,
             password=password,
         )
-        user.is_staff = is_staff
-        user.is_superuser = is_superuser
+        # 🔒 Fuerza siempre a usuario normal
+        user.is_staff = False
+        user.is_superuser = False
         user.save()
 
         return redirect("admin_usuarios")
@@ -111,12 +115,16 @@ def admin_usuario_eliminar(request, user_id):
     # Pequeña pantalla de confirmación
     return render(request, "admin/admin_usuario_eliminar.html", {"usuario": usuario})
 
-# --- FIN DE Vistas de gestión de usuarios ---
+
+# --- FIN de vistas de gestión de usuarios ---
+
 
 @staff_member_required(login_url='/login/')
 def admin_consultas(request):
-    # 👇 CAMBIADO: también dentro de templates/admin/
-    return render(request, "admin/admin_consultas.html")
+    tickets = Ticket.objects.order_by('-creado')
+    return render(request, "admin/admin_consultas.html", {
+        "tickets": tickets
+    })
 
 
 @csrf_exempt
@@ -135,7 +143,7 @@ def chatbot_ask(request):
             return JsonResponse({'error': 'El mensaje no puede estar vacío.'}, status=400)
 
         # 2. Obtener la API KEY de forma segura desde settings
-        api_key = settings.GEMINI_API_KEY 
+        api_key = settings.GEMINI_API_KEY
 
         if not api_key:
             return JsonResponse({'error': 'Configuración del servidor incompleta (API Key).'}, status=500)
@@ -153,6 +161,7 @@ def chatbot_ask(request):
     except Exception as e:
         print(f"Internal Server Error in views.py: {e}")
         return JsonResponse({'error': 'Error interno del servidor.'}, status=500)
+
 
 def home_view(request):
     return render(request, "home.html")
@@ -172,22 +181,69 @@ def contacts(request):
 
 def register_view(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
+        name = request.POST.get('name')      # nombre del niño / usuario
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        auth.create_user(
+        # Validaciones sencillas
+        if not name or not email or not password:
+            messages.error(request, "Por favor, completa todos los campos.")
+            return render(request, 'register.html')
+
+        # Evitar correos repetidos
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Ya existe un usuario con ese correo.")
+            return render(request, 'register.html')
+
+        # Usaremos el email como username
+        username = email
+
+        # Crear usuario en la base de datos SQLite
+        user = User.objects.create_user(
+            username=username,
             email=email,
             password=password,
-            display_name=name
+            first_name=name
         )
+
+        messages.success(request, "Tu cuenta fue creada con éxito. Ahora inicia sesión.")
         return redirect('login')
 
     return render(request, 'register.html')
 
 
+
 def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if not email or not password:
+            messages.error(request, "Completa todos los campos.")
+            return render(request, 'login.html')
+
+        # Buscar usuario por email
+        try:
+            usuario = User.objects.get(email=email)
+            username = usuario.username
+        except User.DoesNotExist:
+            username = None
+
+        user = authenticate(request, username=username, password=password) if username else None
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')   # o la ruta que quieras después del login
+        else:
+            messages.error(request, "Correo o contraseña incorrectos.")
+            return render(request, 'login.html')
+
     return render(request, 'login.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 
 # =========================
@@ -241,7 +297,7 @@ def encuentra(request):
     return render(request, 'encuentra_letra.html', context)
 
 
-## FIN DE ENCUENTRA LA LETRA 
+# FIN DE ENCUENTRA LA LETRA 
 
 
 # JUEGO: LECTURA RÁPIDA
@@ -249,7 +305,7 @@ def encuentra(request):
 def lectura_rapida_game(request):
     categorias = get_categorias()
     categoria = request.GET.get("categoria") or request.POST.get("categoria")
-    action = request.POST.get("action") # "responder" o "otra"
+    action = request.POST.get("action")  # "responder" o "otra"
 
     # Inicializar marcador en sesión
     if "aciertos" not in request.session:
@@ -297,6 +353,8 @@ def lectura_rapida_game(request):
         "intentos": intentos,
     }
     return render(request, "lectura_rapida_game.html", context)
+
+
 # FIN DE LECTURA RÁPIDA
 
 # ====================================
@@ -356,10 +414,11 @@ def palabras_colores(request):
 
     return render(request, "palabras_colores.html", context)
 
+
 # FIN DE PALABRAS Y COLORES
 
 
-#descripcion de la palabra
+# descripción de la palabra
 def desc_palabra(request):
     total = desc_game.total_levels()
 
@@ -405,6 +464,7 @@ def desc_palabra(request):
         "message": message,
     }
     return render(request, "desc_palabra.html", context)
+
 
 # FIN DE DESCRIPCIÓN DE LA PALABRA
 
@@ -463,9 +523,12 @@ def pnp(request):
         "message": message,
     }
     return render(request, "pnp.html", context)
+
+
 # FIN DE PALABRA O NO PALABRA
 
-#Función del formulario contactos
+
+# Función del formulario contactos
 def contacto_view(request):
     if request.method == 'POST':
         nombre = request.POST.get('name')
@@ -473,19 +536,50 @@ def contacto_view(request):
         mensaje = request.POST.get('message')
         fecha = request.POST.get('fecha')
 
-        # Guardar en BD
-        Contacto.objects.create(
+        # 1. Crear Contacto
+        contacto = Contacto.objects.create(
             nombre=nombre,
             correo=email,
             mensaje=mensaje,
             fecha_envio=fecha
         )
 
-        # Enviar success=True al template
-        return render(request, 'contacto.html', {'success': True})
+        # 2. Crear Ticket asociado
+        ticket = Ticket.objects.create(
+            contacto=contacto,
+            estado='pendiente'
+        )
+
+        # 3. Crear el primer mensaje dentro del Ticket
+        Message.objects.create(
+            ticket=ticket,
+            autor='usuario',
+            contenido=mensaje
+        )
+
+        # 4. Enviar success al template
+        return render(request, 'contacto.html', {
+            'success': True,
+            'ticket_id': ticket.id
+        })
 
     return render(request, 'contacto.html')
 
 
-def panel_redirect(request):
-    return redirect('/admin/login/')
+def consulta_detalle(request, ticket_id):
+    ticket = Ticket.objects.get(id=ticket_id)
+    mensajes = Message.objects.filter(ticket=ticket)
+
+    if request.method == "POST":
+        texto = request.POST.get("respuesta")
+        Message.objects.create(
+            ticket=ticket,
+            autor="admin",
+            contenido=texto
+        )
+        return redirect("consulta_detalle", ticket_id=ticket.id)
+
+    return render(request, "admin/consulta_detalle.html", {
+        "ticket": ticket,
+        "mensajes": mensajes
+    })

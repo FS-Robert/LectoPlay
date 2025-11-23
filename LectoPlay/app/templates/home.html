@@ -16,31 +16,48 @@
     {% csrf_token %}
     
     <header>
-        <nav class="navbar" style="padding: 10px 0; display: flex; align-items: center;">
-            <div class="container">
-            </div>
-            <div id="user-info">
-              <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
-                Iniciar Sesión
-              </button>
-            </div> 
-        </nav>
-    </header>
+    <nav class="navbar" style="padding: 10px 0; display: flex; align-items: center;">
+        <div class="container"></div>
 
-    <a id="admin-secret-btn" href="/admin-django/login/" 
-       style="
-          position: fixed;
-          bottom: 20px;
-          left: 20px;
-          background: #333;
-          color: white;
-          padding: 10px 18px;
-          border-radius: 8px;
-          font-size: 14px;
-          display: none; 
-          z-index: 9999;">
-      ⚙ Panel Admin (Secreto)
-    </a>
+        <div id="user-info">
+            {% if user.is_authenticated %}
+                <!-- 🔹 Usuario logueado -->
+                <div class="user-avatar" style="display:flex; align-items:center; gap:10px;">
+                    <img src="{% static 'css/login-avatar.png' %}" 
+                         width="40" height="40" 
+                         alt="avatar" class="avatar">
+
+                    <span style="font-weight:600;">
+                        {{ user.username }}
+                    </span>
+
+                    <!-- 🔹 Botón Cerrar sesión -->
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" style="
+                            background:#ff6b6b;
+                            border:none;
+                            padding:6px 12px;
+                            border-radius:6px;
+                            color:white;
+                            cursor:pointer;">
+                            Cerrar sesión
+                        </button>
+                    </form>
+                </div>
+
+            {% else %}
+                <!-- 🔹 Usuario NO logueado -->
+                <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
+                    Iniciar Sesión
+                </button>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+
+    
 
     <script>
     document.addEventListener("keydown", function(e) {
@@ -107,7 +124,7 @@
                     </a>
                 </li>
 
-                {% if user.is_authenticated and user.is_staff %}
+                {% if request.user.is_authenticated and request.user.is_staff %}
                     <li style="margin-left: 20px;">
                         <a href="{% url 'admin_dashboard' %}" 
                            style="
@@ -240,25 +257,10 @@
         </form>
     </div>
     
-    <script type="module" src="{% static 'js/firebase-auth.js' %}"></script>
+   
     
-    <script type="module">
-    // --- Detectar usuario guardado (Firebase) ---
-    const userName = localStorage.getItem("userName");
-    const userEmail = localStorage.getItem("userEmail");
-    const userInfoDiv = document.getElementById("user-info");
-
-    if (userEmail) {
-      userInfoDiv.innerHTML = `
-        <div class="user-avatar">
-          <img src="{% static 'css/login-avatar.png' %}" width="40" height="40" 
-               alt="avatar" class="avatar">
-          <span>${userName ? userName : userEmail}</span>
-          <button onclick="logoutUser()">Cerrar sesión</button>
-        </div>
-      `;
-    }
-    </script>
+    
+    
     
     <script src="{% static 'js/chatbot.js' %}"></script>
 

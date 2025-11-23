@@ -1,0 +1,35 @@
+{% extends "home.html" %}
+
+{% block title %}Detalle de Consulta{% endblock %}
+
+{% block content %}
+
+<h1>💬 Chat con {{ ticket.contacto.nombre }}</h1>
+
+<div style="border:1px solid gray; padding:15px; margin-bottom:20px;">
+
+    {% for m in mensajes %}
+        <div style="margin-bottom:10px;">
+            <strong>
+                {% if m.autor == 'usuario' %}
+                    🧑 Usuario:
+                {% else %}
+                    🛠️ Admin:
+                {% endif %}
+            </strong>
+            <p>{{ m.contenido }}</p>
+            <small>{{ m.creado|date:"d/m/Y H:i" }}</small>
+            <hr>
+        </div>
+    {% endfor %}
+
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <textarea name="respuesta" rows="3" placeholder="Escribe tu respuesta..." required></textarea>
+    <br><br>
+    <button type="submit">Responder</button>
+</form>
+
+{% endblock %}

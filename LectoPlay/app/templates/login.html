@@ -13,18 +13,41 @@
     <h2>🎮 Iniciar Sesión en <span class="lectoplay">LectoPlay</span></h2>
     <p class="auth-subtitle">¡Bienvenido de nuevo! Aprende jugando 📚</p>
 
-    <input id="email" type="email" placeholder="Correo electrónico" autocomplete="off" required>
-    <input id="password" type="password" placeholder="Contraseña" autocomplete="off" required>
+    <!-- 🔹 Formulario Django -->
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
 
-    <button class="auth-btn" onclick="loginUser()">Entrar</button>
+      <input 
+        type="email" 
+        name="email" 
+        placeholder="Correo electrónico" 
+        autocomplete="off" 
+        required
+      >
+
+      <input 
+        type="password" 
+        name="password" 
+        placeholder="Contraseña" 
+        autocomplete="off" 
+        required
+      >
+
+      <button type="submit" class="auth-btn">Entrar</button>
+
+      {% if messages %}
+        <ul style="margin-top:10px;">
+          {% for message in messages %}
+            <li style="color:red; font-size:0.9rem;">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </form>
 
     <p class="auth-link">¿No tienes cuenta? 
       <a href="{% url 'register' %}">Regístrate aquí</a>
     </p>
   </div>
-
-  <!-- Firebase Auth -->
-  <script type="module" src="{% static 'js/firebase-auth.js' %}"></script>
 
 </body>
 </html>

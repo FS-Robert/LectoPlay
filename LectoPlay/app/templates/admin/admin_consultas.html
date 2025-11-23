@@ -3,6 +3,39 @@
 {% block title %}Ver Consultas | LectoPlay{% endblock %}
 
 {% block content %}
-<h1>Ver Consultas</h1>
-<p>Esta sección de consultas todavía está en construcción 🛠️.</p>
+
+<h1>📨 Consultas de Usuarios</h1>
+
+{% if tickets %}
+<table border="1" cellpadding="10" style="width:100%; border-collapse: collapse;">
+    <tr>
+        <th>Usuario</th>
+        <th>Email</th>
+        <th>Mensaje</th>
+        <th>Estado</th>
+        <th>Fecha</th>
+        <th>Ver</th>
+    </tr>
+
+    {% for ticket in tickets %}
+    <tr>
+        <td>{{ ticket.contacto.nombre }}</td>
+        <td>{{ ticket.contacto.correo }}</td>
+        <td>{{ ticket.contacto.mensaje|truncatechars:40 }}</td>
+        <td>{{ ticket.estado }}</td>
+        <td>{{ ticket.creado|date:"d/m/Y H:i" }}</td>
+
+        <td>
+            <a href="{% url 'consulta_detalle' ticket.id %}">
+                Abrir chat
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+<p>No hay consultas todavía.</p>
+{% endif %}
+
 {% endblock %}

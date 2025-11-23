@@ -9,6 +9,7 @@ urlpatterns = [
     path("ejercicios/palabras_colores/", views.palabras_colores, name="palabras_colores"),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
+    path('logout/', views.logout_view, name='logout'),
     path("ejercicios/lectura/", views.lectura_rapida_game, name="lectura_rapida_game"),
     path('api/chatbot_ask', views.chatbot_ask, name='chatbot_ask'),
     path("ejercicios/desc_palabra/", views.desc_palabra, name="desc_palabra"),
@@ -18,6 +19,8 @@ urlpatterns = [
     path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
     path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),
     path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
+    path('panel-admin/consultas/', views.admin_consultas, name='admin_consultas'),
+    path('panel-admin/consultas/<int:ticket_id>/', views.consulta_detalle, name='consulta_detalle'),
 
     # LISTADO
     path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),
@@ -33,5 +36,7 @@ urlpatterns = [
 
     # …tus otras rutas (juegos, etc.) …
     path("panel-admin/consultas/", views.admin_consultas, name="admin_consultas"),
+
+
     
 ]
