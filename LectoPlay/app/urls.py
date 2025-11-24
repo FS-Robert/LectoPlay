@@ -19,8 +19,13 @@ urlpatterns = [
     path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
     path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),
     path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
-    path('panel-admin/consultas/', views.admin_consultas, name='admin_consultas'),
+    # CONSULTAS
+    path("panel-admin/consultas/", views.admin_consultas, name="admin_consultas"),
     path('panel-admin/consultas/<int:ticket_id>/', views.consulta_detalle, name='consulta_detalle'),
+    path('admin/estado/<int:ticket_id>/', views.cambiar_estado, name='cambiar_estado'),
+    # TICKET PARA USUARIO
+    path("ticket/<str:codigo>/", views.usuario_ver_ticket, name="usuario_ver_ticket"),
+    path('ticket/<int:ticket_id>/finalizar/', views.finalizar_ticket, name='finalizar_ticket'),
 
     # LISTADO
     path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),

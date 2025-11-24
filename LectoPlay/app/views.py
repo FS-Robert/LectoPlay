@@ -554,7 +554,6 @@ def contacto_view(request):
         mensaje = request.POST.get('message')
         fecha = request.POST.get('fecha')
 
-        # 1. Crear Contacto
         contacto = Contacto.objects.create(
             nombre=nombre,
             correo=email,
@@ -562,42 +561,81 @@ def contacto_view(request):
             fecha_envio=fecha
         )
 
-        # 2. Crear Ticket asociado
         ticket = Ticket.objects.create(
             contacto=contacto,
             estado='pendiente'
         )
 
-        # 3. Crear el primer mensaje dentro del Ticket
         Message.objects.create(
             ticket=ticket,
             autor='usuario',
             contenido=mensaje
         )
 
-        # 4. Enviar success al template
         return render(request, 'contacto.html', {
             'success': True,
-            'ticket_id': ticket.id
+            'ticket_codigo': ticket.codigo_acceso
         })
 
     return render(request, 'contacto.html')
 
 
+@staff_member_required(login_url='/login/')
 def consulta_detalle(request, ticket_id):
-    ticket = Ticket.objects.get(id=ticket_id)
-    mensajes = Message.objects.filter(ticket=ticket)
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    mensajes = ticket.mensajes.order_by("creado")
 
     if request.method == "POST":
-        texto = request.POST.get("respuesta")
+        contenido = request.POST.get("respuesta")
         Message.objects.create(
             ticket=ticket,
             autor="admin",
-            contenido=texto
+            contenido=contenido
         )
+        ticket.estado = "respondido"
+        ticket.save()
+
         return redirect("consulta_detalle", ticket_id=ticket.id)
 
     return render(request, "admin/consulta_detalle.html", {
         "ticket": ticket,
         "mensajes": mensajes
     })
+
+
+def usuario_ver_ticket(request, codigo):
+    ticket = get_object_or_404(Ticket, codigo_acceso=codigo)
+    mensajes = ticket.mensajes.order_by("creado")
+
+    if request.method == "POST":
+        contenido = request.POST.get("mensaje")
+        if contenido.strip():
+            Message.objects.create(
+                ticket=ticket,
+                autor="usuario",
+                contenido=contenido
+            )
+        return redirect("usuario_ver_ticket", codigo=codigo)
+
+    return render(request, "usuario_ticket.html", {
+        "ticket": ticket,
+        "mensajes": mensajes
+    })
+
+
+def finalizar_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    ticket.estado = "finalizado"
+    ticket.save()
+    return redirect("consulta_detalle", ticket_id=ticket_id)
+
+
+def cambiar_estado(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    nuevo = request.GET.get("estado")
+    if nuevo:
+        ticket.estado = nuevo
+        ticket.save()
+    return redirect("admin_consultas")
+
+
