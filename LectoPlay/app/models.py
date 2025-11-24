@@ -18,12 +18,13 @@ class Ticket(models.Model):
     contacto = models.ForeignKey(Contacto, on_delete=models.CASCADE, related_name='tickets')
     estado = models.CharField(max_length=20, default='pendiente')   # pendiente / en_proceso / resuelto
     creado = models.DateTimeField(auto_now_add=True)
+    codigo_acceso = models.CharField(max_length=50, unique=True, editable=False)
 
-
-
-    def __str__(self):
-        return f"Ticket #{self.id} - {self.contacto.nombre}"
-
+    def save(self, *args, **kwargs):
+        import uuid
+        if not self.codigo_acceso:
+            self.codigo_acceso = str(uuid.uuid4())
+        super().save(*args, **kwargs)
 
 class Message(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='mensajes')
