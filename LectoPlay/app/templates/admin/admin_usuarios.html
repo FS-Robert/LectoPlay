@@ -1,57 +1,88 @@
 {% extends "home.html" %}
+{% load static %}
 
-{% block title %}Gestionar Usuarios | LectoPlay{% endblock %}
+{% block title %}Equipo y Usuarios | LectoPlay{% endblock %}
 
 {% block content %}
-<h1>Gestionar Usuarios</h1>
-<p>Aquí puedes ver y administrar los usuarios del sistema.</p>
 
-<!-- Botón para crear nuevo usuario -->
-<p style="margin-top:15px;">
-  <a href="{% url 'admin_usuario_nuevo' %}" class="btn">➕ Nuevo usuario</a>
-</p>
+<div class="users-container">
 
-<table border="1" cellpadding="8" cellspacing="0"
-       style="background:white; border-radius:10px; margin-top:10px; width:100%; max-width:900px;">
-  <tr>
-    <th>ID</th>
-    <th>Nombre de usuario</th>
-    <th>Correo</th>
-    <th>Es staff</th>
-    <th>Es superusuario</th>
-    <th>Acciones</th>
-  </tr>
+    <div class="users-header">
+        <div class="header-info">
+            <h1>Gestión de Usuarios</h1>
+            <p>Administra a los Jugadores, Empleados y Administradores.</p>
+        </div>
+        <a href="{% url 'admin_usuario_nuevo' %}" class="btn-add-user">
+            <span>＋</span> Nuevo Usuario
+        </a>
+    </div>
 
-  {% for u in usuarios %}
-  <tr>
-    <td>{{ u.id }}</td>
-    <td>{{ u.username }}</td>
-    <td>{{ u.email }}</td>
-    <td>{% if u.is_staff %}Sí{% else %}No{% endif %}</td>
-    <td>{% if u.is_superuser %}Sí{% else %}No{% endif %}</td>
-    <td>
-      <!-- Editar -->
-      <a href="{% url 'admin_usuario_editar' u.id %}"
-         class="btn"
-         style="padding:4px 8px; font-size:0.85rem;">
-         ✏️ Editar
-      </a>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario / Email</th>
+                    <th>Rol / Permisos</th>
+                    <th>ID Sistema</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>
+                        <div class="user-profile-cell">
+                            <div class="mini-avatar {% if u.is_superuser %}avatar-admin{% elif u.is_staff %}avatar-staff{% else %}avatar-player{% endif %}">
+                                {{ u.username|slice:":1"|upper }}
+                            </div>
+                            <div class="user-names">
+                                <h4>{{ u.username }}</h4>
+                                <span>{{ u.email|default:"Sin correo" }}</span>
+                            </div>
+                        </div>
+                    </td>
 
-      <!-- Eliminar (form POST) -->
-      <form action="{% url 'admin_usuario_eliminar' u.id %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit"
-                class="btn"
-                style="background:#ff6b6b; padding:4px 8px; font-size:0.85rem;">
-          🗑️ Eliminar
-        </button>
-      </form>
-    </td>
-  </tr>
-  {% empty %}
-  <tr>
-    <td colspan="6">No hay usuarios registrados.</td>
-  </tr>
-  {% endfor %}
-</table>
+                    <td>
+                        {% if u.is_superuser %}
+                            <span class="role-badge badge-super">Admin</span>
+                        {% elif u.is_staff %}
+                            <span class="role-badge badge-staff">Empleado</span>
+                        {% else %}
+                            <span class="role-badge badge-player">Jugador</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <span class="user-id-text">#{{ u.id }}</span>
+                    </td>
+
+                    <td>
+                        <div class="actions-cell">
+                            <a href="{% url 'admin_usuario_editar' u.id %}" class="btn-icon btn-edit" title="Editar">
+                                ✎
+                            </a>
+
+                            <form action="{% url 'admin_usuario_eliminar' u.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon btn-delete" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar a {{ u.username }}?');">
+                                    🗑
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="empty-row">
+                        <div class="empty-icon">👻</div>
+                        <p>No se encontraron usuarios en el sistema.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
 {% endblock %}

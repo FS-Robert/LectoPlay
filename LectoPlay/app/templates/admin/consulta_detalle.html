@@ -1,35 +1,64 @@
 {% extends "home.html" %}
+{% load static %}
 
-{% block title %}Detalle de Consulta{% endblock %}
+{% block title %}Chat con {{ ticket.contacto.nombre }} | LectoPlay{% endblock %}
 
 {% block content %}
 
-<h1>💬 Chat con {{ ticket.contacto.nombre }}</h1>
-
-<div style="border:1px solid gray; padding:15px; margin-bottom:20px;">
-
-    {% for m in mensajes %}
-        <div style="margin-bottom:10px;">
-            <strong>
-                {% if m.autor == 'usuario' %}
-                    🧑 Usuario:
-                {% else %}
-                    🛠️ Admin:
-                {% endif %}
-            </strong>
-            <p>{{ m.contenido }}</p>
-            <small>{{ m.creado|date:"d/m/Y H:i" }}</small>
-            <hr>
+<div class="chat-container">
+    
+    <div class="chat-header">
+        <div class="header-user-info">
+            <div class="chat-avatar">
+                {{ ticket.contacto.nombre|slice:":1"|upper }}
+            </div>
+            <div class="header-details">
+                <h2>{{ ticket.contacto.nombre }}</h2>
+                <p>{{ ticket.contacto.correo }}</p>
+            </div>
         </div>
-    {% endfor %}
+        <a href="{% url 'admin_consultas' %}" class="btn-back">⬅ Volver</a>
+    </div>
+
+    <div class="chat-history" id="chatBox">
+        {% for m in mensajes %}
+            
+            {% if m.autor == 'usuario' %}
+                <div class="msg-row msg-user">
+                    <div class="bubble">
+                        <span class="sender-name">{{ ticket.contacto.nombre }}</span>
+                        {{ m.contenido|linebreaksbr }}
+                        <span class="msg-time">{{ m.creado|date:"H:i A | d/m" }}</span>
+                    </div>
+                </div>
+
+            {% else %}
+                <div class="msg-row msg-admin">
+                    <div class="bubble">
+                        {{ m.contenido|linebreaksbr }}
+                        <span class="msg-time">✓ {{ m.creado|date:"H:i A | d/m" }}</span>
+                    </div>
+                </div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+
+    <div class="chat-footer">
+        <form method="post" class="chat-form">
+            {% csrf_token %}
+            <textarea name="respuesta" class="chat-input" rows="2" placeholder="Escribe una respuesta amable..." required></textarea>
+            <button type="submit" class="btn-send">➤</button>
+        </form>
+    </div>
 
 </div>
 
-<form method="post">
-    {% csrf_token %}
-    <textarea name="respuesta" rows="3" placeholder="Escribe tu respuesta..." required></textarea>
-    <br><br>
-    <button type="submit">Responder</button>
-</form>
+<script>
+    window.onload = function() {
+        var chatBox = document.getElementById("chatBox");
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+</script>
 
 {% endblock %}

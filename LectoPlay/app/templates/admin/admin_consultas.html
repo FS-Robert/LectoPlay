@@ -1,41 +1,95 @@
 {% extends "home.html" %}
+{% load static %}
 
-{% block title %}Ver Consultas | LectoPlay{% endblock %}
+{% block title %}Gestión de Consultas | LectoPlay{% endblock %}
 
 {% block content %}
 
-<h1>📨 Consultas de Usuarios</h1>
 
-{% if tickets %}
-<table border="1" cellpadding="10" style="width:100%; border-collapse: collapse;">
-    <tr>
-        <th>Usuario</th>
-        <th>Email</th>
-        <th>Mensaje</th>
-        <th>Estado</th>
-        <th>Fecha</th>
-        <th>Ver</th>
-    </tr>
+<div class="admin-consultas-container">
+    
+    <div class="admin-header-row">
+        <div>
+            <h1>Gestión de Consultas</h1>
+            <p>Revisa y responde los mensajes de los usuarios.</p>
+        </div>
+        {% if unread_count and unread_count > 0 %}
+            <div class="badge-counter bounce">
+                Tienes {{ unread_count }} sin leer
+            </div>
+        {% endif %}
+    </div>
 
-    {% for ticket in tickets %}
-    <tr>
-        <td>{{ ticket.contacto.nombre }}</td>
-        <td>{{ ticket.contacto.correo }}</td>
-        <td>{{ ticket.contacto.mensaje|truncatechars:40 }}</td>
-        <td>{{ ticket.estado }}</td>
-        <td>{{ ticket.creado|date:"d/m/Y H:i" }}</td>
+    {% if tickets %}
+    <div class="tickets-list">
+        {% for item in tickets %}
+            {% with ticket=item.ticket last=item.last unread=item.unread %}
+            
+            <div class="full-ticket-card {% if unread %}status-unread{% else %}status-read{% endif %}">
+                
+                <div class="ticket-header">
+                    <div class="header-left">
+                        <span class="icon-status">
+                            {% if unread %}📩{% else %}✅{% endif %}
+                        </span>
+                        <span class="ticket-subject">Consulta #{{ ticket.id }} - {{ ticket.contacto.nombre }}</span>
+                    </div>
+                    <div class="header-right">
+                        <span class="date-badge">
+                            📅 {{ ticket.creado|date:"d/m/Y H:i" }}
+                        </span>
+                    </div>
+                </div>
 
-        <td>
-            <a href="{% url 'consulta_detalle' ticket.id %}">
-                Abrir chat
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+                <div class="ticket-body">
+                    <div class="row-split">
+                        
+                        <div class="col-msg">
+                            <div class="user-meta">
+                                <strong>Usuario:</strong> {{ ticket.contacto.correo }}
+                            </div>
+                            
+                            <div class="message-box">
+                                <h6 class="msg-label">Último mensaje:</h6>
+                                {% if last %}
+                                    <p>"{{ last.contenido|linebreaksbr }}"</p>
+                                    <small class="msg-time">Enviado: {{ last.creado|date:"d M, H:i a" }}</small>
+                                {% else %}
+                                    <p class="muted">No hay mensajes previos.</p>
+                                {% endif %}
+                            </div>
+                        </div>
 
-{% else %}
-<p>No hay consultas todavía.</p>
-{% endif %}
+                        <div class="col-action">
+                            <div class="action-panel">
+                                <h6>Estado del Ticket</h6>
+                                <span class="status-pill {% if unread %}pill-warning{% else %}pill-success{% endif %}">
+                                    {% if unread %}Pendiente de respuesta{% else %}Respondido{% endif %}
+                                </span>
+                                
+                                <hr class="mini-divider">
+                                
+                                <a href="{% url 'consulta_detalle' ticket.id %}" class="btn-action-block">
+                                    💬 Abrir Conversación
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+        {% endfor %}
+    </div>
+    {% else %}
+    
+    <div class="empty-state-list">
+        <div class="empty-icon">📭</div>
+        <h3>Bandeja de entrada vacía</h3>
+        <p>¡Buen trabajo! No hay consultas pendientes.</p>
+    </div>
+
+    {% endif %}
+</div>
 
 {% endblock %}

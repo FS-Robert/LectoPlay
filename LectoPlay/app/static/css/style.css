@@ -940,6 +940,879 @@ p {
     box-shadow: 0 10px 25px rgba(255, 175, 204, 0.6);
 }
 
+/* ================================ */
+/*  Estilos para admin_consultas     */
+/* ================================ */
+.admin-consultas-container {
+    max-width: 1100px;
+    margin: 30px auto 80px auto;
+    padding: 0 18px;
+}
+
+.admin-consultas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.admin-consultas-header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #023047;
+}
+
+.unread-badge {
+    background: linear-gradient(90deg,#ffafcc,#ffd166);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.admin-consultas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+}
+
+.consulta-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+    border-left: 6px solid transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.consulta-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,0.08); }
+
+.consulta-card.unread { border-left-color: #ff6b8a; }
+.consulta-card .card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.user-info { display:flex; flex-direction:column; }
+.user-name { font-weight:800; color:#023047; font-size:1.05rem; }
+.user-email { font-size:0.9rem; color:#666; }
+.status-area { text-align:right; }
+.status { display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.8rem; }
+.status-unread { background:#ffefef; color:#d93b59; border:1px solid rgba(217,59,89,0.08); }
+.status-read { background:#effff6; color:#0b8a58; border:1px solid rgba(11,138,88,0.06); }
+.ticket-date { font-size:0.8rem; color:#888; margin-top:6px; }
+
+.card-body { margin-top:12px; }
+.last-message { color:#333; font-size:0.98rem; margin:0 0 8px 0; }
+.last-message.muted { color:#999; }
+.meta-row { color:#666; font-size:0.85rem; }
+
+.card-actions { margin-top:14px; display:flex; gap:10px; justify-content:flex-end; }
+.card-actions .btn { padding:8px 14px; border-radius:10px; font-weight:700; }
+
+.empty-state { text-align:center; padding:40px 20px; color:#555; background: linear-gradient(180deg,#ffffff,#fffdf9); border-radius:12px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
+
+@media (max-width:600px) {
+    .admin-consultas-header { flex-direction:column; align-items:flex-start; }
+    .card-actions { justify-content:flex-start; }
+}
+
+/* fin estilos admin_consultas */
 
 
+/* =========================================
+   NUEVO DISEÑO: LISTA DE CONSULTAS (TIPO ADMIN)
+   ========================================= */
 
+.admin-consultas-container {
+    max-width: 1000px;
+    margin: 40px auto 80px auto;
+    padding: 0 20px;
+}
+
+/* Encabezado de la página */
+.admin-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #e0fbfc;
+    padding-bottom: 15px;
+}
+
+.admin-header-row h1 {
+    font-size: 2rem;
+    color: #023047;
+    margin: 0;
+}
+
+.badge-counter {
+    background: #ffafcc;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(255, 175, 204, 0.4);
+}
+
+/* Animación sutil */
+@keyframes bounce-sm { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.bounce { animation: bounce-sm 2s infinite; }
+
+
+/* --- ESTILO DE LA TARJETA COMPLETA --- */
+.full-ticket-card {
+    background: white;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+    overflow: hidden; /* Para que la cabecera no se salga de los bordes */
+    border: 2px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.full-ticket-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* --- 1. CABECERA DE LA TARJETA --- */
+.ticket-header {
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.header-left { display: flex; align-items: center; gap: 10px; }
+.ticket-subject { font-weight: bold; font-size: 1.1rem; }
+.icon-status { font-size: 1.2rem; }
+.date-badge { background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; }
+
+/* Variantes de color según estado */
+.status-unread { border-color: #ffafcc; }
+.status-unread .ticket-header {
+    background: linear-gradient(90deg, #ffafcc, #ffc8dd); /* Rosa LectoPlay */
+}
+
+.status-read { border-color: #a2d2ff; }
+.status-read .ticket-header {
+    background: linear-gradient(90deg, #a2d2ff, #bde0fe); /* Azul suave */
+    color: #023047;
+}
+
+/* --- 2. CUERPO DE LA TARJETA --- */
+.ticket-body {
+    padding: 0;
+}
+
+.row-split {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* COLUMNA IZQUIERDA: MENSAJE (70%) */
+.col-msg {
+    flex: 2;
+    padding: 25px;
+    min-width: 300px;
+    border-right: 1px solid #f0f0f0;
+}
+
+.user-meta {
+    color: #023047;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.message-box {
+    background-color: #fcfcfc;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.msg-label { color: #888; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; }
+.message-box p { color: #555; font-style: italic; margin: 0; }
+.msg-time { display: block; text-align: right; margin-top: 8px; font-size: 0.75rem; color: #aaa; }
+
+/* COLUMNA DERECHA: ACCIONES (30%) */
+.col-action {
+    flex: 1;
+    padding: 25px;
+    background-color: #fffdf9; /* Fondo muy clarito */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 250px;
+}
+
+.action-panel {
+    text-align: center;
+}
+
+.action-panel h6 { color: #023047; margin-bottom: 10px; }
+
+/* Pildoras de estado internas */
+.status-pill { padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; display: inline-block; }
+.pill-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.pill-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+.mini-divider { border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0; }
+
+/* Botón grande de acción */
+.btn-action-block {
+    display: block;
+    width: 100%;
+    background-color: #219ebc;
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+    border: none;
+    box-shadow: 0 4px 0 #126e82; /* Efecto botón 3D simple */
+}
+
+.btn-action-block:hover {
+    background-color: #023047;
+    box-shadow: 0 4px 0 #001d2d;
+    transform: translateY(-2px);
+}
+.btn-action-block:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+/* Estado Vacío */
+.empty-state-list {
+    text-align: center;
+    padding: 50px;
+    background: white;
+    border-radius: 20px;
+    border: 3px dashed #ffd166;
+}
+.empty-icon { font-size: 3rem; margin-bottom: 10px; }
+
+/* Responsive para movil */
+@media (max-width: 768px) {
+    .row-split { flex-direction: column; }
+    .col-msg { border-right: none; border-bottom: 1px solid #f0f0f0; }
+    .header-right { display: none; } /* Ocultar fecha en movil si falta espacio */
+}
+
+/* FIN DE ESTILOS DE LISTA DE CONSULTAS ADMIN */
+
+/* Estilos de Mensajeria */
+/* Contenedor principal centrado */
+    .chat-container {
+        max-width: 800px;
+        margin: 30px auto;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 80vh; /* Ocupa el 80% de la altura de la pantalla */
+        border: 4px solid #e0fbfc;
+    }
+
+    /* --- 1. CABECERA DEL CHAT --- */
+    .chat-header {
+        background: linear-gradient(90deg, #a2d2ff, #bde0fe);
+        padding: 15px 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid #fff;
+    }
+
+    .header-user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .chat-avatar {
+        width: 45px;
+        height: 45px;
+        background: white;
+        color: #219ebc;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header-details h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #023047;
+    }
+
+    .header-details p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #555;
+    }
+
+    .btn-back {
+        background: rgba(255,255,255,0.4);
+        padding: 8px 15px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #023047;
+        font-weight: bold;
+        font-size: 0.9rem;
+        transition: 0.2s;
+    }
+    .btn-back:hover { background: white; }
+
+    /* --- 2. ÁREA DE MENSAJES (SCROLL) --- */
+    .chat-history {
+        flex: 1; /* Ocupa el espacio restante */
+        background-color: #fdfbf7; /* Fondo crema muy suave */
+        padding: 20px;
+        overflow-y: auto; /* Permite scroll vertical */
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Estilo de la barra de scroll */
+    .chat-history::-webkit-scrollbar { width: 8px; }
+    .chat-history::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+    /* FILAS DE MENSAJES */
+    .msg-row {
+        display: flex;
+        width: 100%;
+    }
+
+    /* BURBUJAS GENERALES */
+    .bubble {
+        max-width: 70%;
+        padding: 12px 18px;
+        border-radius: 18px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        position: relative;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    /* META DATOS (Hora) */
+    .msg-time {
+        display: block;
+        font-size: 0.7rem;
+        margin-top: 5px;
+        text-align: right;
+        opacity: 0.7;
+    }
+
+    /* --- ESTILO: MENSAJE DEL USUARIO (IZQUIERDA) --- */
+    .msg-user {
+        justify-content: flex-start;
+    }
+
+    .msg-user .bubble {
+        background: white;
+        color: #333;
+        border-bottom-left-radius: 4px; /* Efecto pico */
+        border: 1px solid #eee;
+    }
+    
+    .msg-user .sender-name {
+        font-size: 0.75rem;
+        color: #fb8500;
+        font-weight: bold;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    /* --- ESTILO: MENSAJE DEL ADMIN (DERECHA) --- */
+    .msg-admin {
+        justify-content: flex-end;
+    }
+
+    .msg-admin .bubble {
+        background: #219ebc; /* Azul LectoPlay */
+        color: white;
+        border-bottom-right-radius: 4px; /* Efecto pico */
+    }
+
+    .msg-admin .msg-time { color: #e0fbfc; }
+
+    /* --- 3. ÁREA DE INPUT (PIE) --- */
+    .chat-footer {
+        background: white;
+        padding: 15px 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .chat-form {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+    .chat-input {
+        flex: 1;
+        background: #f0f2f5;
+        border: 2px solid transparent;
+        border-radius: 20px;
+        padding: 12px 15px;
+        resize: none; /* No redimensionar manual */
+        font-family: inherit;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .chat-input:focus {
+        background: white;
+        border-color: #a2d2ff;
+    }
+
+    .btn-send {
+        background: #ffafcc;
+        color: white;
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(255, 175, 204, 0.4);
+    }
+
+    .btn-send:hover {
+        background: #ff8fa3;
+        transform: scale(1.1);
+    }
+
+/* Fin de estilos de mensajería */
+
+
+/* =========================================
+   GESTIÓN DE USUARIOS (ADMIN)
+   ========================================= */
+
+.users-container {
+    max-width: 1000px;
+    margin: 40px auto 80px auto;
+    padding: 0 20px;
+}
+
+/* --- CABECERA --- */
+.users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 2px solid #e0fbfc;
+}
+
+.header-info h1 {
+    margin: 0;
+    color: #023047;
+    font-size: 1.8rem;
+}
+.header-info p {
+    margin: 5px 0 0 0;
+    color: #888;
+}
+
+.btn-add-user {
+    background: #219ebc;
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(33, 158, 188, 0.3);
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add-user:hover {
+    background: #023047;
+    transform: translateY(-3px);
+}
+
+/* --- TABLA ESTILIZADA --- */
+.table-responsive {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    overflow: hidden; /* Recorta esquinas */
+    border: 1px solid #f0f0f0;
+}
+
+.table-responsive table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.table-responsive thead {
+    background: linear-gradient(90deg, #a2d2ff, #bde0fe);
+    color: #023047;
+}
+
+.table-responsive th {
+    padding: 18px 20px;
+    text-align: left;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table-responsive td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f9f9f9;
+    vertical-align: middle;
+    color: #555;
+}
+
+.table-responsive tr:last-child td { border-bottom: none; }
+.table-responsive tr:hover { background-color: #fdfbf7; }
+
+/* --- CELDAS ESPECÍFICAS --- */
+/* --- CELDAS ESPECÍFICAS Y ROLES --- */
+
+/* Perfil */
+.user-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mini-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    color: white; /* Texto blanco por defecto */
+}
+
+/* Colores de Avatar según rol */
+.avatar-admin { background: #ffafcc; } /* Rosa */
+.avatar-staff { background: #06d6a0; } /* Verde Mentolado */
+.avatar-player { background: #ffd166; } /* Amarillo */
+
+.user-names h4 { margin: 0; font-size: 1rem; color: #023047; }
+.user-names span { font-size: 0.8rem; color: #999; }
+
+/* Badges (Etiquetas de Rol) */
+.role-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+
+/* 1. ADMIN (Superusuario) - Morado/Rosa */
+.badge-super { 
+    background: #e0b1cb; 
+    color: #5e304b; 
+    border: 1px solid #d4a0bd; 
+}
+
+/* 2. EMPLEADO (Staff) - Verde Profesional */
+.badge-staff { 
+    background: #d0f4de; 
+    color: #1b4332; 
+    border: 1px solid #b7e4c7; 
+}
+
+/* 3. JUGADOR (Usuario Normal) - Azul Divertido */
+.badge-player { 
+    background: #a2d2ff; 
+    color: #023047; 
+    border: 1px solid #8ecae6; 
+}
+
+/* Perfil */
+.user-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mini-avatar {
+    width: 40px;
+    height: 40px;
+    background: #ffd166;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.is-admin-avatar { background: #ffafcc; }
+
+.user-names h4 { margin: 0; font-size: 1rem; color: #023047; }
+.user-names span { font-size: 0.8rem; color: #999; }
+
+/* Badges (Roles) */
+.role-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.badge-super { background: #e0b1cb; color: #5e304b; border: 1px solid #d4a0bd; }
+.badge-staff { background: #d0f4de; color: #1b4332; border: 1px solid #b7e4c7; }
+.badge-user { background: #f0f0f0; color: #777; border: 1px solid #ddd; }
+
+/* ID Text */
+.user-id-text { font-family: monospace; color:#aaa; }
+
+/* Botones de Acción */
+.actions-cell {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-edit { background: #ffeaec; color: #fb6f92; }
+.btn-edit:hover { background: #fb6f92; color: white; }
+
+.btn-delete { background: #ffe3e3; color: #e03131; }
+.btn-delete:hover { background: #e03131; color: white; }
+
+/* Estado vacío */
+.empty-row { text-align:center; padding: 40px !important; }
+.empty-row .empty-icon { font-size: 3rem; margin-bottom:10px; }
+
+/* =========================================
+   FORMULARIO DE USUARIO (CREAR/EDITAR)
+   ========================================= */
+
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.user-form-card {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border: 2px solid #e0fbfc;
+    position: relative;
+}
+
+/* Título con icono */
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header .icon-header {
+    background: #ffafcc;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin: 0 auto 15px auto;
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 175, 204, 0.4);
+}
+
+.form-header h2 {
+    color: #023047;
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+/* Inputs estilizados */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.styled-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    background-color: #fdfbf7;
+    transition: 0.3s;
+    box-sizing: border-box; 
+}
+
+.styled-input:focus {
+    border-color: #219ebc;
+    background-color: white;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.1);
+}
+
+/* Nota contraseña */
+.pass-note {
+    font-size: 0.75rem;
+    color: #fb8500;
+    margin-top: 5px;
+    display: block;
+}
+
+.form-divider {
+    border: 0; 
+    border-top: 1px solid #eee; 
+    margin: 25px 0;
+}
+
+/* --- SWITCH MODERNO (Toggle) --- */
+.switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid #d1e9ff;
+    margin-top: 10px;
+}
+
+.switch-label-text {
+    font-weight: bold;
+    color: #023047;
+}
+
+.switch-desc {
+    font-size: 0.75rem;
+    color: #666;
+    display: block;
+}
+
+/* Ocultar checkbox real */
+.toggle-checkbox {
+    display: none;
+}
+
+/* Carril del switch */
+.toggle-label {
+    width: 50px;
+    height: 26px;
+    background: #ccc;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Bolita del switch */
+.toggle-label::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+/* Estado ACTIVO */
+.toggle-checkbox:checked + .toggle-label {
+    background: #219ebc; 
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+    transform: translateX(24px);
+}
+
+/* --- BOTONES --- */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-save {
+    flex: 2;
+    background: #219ebc;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+.btn-save:hover { background: #023047; }
+
+.btn-cancel {
+    flex: 1;
+    background: white;
+    color: #ff6b6b;
+    border: 2px solid #ff6b6b;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.btn-cancel:hover { background: #ff6b6b; color: white; }
