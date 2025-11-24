@@ -1,0 +1,53 @@
+{% extends "home.html" %}
+
+{% block content %}
+<h2>Consulta / Ticket</h2>
+
+<p><strong>Estado:</strong> {{ ticket.estado }}</p>
+<hr>
+
+<!-- CARD DEL CHAT -->
+<div style="
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: #fff;
+">
+
+    <!-- MENSAJES -->
+    <div style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
+        {% for m in mensajes %}
+        <div style="margin-bottom: 15px;">
+            <strong>
+                {% if m.autor == 'usuario' %}
+                    🧑 Tú:
+                {% else %}
+                    🛠️ Admin:
+                {% endif %}
+            </strong>
+            <p style="margin: 5px 0;">{{ m.contenido }}</p>
+            <small>{{ m.creado|date:"d/m/Y H:i" }}</small>
+            <hr>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- FORMULARIO SOLO SI EL TICKET NO ESTÁ FINALIZADO -->
+{% if ticket.estado != "finalizado" %}
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="mensaje" rows="3" placeholder="Escribe tu mensaje..."
+     required style="width:100%; border-radius:8px;"></textarea>
+    <br><br>
+    <button type="submit" style="width: 100%;">Enviar mensaje</button>
+</form>
+{% else %}
+<p class="finalizado-msg" style="color:red; font-weight:bold;">
+    La conversación ha sido finalizada. Ya no puedes enviar mensajes.
+</p>
+{% endif %}
+
+{% endblock %}  
