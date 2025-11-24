@@ -31,11 +31,15 @@ from django.contrib.auth.decorators import login_required
 def admin_dashboard(request):
     # 1. Contar datos reales
     total_usuarios = User.objects.count()
-    total_consultas = Contacto.objects.count()
-    
-    # Lógica simple: asumimos que todos están sin responder por ahora
-    # (Podrías mejorar esto agregando un campo 'leido' a tu modelo Contacto después)
-    consultas_sin_responder = total_consultas
+    # Usamos Tickets como unidad de consulta (cada ticket representa una conversación)
+    total_consultas = Ticket.objects.count()
+
+    # Contar consultas sin responder: aquellas cuyo último mensaje fue enviado por el usuario
+    consultas_sin_responder = 0
+    for ticket in Ticket.objects.all():
+        last_msg = ticket.mensajes.order_by('-creado').first()
+        if last_msg and last_msg.autor == 'usuario':
+            consultas_sin_responder += 1
 
     stats = {
         'total_usuarios': total_usuarios,
@@ -121,9 +125,23 @@ def admin_usuario_eliminar(request, user_id):
 
 @staff_member_required(login_url='/login/')
 def admin_consultas(request):
-    tickets = Ticket.objects.order_by('-creado')
+    # Preparamos una lista con metadata para facilitar el template
+    tickets_qs = Ticket.objects.order_by('-creado')
+    tickets = []
+    for t in tickets_qs:
+        last = t.mensajes.order_by('-creado').first()
+        unread = True if last and last.autor == 'usuario' else False
+        tickets.append({
+            'ticket': t,
+            'last': last,
+            'unread': unread,
+        })
+
+    unread_count = sum(1 for x in tickets if x['unread'])
+
     return render(request, "admin/admin_consultas.html", {
-        "tickets": tickets
+        "tickets": tickets,
+        "unread_count": unread_count,
     })
 
 

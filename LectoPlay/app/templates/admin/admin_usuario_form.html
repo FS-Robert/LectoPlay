@@ -1,50 +1,72 @@
 {% extends "home.html" %}
+{% load static %}
 
 {% block title %}
   {% if modo == "crear" %}Nuevo Usuario{% else %}Editar Usuario{% endif %} | LectoPlay
 {% endblock %}
 
 {% block content %}
-<h1>
-  {% if modo == "crear" %}Crear nuevo usuario{% else %}Editar usuario{% endif %}
-</h1>
 
-<form method="post" style="max-width:400px; background:white; padding:20px; border-radius:15px;">
-  {% csrf_token %}
+<div class="form-wrapper">
+    <div class="user-form-card">
+        
+        <div class="form-header">
+            <div class="icon-header">
+                {% if modo == "crear" %}👤{% else %}✏️{% endif %}
+            </div>
+            <h2>
+                {% if modo == "crear" %}Crear Nuevo Usuario{% else %}Editar Perfil{% endif %}
+            </h2>
+        </div>
 
-  <label>Nombre de usuario:</label><br>
-  <input type="text" name="username" required
-         value="{% if usuario %}{{ usuario.username }}{% endif %}"><br><br>
+        <form method="post">
+            {% csrf_token %}
 
-  <label>Correo electrónico:</label><br>
-  <input type="email" name="email"
-         value="{% if usuario %}{{ usuario.email }}{% endif %}"><br><br>
+            <div class="form-group">
+                <label class="form-label">Nombre de usuario</label>
+                <input type="text" name="username" class="styled-input" required 
+                       placeholder="Ej: juanperez123"
+                       value="{% if usuario %}{{ usuario.username }}{% endif %}">
+            </div>
 
-  <label>Contraseña:
-    <small>
-      {% if modo == "editar" %}(déjalo vacío para no cambiarla){% endif %}
-    </small>
-  </label><br>
-  <input type="password" name="password"><br><br>
+            <div class="form-group">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" name="email" class="styled-input"
+                       placeholder="ejemplo@correo.com"
+                       value="{% if usuario %}{{ usuario.email }}{% endif %}">
+            </div>
 
-  <label>
-    <input type="checkbox" name="is_staff"
-           {% if usuario and usuario.is_staff %}checked{% endif %}>
-    ¿Es staff (puede administrar)?
-  </label><br>
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="password" class="styled-input" placeholder="••••••••">
+                {% if modo == "editar" %}
+                    <span class="pass-note">ℹ️ Deja este campo vacío si no quieres cambiar la contraseña actual.</span>
+                {% endif %}
+            </div>
 
-  <label>
-    <input type="checkbox" name="is_superuser"
-           {% if usuario and usuario.is_superuser %}checked{% endif %}>
-    ¿Es superusuario?
-  </label><br><br>
+            <hr class="form-divider">
 
-  <button type="submit" class="btn">
-    {% if modo == "crear" %}Crear usuario{% else %}Guardar cambios{% endif %}
-  </button>
+            <div class="switch-container">
+                <div>
+                    <span class="switch-label-text">¿Es Administrador?</span>
+                    <span class="switch-desc">Acceso total al sistema y configuración.</span>
+                </div>
+                
+                <input type="checkbox" id="admin-toggle" name="is_superuser" class="toggle-checkbox"
+                       {% if usuario and usuario.is_superuser %}checked{% endif %}>
+                <label for="admin-toggle" class="toggle-label"></label>
+            </div>
 
-  <a href="{% url 'admin_usuarios' %}" class="btn" style="margin-left:10px;">
-    Cancelar
-  </a>
-</form>
+            <div class="form-actions">
+                <a href="{% url 'admin_usuarios' %}" class="btn-cancel">Cancelar</a>
+                
+                <button type="submit" class="btn-save">
+                    {% if modo == "crear" %}Crear Usuario{% else %}Guardar Cambios{% endif %}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
 {% endblock %}
