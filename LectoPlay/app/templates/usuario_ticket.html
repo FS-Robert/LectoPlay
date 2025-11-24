@@ -1,54 +1,124 @@
 {% extends "home.html" %}
 
+{% block title %}Mi Consulta{% endblock %}
+
 {% block content %}
-<h2>Consulta / Ticket</h2>
 
-<p><strong>Estado:</strong> {{ ticket.estado }}</p>
-<hr>
+<div style="max-width: 700px; margin: 30px auto;">
 
-<!-- CARD DEL CHAT -->
-<div style="
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: #fff;
-">
-
-    <!-- MENSAJES -->
-    <div style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
-        {% for m in mensajes %}
-        <div style="margin-bottom: 15px;">
-            <strong>
-                {% if m.autor == 'usuario' %}
-                    🧑 Tú:
-                {% else %}
-                    🛠️ Admin:
-                {% endif %}
-            </strong>
-            <p style="margin: 5px 0;">{{ m.contenido }}</p>
-            <small>{{ m.creado|date:"d/m/Y H:i" }}</small>
-            <hr>
+    <!-- Header -->
+    <div style="
+        background: linear-gradient(135deg, #6cbef5, #82d0ff);
+        padding: 20px;
+        border-radius: 15px 15px 0 0;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    ">
+        <div>
+            <h2 style="margin: 0;">Mi Consulta</h2>
+            <small style="opacity: .9;">Código: {{ ticket.codigo_acceso }}</small>
         </div>
-        {% endfor %}
+
+        <a href="/" style="
+            background:#fff;
+            padding: 8px 13px;
+            border-radius:10px;
+            text-decoration:none;
+            color:#0077aa;
+            font-weight: bold;
+        ">Volver</a>
+    </div>
+
+
+    <!-- Caja del chat -->
+    <div style="
+        border: 1px solid #ccc;
+        border-radius: 0 0 15px 15px;
+        background:#ffffff;
+        padding: 20px;
+    ">
+
+        <!-- Contenedor mensajes -->
+        <div style="height: 380px; overflow-y: auto; padding-right: 10px;">
+
+            {% for m in mensajes %}
+                {% if m.autor == 'usuario' %}
+                    <!-- Mensaje del usuario -->
+                    <div style="text-align: right; margin-bottom: 15px;">
+                        <div style="
+                            display: inline-block;
+                            background: #4db7d8;
+                            color: white;
+                            padding: 10px 15px;
+                            border-radius: 12px;
+                            max-width: 70%;
+                            text-align: left;
+                        ">
+                            {{ m.contenido }}
+                        </div>
+                        <br>
+                        <small style="color:#777;">✓ {{ m.creado|date:"H:i d/m" }}</small>
+                    </div>
+
+                {% else %}
+                    <!-- Mensaje del admin -->
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <div style="
+                            display: inline-block;
+                            background: #f1f1f1;
+                            color: #333;
+                            padding: 10px 15px;
+                            border-radius: 12px;
+                            max-width: 70%;
+                        ">
+                            <strong style="color:#ff9800;">Admin:</strong><br>
+                            {{ m.contenido }}
+                        </div>
+                        <br>
+                        <small style="color:#777;">{{ m.creado|date:"H:i d/m" }}</small>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+
+        {% if ticket.estado != "finalizado" %}
+        <!-- Input para escribir -->
+        <form method="POST" style="margin-top: 15px;">
+            {% csrf_token %}
+            <div style="display:flex; gap:10px;">
+                <textarea name="mensaje" rows="2" required placeholder="Escribe tu mensaje..."
+                    style="
+                        flex:1;
+                        padding:10px;
+                        border-radius:10px;
+                        border:1px solid #ccc;
+                        resize:none;
+                    "></textarea>
+
+                <button type="submit" style="
+                    background:#ff4081;
+                    width:60px;
+                    border:none;
+                    border-radius:50%;
+                    color:white;
+                    font-size:18px;
+                    cursor:pointer;
+                ">➤</button>
+            </div>
+        </form>
+
+        {% else %}
+            <p style="color:red; font-weight:bold; text-align:center; margin-top:20px;">
+                Esta consulta ha sido finalizada. No puedes enviar más mensajes.
+            </p>
+        {% endif %}
+
     </div>
 
 </div>
 
-<!-- FORMULARIO SOLO SI EL TICKET NO ESTÁ FINALIZADO -->
-{% if ticket.estado != "finalizado" %}
-<form method="POST">
-    {% csrf_token %}
-    <textarea name="mensaje" rows="3" placeholder="Escribe tu mensaje..."
-     required style="width:100%; border-radius:8px;"></textarea>
-    <br><br>
-    <button type="submit" style="width: 100%;">Enviar mensaje</button>
-</form>
-{% else %}
-<p class="finalizado-msg" style="color:red; font-weight:bold;">
-    La conversación ha sido finalizada. Ya no puedes enviar mensajes.
-</p>
-{% endif %}
-
 {% endblock %}
-

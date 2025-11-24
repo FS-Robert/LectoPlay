@@ -4,56 +4,121 @@
 
 {% block content %}
 
-<h1>💬 Chat con {{ ticket.contacto.nombre }}</h1>
+<div style="max-width: 700px; margin: 30px auto;">
 
-{% if ticket.estado != "finalizado" %}
-<form action="{% url 'finalizar_ticket' ticket.id %}" method="post" style="margin-bottom: 15px;">
-    {% csrf_token %}
-    <button class="btn-finalizar">Finalizar conversación</button>
-</form>
-{% endif %}
+    <!-- Header -->
+    <div style="
+        background: linear-gradient(135deg, #6cbef5, #82d0ff);
+        padding: 20px;
+        border-radius: 15px 15px 0 0;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    ">
+        <div>
+            <h2 style="margin: 0;">Detalle de Consulta</h2>
+            <small style="opacity: .9;">Usuario: {{ ticket.contacto.nombre }}</small>
+        </div>
 
-<!-- CARD DEL CHAT -->
-<div style="
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: #fff;
-">
-
-    <!-- MENSAJES -->
-    <div style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
-        {% for m in mensajes %}
-            <div style="margin-bottom: 15px;">
-                <strong>
-                    {% if m.autor == 'usuario' %}
-                        🧑 Usuario:
-                    {% else %}
-                        🛠️ Admin:
-                    {% endif %}
-                </strong>
-                <p style="margin: 5px 0;">{{ m.contenido }}</p>
-                <small>{{ m.creado|date:"d/m/Y H:i" }}</small>
-                <hr>
-            </div>
-        {% endfor %}
+        <form action="{% url 'finalizar_ticket' ticket.pk %}" method="post">
+            {% csrf_token %}
+            <button style="
+                background:#fff;
+                padding: 8px 13px;
+                border-radius:10px;
+                border:none;
+                color:#f44336;
+                font-weight: bold;
+                cursor:pointer;
+            ">Finalizar</button>
+        </form>
     </div>
-</div>
 
-<!-- FORMULARIO SOLO SI NO ESTÁ FINALIZADO -->
-{% if ticket.estado != "finalizado" %}
-<form method="post" style="margin-top: 10px;">
-    {% csrf_token %}
-    <textarea name="respuesta" rows="3" placeholder="Escribe tu respuesta..." required 
-     style="width:100%; border-radius:8px;"></textarea>
-    <br><br>
-    <button type="submit" style="width: 100%;">Responder</button>
-</form>
-{% else %}
-<p class="finalizado-msg" style="color:red; font-weight:bold;">
-    La conversación ha sido finalizada. Ya no puedes enviar mensajes.
-</p>
-{% endif %}
+    <!-- Caja del chat -->
+    <div style="
+        border: 1px solid #ccc;
+        border-radius: 0 0 15px 15px;
+        background:#ffffff;
+        padding: 20px;
+    ">
+
+        <!-- Contenedor mensajes -->
+        <div style="height: 380px; overflow-y: auto; padding-right: 10px;">
+
+            {% for m in mensajes %}
+                {% if m.autor == 'usuario' %}
+                    <!-- Mensaje del usuario -->
+                    <div style="text-align: right; margin-bottom: 15px;">
+                        <div style="
+                            display: inline-block;
+                            background: #4db7d8;
+                            color: white;
+                            padding: 10px 15px;
+                            border-radius: 12px;
+                            max-width: 70%;
+                            text-align: left;
+                        ">
+                            {{ m.contenido }}
+                        </div>
+                        <br>
+                        <small style="color:#777;">✓ {{ m.creado|date:"H:i d/m" }}</small>
+                    </div>
+                {% else %}
+                    <!-- Mensaje del admin -->
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <div style="
+                            display: inline-block;
+                            background: #f1f1f1;
+                            color: #333;
+                            padding: 10px 15px;
+                            border-radius: 12px;
+                            max-width: 70%;
+                        ">
+                            <strong style="color:#ff9800;">Admin:</strong><br>
+                            {{ m.contenido }}
+                        </div>
+                        <br>
+                        <small style="color:#777;">{{ m.creado|date:"H:i d/m" }}</small>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+        <!-- Formulario de respuesta -->
+        {% if ticket.estado != "finalizado" %}
+        <form method="post" style="margin-top: 15px;">
+            {% csrf_token %}
+            <div style="display:flex; gap:10px;">
+                <textarea name="respuesta" rows="2" required placeholder="Escribe tu respuesta..."
+                    style="
+                        flex:1;
+                        padding:10px;
+                        border-radius:10px;
+                        border:1px solid #ccc;
+                        resize:none;
+                    "></textarea>
+
+                <button type="submit" style="
+                    background:#4db7d8;
+                    width:60px;
+                    border:none;
+                    border-radius:50%;
+                    color:white;
+                    font-size:18px;
+                    cursor:pointer;
+                ">➤</button>
+            </div>
+        </form>
+        {% else %}
+            <p style="color:red; font-weight:bold; text-align:center; margin-top:20px;">
+                La conversación ha sido finalizada. Ya no puedes enviar mensajes.
+            </p>
+        {% endif %}
+
+    </div>
+
+</div>
 
 {% endblock %}
