@@ -181,8 +181,9 @@ def chatbot_ask(request):
         return JsonResponse({'error': 'Error interno del servidor.'}, status=500)
 
 
-def home_view(request):
-    return render(request, "home.html")
+
+def inicio_view(request):
+    return render(request, "inicio.html")
 
 
 def about_view(request):
