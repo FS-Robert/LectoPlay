@@ -1,6 +1,6 @@
 {% extends "home.html" %}
 
-{% block title %}Detalle de Consulta{% endblock %}
+{% block title %}Mi Consulta{% endblock %}
 
 {% block content %}
 
@@ -17,23 +17,20 @@
         align-items: center;
     ">
         <div>
-            <h2 style="margin: 0;">Detalle de Consulta</h2>
-            <small style="opacity: .9;">Usuario: {{ ticket.contacto.nombre }}</small>
+            <h2 style="margin: 0;">Mi Consulta</h2>
+            <small style="opacity: .9;">Código: {{ ticket.codigo_acceso }}</small>
         </div>
 
-        <form action="{% url 'finalizar_ticket' ticket.pk %}" method="post">
-            {% csrf_token %}
-            <button style="
-                background:#fff;
-                padding: 8px 13px;
-                border-radius:10px;
-                border:none;
-                color:#f44336;
-                font-weight: bold;
-                cursor:pointer;
-            ">Finalizar</button>
-        </form>
+        <a href="/" style="
+            background:#fff;
+            padding: 8px 13px;
+            border-radius:10px;
+            text-decoration:none;
+            color:#0077aa;
+            font-weight: bold;
+        ">Volver</a>
     </div>
+
 
     <!-- Caja del chat -->
     <div style="
@@ -64,6 +61,7 @@
                         <br>
                         <small style="color:#777;">✓ {{ m.creado|date:"H:i d/m" }}</small>
                     </div>
+
                 {% else %}
                     <!-- Mensaje del admin -->
                     <div style="text-align: left; margin-bottom: 15px;">
@@ -86,12 +84,13 @@
 
         </div>
 
-        <!-- Formulario de respuesta -->
+
         {% if ticket.estado != "finalizado" %}
-        <form method="post" style="margin-top: 15px;">
+        <!-- Input para escribir -->
+        <form method="POST" style="margin-top: 15px;">
             {% csrf_token %}
             <div style="display:flex; gap:10px;">
-                <textarea name="respuesta" rows="2" required placeholder="Escribe tu respuesta..."
+                <textarea name="mensaje" rows="2" required placeholder="Escribe tu mensaje..."
                     style="
                         flex:1;
                         padding:10px;
@@ -101,7 +100,7 @@
                     "></textarea>
 
                 <button type="submit" style="
-                    background:#4db7d8;
+                    background:#ff4081;
                     width:60px;
                     border:none;
                     border-radius:50%;
@@ -111,9 +110,10 @@
                 ">➤</button>
             </div>
         </form>
+
         {% else %}
             <p style="color:red; font-weight:bold; text-align:center; margin-top:20px;">
-                La conversación ha sido finalizada. Ya no puedes enviar mensajes.
+                Esta consulta ha sido finalizada. No puedes enviar más mensajes.
             </p>
         {% endif %}
 

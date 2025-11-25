@@ -1,0 +1,79 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Inicio | LectoPlay{% endblock %}
+
+{% block content %}
+    
+    <div class="carrousel">
+        <div class="conteCarrousel">
+            <div class="itemCarrousel" id="itemCarrousel-1">
+                <div class="itemCarrouselTarjeta">
+                    <img src="{% static 'css/carrusel1.png' %}" class="carrousel-img" alt="Carrusel 1">
+                    <div class="carrousel-text">
+                        <h2>LECTURA Y DIVERSIÓN</h2>
+                        <p>Donde las letras son amigas</p>
+                    </div>
+                </div>
+                <div class="itemCarrouselArrows">
+                    <a href="#itemCarrousel-2">
+                        <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Siguiente">
+                    </a>
+                    <a href="#itemCarrousel-2">
+                        <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Siguiente">
+                    </a>
+                </div>
+            </div>
+
+            <div class="itemCarrousel" id="itemCarrousel-2">
+                <div class="itemCarrouselTarjeta">
+                    <img src="{% static 'css/carrusel2.png' %}" class="carrousel-img" alt="Carrusel 2">
+                    <div class="carrousel-text">
+                        <h2>LECTURA Y DIVERSIÓN</h2>
+                        <p>Jugar es tu mejor herramienta</p>
+                    </div>
+                </div>
+                <div class="itemCarrouselArrows">
+                    <a href="#itemCarrousel-1">
+                        <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Anterior">
+                    </a>
+                    <a href="#itemCarrousel-1">
+                        <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Anterior">
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="conteCarrouselController">
+            <a href="#itemCarrousel-1">•</a>
+            <a href="#itemCarrousel-2">•</a>
+        </div>
+    </div>
+
+    <main class="container"> 
+        <section class="about-lectoplay">
+            <div class="about-text">
+                <h2>¡BIENVENIDOS A LECTOPLAY!</h2>
+                <p>
+                    <strong>LectoPlay</strong> es un sitio web educativo diseñado para ayudar a 
+                    <strong>niños con dislexia</strong> a mejorar su lectura de forma divertida y accesible. 
+                    Mediante actividades visuales, colores llamativos y herramientas interactivas,
+                    busca convertir el aprendizaje en una experiencia positiva y entretenida.
+                </p>
+                <p>
+                    Su objetivo es brindar una <strong>plataforma inclusiva</strong> que apoye tanto a los niños 
+                    como a docentes, terapeutas del lenguaje y familias, fomentando la confianza 
+                    y el gusto por la lectura.
+                </p>
+                <p>
+                    Con <strong>LectoPlay</strong>, aprender a leer se convierte en una aventura colorida 
+                    donde cada palabra cuenta.
+                </p>
+            </div>
+            <div class="about-image">
+                <img src="{% static 'css/osito.png' %}" alt="LectoPlay" />
+            </div>
+        </section>
+    </main> 
+
+{% endblock %}

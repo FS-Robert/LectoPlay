@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home_view, name='home'),
+    path('', views.inicio_view, name='home'),
     path('about/', views.about_view, name='about'),
     path('ejercicios/', views.ejercicios, name='ejercicios'),
     path('ejercicios/encuentra/', views.encuentra, name='encuentra'),
@@ -19,22 +19,23 @@ urlpatterns = [
     path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
     path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),
     path("panel-admin/", views.admin_dashboard, name="admin_dashboard"),
-    path('panel-admin/consultas/', views.admin_consultas, name='admin_consultas'),
+    # CONSULTAS
+    path("panel-admin/consultas/", views.admin_consultas, name="admin_consultas"),
     path('panel-admin/consultas/<int:ticket_id>/', views.consulta_detalle, name='consulta_detalle'),
+    path('admin/estado/<int:ticket_id>/', views.cambiar_estado, name='cambiar_estado'),
+    # TICKET PARA USUARIO
+    path("ticket/<str:codigo>/", views.usuario_ver_ticket, name="usuario_ver_ticket"),
+    path('ticket/<int:ticket_id>/finalizar/', views.finalizar_ticket, name='finalizar_ticket'),
 
-    # LISTADO
+ 
     path("panel-admin/usuarios/", views.admin_usuarios, name="admin_usuarios"),
 
-    # CREAR
     path("panel-admin/usuarios/nuevo/", views.admin_usuario_nuevo, name="admin_usuario_nuevo"),
 
-    # EDITAR
     path("panel-admin/usuarios/editar/<int:user_id>/", views.admin_usuario_editar, name="admin_usuario_editar"),
 
-    # ELIMINAR
     path("panel-admin/usuarios/eliminar/<int:user_id>/", views.admin_usuario_eliminar, name="admin_usuario_eliminar"),
 
-    # …tus otras rutas (juegos, etc.) …
     path("panel-admin/consultas/", views.admin_consultas, name="admin_consultas"),
 
 

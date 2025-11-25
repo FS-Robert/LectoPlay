@@ -31,11 +31,15 @@ from django.contrib.auth.decorators import login_required
 def admin_dashboard(request):
     # 1. Contar datos reales
     total_usuarios = User.objects.count()
-    total_consultas = Contacto.objects.count()
-    
-    # Lógica simple: asumimos que todos están sin responder por ahora
-    # (Podrías mejorar esto agregando un campo 'leido' a tu modelo Contacto después)
-    consultas_sin_responder = total_consultas
+    # Usamos Tickets como unidad de consulta (cada ticket representa una conversación)
+    total_consultas = Ticket.objects.count()
+
+    # Contar consultas sin responder: aquellas cuyo último mensaje fue enviado por el usuario
+    consultas_sin_responder = 0
+    for ticket in Ticket.objects.all():
+        last_msg = ticket.mensajes.order_by('-creado').first()
+        if last_msg and last_msg.autor == 'usuario':
+            consultas_sin_responder += 1
 
     stats = {
         'total_usuarios': total_usuarios,
@@ -121,9 +125,23 @@ def admin_usuario_eliminar(request, user_id):
 
 @staff_member_required(login_url='/login/')
 def admin_consultas(request):
-    tickets = Ticket.objects.order_by('-creado')
+    # Preparamos una lista con metadata para facilitar el template
+    tickets_qs = Ticket.objects.order_by('-creado')
+    tickets = []
+    for t in tickets_qs:
+        last = t.mensajes.order_by('-creado').first()
+        unread = True if last and last.autor == 'usuario' else False
+        tickets.append({
+            'ticket': t,
+            'last': last,
+            'unread': unread,
+        })
+
+    unread_count = sum(1 for x in tickets if x['unread'])
+
     return render(request, "admin/admin_consultas.html", {
-        "tickets": tickets
+        "tickets": tickets,
+        "unread_count": unread_count,
     })
 
 
@@ -163,8 +181,9 @@ def chatbot_ask(request):
         return JsonResponse({'error': 'Error interno del servidor.'}, status=500)
 
 
-def home_view(request):
-    return render(request, "home.html")
+
+def inicio_view(request):
+    return render(request, "inicio.html")
 
 
 def about_view(request):
@@ -536,7 +555,6 @@ def contacto_view(request):
         mensaje = request.POST.get('message')
         fecha = request.POST.get('fecha')
 
-        # 1. Crear Contacto
         contacto = Contacto.objects.create(
             nombre=nombre,
             correo=email,
@@ -544,42 +562,81 @@ def contacto_view(request):
             fecha_envio=fecha
         )
 
-        # 2. Crear Ticket asociado
         ticket = Ticket.objects.create(
             contacto=contacto,
             estado='pendiente'
         )
 
-        # 3. Crear el primer mensaje dentro del Ticket
         Message.objects.create(
             ticket=ticket,
             autor='usuario',
             contenido=mensaje
         )
 
-        # 4. Enviar success al template
         return render(request, 'contacto.html', {
             'success': True,
-            'ticket_id': ticket.id
+            'ticket_codigo': ticket.codigo_acceso
         })
 
     return render(request, 'contacto.html')
 
 
+@staff_member_required(login_url='/login/')
 def consulta_detalle(request, ticket_id):
-    ticket = Ticket.objects.get(id=ticket_id)
-    mensajes = Message.objects.filter(ticket=ticket)
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    mensajes = ticket.mensajes.order_by("creado")
 
     if request.method == "POST":
-        texto = request.POST.get("respuesta")
+        contenido = request.POST.get("respuesta")
         Message.objects.create(
             ticket=ticket,
             autor="admin",
-            contenido=texto
+            contenido=contenido
         )
+        ticket.estado = "respondido"
+        ticket.save()
+
         return redirect("consulta_detalle", ticket_id=ticket.id)
 
     return render(request, "admin/consulta_detalle.html", {
         "ticket": ticket,
         "mensajes": mensajes
     })
+
+
+def usuario_ver_ticket(request, codigo):
+    ticket = get_object_or_404(Ticket, codigo_acceso=codigo)
+    mensajes = ticket.mensajes.order_by("creado")
+
+    if request.method == "POST":
+        contenido = request.POST.get("mensaje")
+        if contenido.strip():
+            Message.objects.create(
+                ticket=ticket,
+                autor="usuario",
+                contenido=contenido
+            )
+        return redirect("usuario_ver_ticket", codigo=codigo)
+
+    return render(request, "usuario_ticket.html", {
+        "ticket": ticket,
+        "mensajes": mensajes
+    })
+
+
+def finalizar_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    ticket.estado = "finalizado"
+    ticket.save()
+    return redirect("consulta_detalle", ticket_id=ticket_id)
+
+
+def cambiar_estado(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    nuevo = request.GET.get("estado")
+    if nuevo:
+        ticket.estado = nuevo
+        ticket.save()
+    return redirect("admin_consultas")
+
+

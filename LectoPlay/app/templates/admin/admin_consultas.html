@@ -1,39 +1,82 @@
 {% extends "home.html" %}
 
-{% block title %}Ver Consultas | LectoPlay{% endblock %}
+{% block title %}Consultas de Usuarios{% endblock %}
 
 {% block content %}
 
-<h1>📨 Consultas de Usuarios</h1>
+<h1 style="margin-bottom: 20px;">📨 Consultas de Usuarios</h1>
 
 {% if tickets %}
-<table border="1" cellpadding="10" style="width:100%; border-collapse: collapse;">
-    <tr>
-        <th>Usuario</th>
-        <th>Email</th>
-        <th>Mensaje</th>
-        <th>Estado</th>
-        <th>Fecha</th>
-        <th>Ver</th>
-    </tr>
+<div style="display: flex; flex-direction: column; gap: 20px;">
 
-    {% for ticket in tickets %}
-    <tr>
-        <td>{{ ticket.contacto.nombre }}</td>
-        <td>{{ ticket.contacto.correo }}</td>
-        <td>{{ ticket.contacto.mensaje|truncatechars:40 }}</td>
-        <td>{{ ticket.estado }}</td>
-        <td>{{ ticket.creado|date:"d/m/Y H:i" }}</td>
+    {% for item in tickets %}
+    {% with ticket=item.ticket %}
+    <div style="
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    ">
+        <!-- Encabezado tipo correo -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0;">👤 {{ ticket.contacto.nombre }}</h3>
+                <p style="margin: 0; color: #555;"><strong>📧</strong> {{ ticket.contacto.correo }}</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="margin: 0;"><strong>📅</strong> {{ ticket.creado|date:"d/m/Y H:i" }}</p>
+                <p style="margin: 0;"><strong>⏳</strong> {{ ticket.estado|title }}</p>
+            </div>
+        </div>
 
-        <td>
-            <a href="{% url 'consulta_detalle' ticket.id %}">
-                Abrir chat
+        <!-- Mensaje -->
+        <div style="
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #333;
+        ">
+            <strong>💬 Mensaje:</strong><br>
+            {{ ticket.contacto.mensaje|truncatechars:160 }}
+        </div>
+
+        <!-- Estado y acciones -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <form method="get" action="{% url 'cambiar_estado' ticket.id %}">
+                <label><strong>Cambiar estado:</strong></label><br>
+                <select name="estado" onchange="this.form.submit()" style="
+                    padding: 8px;
+                    border-radius: 8px;
+                    border: 1px solid #ccc;
+                    width: 180px;
+                ">
+                    <option value="pendiente" {% if ticket.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="respondido" {% if ticket.estado == 'respondido' %}selected{% endif %}>Respondido</option>
+                    <option value="finalizado" {% if ticket.estado == 'finalizado' %}selected{% endif %}>Finalizado</option>
+                </select>
+            </form>
+
+            <a href="{% url 'consulta_detalle' ticket.id %}" style="
+                background: #4db7d8;
+                padding: 10px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: bold;
+                text-decoration: none;
+                text-align: center;
+            ">
+                Abrir chat 💬
             </a>
-        </td>
-    </tr>
+        </div>
+    </div>
+    {% endwith %}
     {% endfor %}
-</table>
 
+</div>
 {% else %}
 <p>No hay consultas todavía.</p>
 {% endif %}
