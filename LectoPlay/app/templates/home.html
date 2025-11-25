@@ -6,58 +6,118 @@
     <title>{% block title %}LectoPlay{% endblock %}</title>
 
     {% load static %}
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    </style>
+    <script>
+    tailwind.config = {
+        corePlugins: {
+            preflight: false,
+        },
+        }
+    </script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
 </head>
 
 <body>
     
     {% csrf_token %}
-    
-    <header>
-    <nav class="navbar" style="padding: 10px 0; display: flex; align-items: center;">
-        <div class="container"></div>
+    <!-- Barra rosa -->
+    <header class="navbar">
+        <div class="container-fluid py-3 d-none d-md-block d-flex justify-content-end">
+        </div>
+    </header>
 
-        <div id="user-info">
-            {% if user.is_authenticated %}
-                <!-- 🔹 Usuario logueado -->
-                <div class="user-avatar" style="display:flex; align-items:center; gap:10px;">
-                    <img src="{% static 'css/login-avatar.png' %}" 
-                         width="40" height="40" 
-                         alt="avatar" class="avatar">
 
-                    <span style="font-weight:600;">
-                        {{ user.username }}
-                    </span>
+    <!-- Navbar blanco -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm white-navbar" style="border-radius:60px; padding:10px 35px; margin-top:-45px;">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3"> 
 
-                    <!-- 🔹 Botón Cerrar sesión -->
-                    <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" style="
-                            background:#ff6b6b;
-                            border:none;
-                            padding:6px 12px;
-                            border-radius:6px;
-                            color:white;
-                            cursor:pointer;">
-                            Cerrar sesión
+                <!-- LOGIN / CERRAR SESIÓN - ESCRITORIO Y MÓVIL -->
+                <div class="d-flex align-items-center ms-auto" style="margin-left:auto;">
+                    <div id="user-info">
+                        {% if user.is_authenticated %}
+                        <!-- Usuario logueado -->
+                        <div class="user-avatar d-flex align-items-center gap-2">
+                            <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+                            <span style="font-weight:600; font-size: 10px; color:#6a4736;">
+                             {{ user.username }}
+                            </span>
+                            <form method="post" action="{% url 'logout' %}">
+                             {% csrf_token %}
+                                <button type="submit" style="
+                                    background:#ff6b6b;
+                                    border:none;
+                                    padding:2px 5px;
+                                    border-radius:6px;
+                                    color:white;
+                                    font-size: 10px;
+                                    cursor:pointer;">Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <!-- Usuario NO logueado -->
+                        <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
+                            Iniciar Sesión
                         </button>
-                    </form>
+                        {% endif %}
+                    </div>
                 </div>
 
-            {% else %}
-                <!-- 🔹 Usuario NO logueado -->
-                <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
-                    Iniciar Sesión
-                </button>
-            {% endif %}
+             <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'css/logo3.png' %}" height="55" style="object-fit:contain;">
+            </a>
+
+            </div>
+
+            <!-- Botón hamburguesa -->
+             <button class="navbar-toggler ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#lectoplay_nav"
+             aria-controls="lectoplay_nav" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Menu principal -->
+            <div class="collapse navbar-collapse" id="lectoplay_nav">
+                <!-- LINKS CENTRALES -->
+                <ul class="navbar-nav mx-auto white-nav-links">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                        href="{% url 'home' %}">Inicio</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                        href="{% url 'about' %}">Acerca de</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'ejercicios' %}active{% endif %}"
+                        href="{% url 'ejercicios' %}">Ejercicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contacto' %}active{% endif %}"
+                        href="{% url 'contacto' %}">Contacto</a></li>
+                        
+                    {% if request.user.is_authenticated and request.user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
-</header>
 
-
-    
 
     <script>
     document.addEventListener("keydown", function(e) {
@@ -74,130 +134,52 @@
     });
     </script>
 
-
-    <div class="white-navbar-container" style="width: 100%; background-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; z-index: 50;">
-        
-        <nav class="white-navbar" style="width: 100%; max-width: none; display: flex; align-items: center; justify-content: flex-start; padding: 10px 60px; gap: 80px;">
-        
-            <a href="{% url 'home' %}" style="display: flex; align-items: center; text-decoration: none;">
-                <img src="{% static 'css/logo3.png' %}" alt="LectoPlay" class="logo-img" 
-                     style="height: 65px; width: auto; object-fit: contain; transition: transform 0.3s ease;" 
-                     onmouseover="this.style.transform='scale(1.05)'" 
-                     onmouseout="this.style.transform='scale(1)'">
-            </a>
-
-            <ul class="nav-links" style="display: flex; align-items: center; list-style: none; gap: 50px; margin: 0; padding: 0;">
-                
-                <li>
-                    <a href="{% url 'home' %}" class="active" 
-                       style="text-decoration: none; color: #333; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
-                       onmouseover="this.style.color='#ffafcc'" 
-                       onmouseout="this.style.color='#333'">
-                        Inicio
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="{% url 'about' %}" 
-                       style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
-                       onmouseover="this.style.color='#ffafcc'" 
-                       onmouseout="this.style.color='#555'">
-                        Acerca de
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="{% url 'ejercicios' %}" 
-                       style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
-                       onmouseover="this.style.color='#ffafcc'" 
-                       onmouseout="this.style.color='#555'">
-                        Ejercicios
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="{% url 'contacto' %}" 
-                       style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;  transition: color 0.3s;"
-                       onmouseover="this.style.color='#ffafcc'" 
-                       onmouseout="this.style.color='#555'">
-                        Contacto
-                    </a>
-                </li>
-
-                {% if request.user.is_authenticated and request.user.is_staff %}
-                    <li style="margin-left: 20px;">
-                        <a href="{% url 'admin_dashboard' %}" 
-                           style="
-                               color: #fff; 
-                               background-color: #ffafcc; 
-                               padding: 8px 24px; 
-                               border-radius: 50px; 
-                               font-weight: 800; 
-                               font-size: 13px; 
-                               border: 2px solid #fff;
-                               box-shadow: 0 4px 8px rgba(255, 175, 204, 0.5);
-                               transition: all 0.3s ease;
-                               text-decoration: none;
-                               display: flex;
-                               align-items: center;
-                               gap: 6px;
-                               
-                           "
-                           onmouseover="this.style.backgroundColor='#f28482'; this.style.transform='translateY(-2px) scale(1.05)';"
-                           onmouseout="this.style.backgroundColor='#ffafcc'; this.style.transform='translateY(0) scale(1)';">
-                           🐼 Admin
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-
     {% block content %}
-    
-    <div class="carrousel">
-        <div class="conteCarrousel">
-            <div class="itemCarrousel" id="itemCarrousel-1">
-                <div class="itemCarrouselTarjeta">
-                    <img src="{% static 'css/carrusel1.png' %}" class="carrousel-img" alt="Carrusel 1">
-                    <div class="carrousel-text">
-                        <h2>LECTURA Y DIVERSIÓN</h2>
-                        <p>Donde las letras son amigas</p>
-                    </div>
-                </div>
-                <div class="itemCarrouselArrows">
-                    <a href="#itemCarrousel-2">
-                        <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Siguiente">
-                    </a>
-                    <a href="#itemCarrousel-2">
-                        <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Siguiente">
-                    </a>
+
+    <!-- Carrusel -->
+     <div id="lectoCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <!-- ==== Diapo1 -->
+             <div class="carousel-item active">
+                <img src="{% static 'css/carrusel1.png' %}" class="d-block w-100 carrusel-image">
+                <div class="carousel-caption custom-caption">
+                    <h4>LECTURA Y DIVERSIÓN</h4>
+                    <h1>Donde las letras son amigas</h1>
                 </div>
             </div>
-
-            <div class="itemCarrousel" id="itemCarrousel-2">
-                <div class="itemCarrouselTarjeta">
-                    <img src="{% static 'css/carrusel2.png' %}" class="carrousel-img" alt="Carrusel 2">
-                    <div class="carrousel-text">
-                        <h2>LECTURA Y DIVERSIÓN</h2>
-                        <p>Jugar es tu mejor herramienta</p>
-                    </div>
-                </div>
-                <div class="itemCarrouselArrows">
-                    <a href="#itemCarrousel-1">
-                        <img src="{% static 'css/flecha1.png' %}" class="arrow" alt="Anterior">
-                    </a>
-                    <a href="#itemCarrousel-1">
-                        <img src="{% static 'css/flecha2.png' %}" class="arrow" alt="Anterior">
-                    </a>
+            
+            <!-- Diapo2 -->
+             <div class="carousel-item">
+                <img src="{% static 'css/carrusel2.png' %}" class="d-block w-100 carrusel-image">
+                <div class="carousel-caption custom-caption">
+                    <h4>APRENDER ES UNA AVENTURA</h4>
+                    <h1>Jugar es tu mejor herramienta</h1>
                 </div>
             </div>
         </div>
-        <div class="conteCarrouselController">
-            <a href="#itemCarrousel-1">•</a>
-            <a href="#itemCarrousel-2">•</a>
+        
+        <!-- Flecha anterior -->
+        <button class="carousel-control-prev custom-arrow" type="button"
+         data-bs-target="#lectoCarousel" data-bs-slide="prev">
+         <i class="bi bi-arrow-left-circle arrow-icon"></i>
+         <span class="visually-hidden">Anterior</span>
+        </button>
+        
+        <!-- Flecha siguiente -->
+        <button class="carousel-control-next custom-arrow" type="button"
+         data-bs-target="#lectoCarousel" data-bs-slide="next">
+         <i class="bi bi-arrow-right-circle arrow-icon"></i>
+         <span class="visually-hidden">Siguiente</span>
+        </button>
+        
+        <!-- Indicadores -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="1"></button>
         </div>
     </div>
+
+
 
     <main class="container"> 
         <section class="about-lectoplay">
@@ -274,5 +256,6 @@
         <p>🐾 &copy; 2025 LectoPlay. Aprende jugando </p>
     </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
