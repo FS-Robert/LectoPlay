@@ -4,46 +4,54 @@
 {% block title %}Inicio | LectoPlay{% endblock %}
 
 {% block content %}
-    <div class="mb-5"> <div id="lectoCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="{% static 'css/carrusel1.png' %}" class="d-block w-100 carrusel-image">
-                    <div class="carousel-caption custom-caption">
-                        <h4>LECTURA Y DIVERSIÓN</h4>
-                        <h1>Donde las letras son amigas</h1>
-                    </div>
-                </div>
-                
-                <div class="carousel-item">
-                    <img src="{% static 'css/carrusel2.png' %}" class="d-block w-100 carrusel-image">
-                    <div class="carousel-caption custom-caption">
-                        <h4>APRENDER ES UNA AVENTURA</h4>
-                        <h1>Jugar es tu mejor herramienta</h1>
-                    </div>
+
+<!-- Carrusel -->
+
+<div id="lectoCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <!-- ==== Diapo1 -->
+             <div class="carousel-item active">
+                <img src="{% static 'css/carrusel1.png' %}" class="d-block w-100 carrusel-image">
+                <div class="carousel-caption custom-caption">
+                    <h4>LECTURA Y DIVERSIÓN</h4>
+                    <h1>Donde las letras son amigas</h1>
                 </div>
             </div>
             
-            <button class="carousel-control-prev custom-arrow" type="button"
-                data-bs-target="#lectoCarousel" data-bs-slide="prev">
-                <i class="bi bi-arrow-left-circle arrow-icon"></i>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            
-            <button class="carousel-control-next custom-arrow" type="button"
-                data-bs-target="#lectoCarousel" data-bs-slide="next">
-                <i class="bi bi-arrow-right-circle arrow-icon"></i>
-                <span class="visually-hidden">Siguiente</span>
-            </button>
-            
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="0" class="active"></button>
-                <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="1"></button>
+            <!-- Diapo2 -->
+             <div class="carousel-item">
+                <img src="{% static 'css/carrusel2.png' %}" class="d-block w-100 carrusel-image">
+                <div class="carousel-caption custom-caption">
+                    <h4>APRENDER ES UNA AVENTURA</h4>
+                    <h1>Jugar es tu mejor herramienta</h1>
+                </div>
             </div>
         </div>
-    </div>
+        
+        <!-- Flecha anterior -->
+        <button class="carousel-control-prev custom-arrow" type="button"
+         data-bs-target="#lectoCarousel" data-bs-slide="prev">
+         <i class="bi bi-arrow-left-circle arrow-icon"></i>
+         <span class="visually-hidden">Anterior</span>
+        </button>
+        
+        <!-- Flecha siguiente -->
+        <button class="carousel-control-next custom-arrow" type="button"
+         data-bs-target="#lectoCarousel" data-bs-slide="next">
+         <i class="bi bi-arrow-right-circle arrow-icon"></i>
+         <span class="visually-hidden">Siguiente</span>
+        </button>
+        
+        <!-- Indicadores -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="1"></button>
+        </div>
+</div>
 
 
-    <main class="container"> 
+
+<main class="container"> 
         <section class="about-lectoplay">
             <div class="about-text">
                 <h2>¡BIENVENIDOS A LECTOPLAY!</h2>
