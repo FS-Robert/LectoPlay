@@ -1,84 +1,68 @@
 {% extends "home.html" %}
 
-{% block title %}Consultas de Usuarios{% endblock %}
+{% block title %}Panel de Consultas | LectoPlay{% endblock %}
 
 {% block content %}
 
-<h1 style="margin-bottom: 20px;">📨 Consultas de Usuarios</h1>
+<div class="consultas-main-container">
 
-{% if tickets %}
-<div style="display: flex; flex-direction: column; gap: 20px;">
+    <h1 class="page-title">Panel de Consultas</h1>
 
-    {% for item in tickets %}
-    {% with ticket=item.ticket %}
-    <div style="
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    ">
-        <!-- Encabezado tipo correo -->
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h3 style="margin: 0;">👤 {{ ticket.contacto.nombre }}</h3>
-                <p style="margin: 0; color: #555;"><strong>📧</strong> {{ ticket.contacto.correo }}</p>
-            </div>
-            <div style="text-align: right;">
-                <p style="margin: 0;"><strong>📅</strong> {{ ticket.creado|date:"d/m/Y H:i" }}</p>
-                <p style="margin: 0;"><strong>⏳</strong> {{ ticket.estado|title }}</p>
-            </div>
+    {% if tickets %}
+        <div class="tickets-grid">
+            {% for item in tickets %}
+            {% with ticket=item.ticket %}
+            
+            <article class="ticket-card">
+                <div class="card-header-row">
+                    <div class="user-info">
+                        <div class="avatar-circle">
+                            {{ ticket.contacto.nombre|slice:":1"|upper }}
+                        </div>
+                        <div class="user-text">
+                            <h3>{{ ticket.contacto.nombre }}</h3>
+                            <span>{{ ticket.contacto.correo }}</span>
+                        </div>
+                    </div>
+                    <div class="date-badge">
+                         {{ ticket.creado|date:"d/m" }}
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="message-box">
+                        {{ ticket.contacto.mensaje|truncatechars:120 }}
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <form method="get" action="{% url 'cambiar_estado' ticket.id %}">
+                        <select name="estado" onchange="this.form.submit()" 
+                                class="status-select status-{{ ticket.estado }}">
+                            <option value="pendiente" {% if ticket.estado == 'pendiente' %}selected{% endif %}>🟡 Pendiente</option>
+                            <option value="respondido" {% if ticket.estado == 'respondido' %}selected{% endif %}>🔵 Respondido</option>
+                            <option value="finalizado" {% if ticket.estado == 'finalizado' %}selected{% endif %}>🟢 Finalizado</option>
+                        </select>
+                    </form>
+
+                    <a href="{% url 'consulta_detalle' ticket.id %}" class="btn-chat">
+                        Abrir Chat 💬
+                    </a>
+                </div>
+            </article>
+
+            {% endwith %}
+            {% endfor %}
         </div>
 
-        <!-- Mensaje -->
-        <div style="
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 15px;
-            color: #333;
-        ">
-            <strong>💬 Mensaje:</strong><br>
-            {{ ticket.contacto.mensaje|truncatechars:160 }}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon"></div>
+            <h3>¡Todo limpio!</h3>
+            <p>No tienes consultas pendientes en este momento.</p>
         </div>
-
-        <!-- Estado y acciones -->
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <form method="get" action="{% url 'cambiar_estado' ticket.id %}">
-                <label><strong>Cambiar estado:</strong></label><br>
-                <select name="estado" onchange="this.form.submit()" style="
-                    padding: 8px;
-                    border-radius: 8px;
-                    border: 1px solid #ccc;
-                    width: 180px;
-                ">
-                    <option value="pendiente" {% if ticket.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
-                    <option value="respondido" {% if ticket.estado == 'respondido' %}selected{% endif %}>Respondido</option>
-                    <option value="finalizado" {% if ticket.estado == 'finalizado' %}selected{% endif %}>Finalizado</option>
-                </select>
-            </form>
-
-            <a href="{% url 'consulta_detalle' ticket.id %}" style="
-                background: #4db7d8;
-                padding: 10px 20px;
-                border-radius: 10px;
-                color: white;
-                font-weight: bold;
-                text-decoration: none;
-                text-align: center;
-            ">
-                Abrir chat 💬
-            </a>
-        </div>
-    </div>
-    {% endwith %}
-    {% endfor %}
+    {% endif %}
 
 </div>
-{% else %}
-<p>No hay consultas todavía.</p>
-{% endif %}
 
 {% endblock %}
