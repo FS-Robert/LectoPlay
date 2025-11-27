@@ -6,56 +6,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LectoPlay{% endblock %}</title>
 
-    <!-- TTS para que esté disponible en todo el proyecto -->
-    <script src="{% static 'js/tts.js' %}"></script>
+    {% load static %}
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    </style>
+    <script>
+    tailwind.config = {
+        corePlugins: {
+            preflight: false,
+        },
+        }
+    </script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
 </head>
 
 <body>
     
-    <header>
-        <nav class="navbar" style="padding: 10px 0; display: flex; align-items: center;">
-            <div class="container"></div>
-
-            <div id="user-info">
-                {% if user.is_authenticated %}
-                    <div class="user-avatar" style="display:flex; align-items:center; gap:10px;">
-                        <img src="{% static 'css/login-avatar.png' %}" 
-                             width="40" height="40" 
-                             alt="avatar" class="avatar">
-
-                        <span style="font-weight:600;">
-                            {{ user.username }}
-                        </span>
-
-                        <form method="post" action="{% url 'logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" style="
-                                background:#ff6b6b; border:none; padding:6px 12px;
-                                border-radius:6px; color:white; cursor:pointer;">
-                                Cerrar sesión
-                            </button>
-                        </form>
-                    </div>
-                {% else %}
-                    <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
-                        Iniciar Sesión
-                    </button>
-                {% endif %}
-            </div>
-        </nav>
+    {% csrf_token %}
+    <!-- Barra rosa -->
+    <header class="navbar">
+        <div class="container-fluid py-3 d-none d-md-block d-flex justify-content-end">
+        </div>
     </header>
+
+
+    <!-- Navbar blanco -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm white-navbar" style="border-radius:60px; padding:10px 35px; margin-top:-45px;">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3"> 
+
+                <!-- LOGIN / CERRAR SESIÓN - ESCRITORIO Y MÓVIL -->
+                <div class="d-flex align-items-center ms-auto" style="margin-left:auto;">
+                    <div id="user-info">
+                        {% if user.is_authenticated %}
+                        <!-- Usuario logueado -->
+                        <div class="user-avatar d-flex align-items-center gap-2">
+                            <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+                            <span style="font-weight:600; font-size: 10px; color:#6a4736;">
+                             {{ user.username }}
+                            </span>
+                            <form method="post" action="{% url 'logout' %}">
+                             {% csrf_token %}
+                                <button type="submit" style="
+                                    background:#ff6b6b;
+                                    border:none;
+                                    padding:2px 5px;
+                                    border-radius:6px;
+                                    color:white;
+                                    font-size: 10px;
+                                    cursor:pointer;">Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <!-- Usuario NO logueado -->
+                        <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
+                            Iniciar Sesión
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+
+             <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'css/logo3.png' %}" height="55" style="object-fit:contain;">
+            </a>
+
+            </div>
+
+            <!-- Botón hamburguesa -->
+             <button class="navbar-toggler ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#lectoplay_nav"
+             aria-controls="lectoplay_nav" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Menu principal -->
+            <div class="collapse navbar-collapse" id="lectoplay_nav">
+                <!-- LINKS CENTRALES -->
+                <ul class="navbar-nav mx-auto white-nav-links">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                        href="{% url 'home' %}">Inicio</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                        href="{% url 'about' %}">Acerca de</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'ejercicios' %}active{% endif %}"
+                        href="{% url 'ejercicios' %}">Ejercicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contacto' %}active{% endif %}"
+                        href="{% url 'contacto' %}">Contacto</a></li>
+                        
+                    {% if request.user.is_authenticated and request.user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
 
     <script>
     document.addEventListener("keydown", function(e) {
+        // Detectar Shift + A + D
         if (e.shiftKey && e.key.toLowerCase() === "a") {
             document.addEventListener("keydown", function secondKey(ev) {
                 if (ev.key.toLowerCase() === "d") {
                     const adminBtn = document.getElementById("admin-secret-btn");
-                    if(adminBtn) adminBtn.style.display = "block";
+                    adminBtn.style.display = "block";
                     document.removeEventListener("keydown", secondKey);
                 }
             });
@@ -63,35 +135,23 @@
     });
     </script>
 
-    <div class="white-navbar-container" style="width: 100%; background-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; z-index: 50;">
-        <nav class="white-navbar" style="width: 100%; max-width: none; display: flex; align-items: center; justify-content: flex-start; padding: 10px 60px; gap: 80px;">
-            <a href="{% url 'home' %}" style="display: flex; align-items: center; text-decoration: none;">
-                <img src="{% static 'css/logo3.png' %}" alt="LectoPlay" class="logo-img" 
-                     style="height: 65px; width: auto; object-fit: contain; transition: transform 0.3s ease;" 
-                     onmouseover="this.style.transform='scale(1.05)'" 
-                     onmouseout="this.style.transform='scale(1)'">
-            </a>
 
-            <ul class="nav-links" style="display: flex; align-items: center; list-style: none; gap: 50px; margin: 0; padding: 0;">
-                <li><a href="{% url 'home' %}" class="active" style="text-decoration: none; color: #333; font-weight: 700; font-size: 15px; letter-spacing: 0.5px; transition: color 0.3s;" onmouseover="this.style.color='#ffafcc'" onmouseout="this.style.color='#333'">Inicio</a></li>
-                <li><a href="{% url 'about' %}" style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px; transition: color 0.3s;" onmouseover="this.style.color='#ffafcc'" onmouseout="this.style.color='#555'">Acerca de</a></li>
-                <li><a href="{% url 'ejercicios' %}" style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px; transition: color 0.3s;" onmouseover="this.style.color='#ffafcc'" onmouseout="this.style.color='#555'">Ejercicios</a></li>
-                <li><a href="{% url 'contacto' %}" style="text-decoration: none; color: #555; font-weight: 700; font-size: 15px; letter-spacing: 0.5px; transition: color 0.3s;" onmouseover="this.style.color='#ffafcc'" onmouseout="this.style.color='#555'">Contacto</a></li>
 
-                {% if request.user.is_authenticated and request.user.is_staff %}
-                    <li style="margin-left: 20px;">
-                        <a href="{% url 'admin_dashboard' %}" style="color: #fff; background-color: #ffafcc; padding: 8px 24px; border-radius: 50px; font-weight: 800; font-size: 13px; border: 2px solid #fff; box-shadow: 0 4px 8px rgba(255, 175, 204, 0.5); transition: all 0.3s ease; text-decoration: none; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.backgroundColor='#f28482'; this.style.transform='translateY(-2px) scale(1.05)';" onmouseout="this.style.backgroundColor='#ffafcc'; this.style.transform='translateY(0) scale(1)';">
-                            🐼 Admin
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
+  
+    
+   
+    
+    
+    
+    <main class="container-fluid my-4"> 
+        {% block content %}
+            {% endblock content %}
+    </main>
+    <script src="{% static 'js/chatbot.js' %}"></script>
 
-    {% block content %}
-    {% endblock %}
 
+   
+    
     <div id="chatbot-toggle" role="button" aria-label="Abrir chat">
         <svg id="chat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22H6C4.89543 22 4 21.1046 4 20V18C4 16.8954 3.10457 16 2 16V12ZM6 18H8V20H6V18ZM12 4C7.58172 4 4 7.58172 4 12V16H20V12C20 7.58172 16.4183 4 12 4Z" fill="currentColor"/>
@@ -110,30 +170,35 @@
                 </svg>
             </button>
         </div>
+
         <div id="chat-messages" aria-live="polite">
             <div class="message-bubble bot-message">
                 ¡Hola! Soy tu asistente de LectoPlay. Estoy aquí para ayudarte con las reglas de los ejercicios, la dislexia, o cómo usar la plataforma. ¿En qué puedo ayudarte hoy?
             </div>
         </div>
+
         <form id="chat-input-form" aria-label="Formulario de chat">
             <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." required aria-label="Escribe tu mensaje">
             <button type="submit" id="chat-send-btn" aria-label="Enviar mensaje">Enviar</button>
         </form>
     </div>
-
+    
+   
+    
+    
+    
+    
     <script src="{% static 'js/chatbot.js' %}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-             // Scripts globales si son necesarios
+            // Lógica extra para el carrusel si fuera necesaria
         });
     </script>
 
     <footer>
         <p>🐾 &copy; 2025 LectoPlay. Aprende jugando </p>
     </footer>
-
-    <!-- BLOQUE PARA SCRIPTS ESPECÍFICOS DE CADA TEMPLATE -->
-    {% block extra_js %}{% endblock %}
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
