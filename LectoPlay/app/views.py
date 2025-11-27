@@ -1,6 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import random
+from .desc_game import get_level, total_levels, check_answer
+
+
+
+from httpx import request
+from matplotlib.style import context
 from . import encuentra_game
 from . import palabras_colores_game 
 from django.shortcuts import render
@@ -375,13 +381,11 @@ def lectura_rapida_game(request):
 
 
 # FIN DE LECTURA RÁPIDA
-
 # ====================================
 #   JUEGO: PALABRAS Y COLORES
 # ====================================
 
 def palabras_colores(request):
-
     total = palabras_colores_game.total_levels()
 
     # Reinicio
@@ -402,7 +406,9 @@ def palabras_colores(request):
     # Lógica del intento
     if request.method == 'POST' and request.POST.get('choice'):
         choice = request.POST.get('choice')
-        level_idx, score, correct, msg = palabras_colores_game.check_choice(choice, level_idx, score)
+        # Se desempaquetan solo los primeros 4 valores para evitar errores
+        result = palabras_colores_game.check_choice(choice, level_idx, score)
+        level_idx, score, correct, msg = result[:4]
 
         request.session['pc_level'] = level_idx
         request.session['pc_score'] = score
@@ -432,6 +438,7 @@ def palabras_colores(request):
     }
 
     return render(request, "palabras_colores.html", context)
+
 
 
 # FIN DE PALABRAS Y COLORES
@@ -483,6 +490,13 @@ def desc_palabra(request):
         "message": message,
     }
     return render(request, "desc_palabra.html", context)
+
+# ---------------------- TTS -----------------------
+
+def toggle_tts_pc(request):
+    tts_enabled = request.session.get("tts_enabled", False)
+    request.session["tts_enabled"] = not tts_enabled
+    return JsonResponse({"tts_enabled": request.session["tts_enabled"]})
 
 
 # FIN DE DESCRIPCIÓN DE LA PALABRA
@@ -624,6 +638,7 @@ def usuario_ver_ticket(request, codigo):
     })
 
 
+
 def finalizar_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.estado = "finalizado"
@@ -640,3 +655,58 @@ def cambiar_estado(request, ticket_id):
     return redirect("admin_consultas")
 
 
+def escribe_palabra_game(request):
+    idx = request.session.get("level_idx", 0)     # Nivel actual
+    score = request.session.get("score", 0)
+    narracion_activada = request.session.get("narracion_activada", False)   # Estado de voz (True/False)
+
+    total = total_levels()
+
+    if request.method == "POST":
+        # 🔹 ACTIVAR / DESACTIVAR NARRACIÓN
+        if request.POST.get("toggle_narracion"):
+            narracion_activada = not narracion_activada
+            request.session["narracion_activada"] = narracion_activada
+
+        # 🔹 REINICIAR JUEGO
+        if request.POST.get("reset") == "1":
+            request.session["level_idx"] = 0
+            request.session["score"] = 0
+            request.session["narracion_activada"] = False
+            return redirect("escribe_palabra_game")  # 👈 NOMBRE DE TU URL
+
+        # 🔹 REVISAR RESPUESTA
+        if request.POST.get("respuesta"):
+            respuesta = request.POST.get("respuesta", "")
+            idx, score, correct, msg, finished = check_answer(respuesta, idx, score)
+            request.session["level_idx"] = idx
+            request.session["score"] = score
+
+            if finished:
+                return render(request, "escribe_palabra.html", {
+                    "finished": True,
+                    "score": score,
+                    "total": total,
+                })
+
+            # 🔹 ENVIAR MENSAJE DE CORRECCIÓN
+            nivel_data = get_level(idx)
+            return render(request, "escribe_palabra.html", {
+                "descripcion": nivel_data["texto"],
+                "message": msg,
+                "level_num": idx + 1,
+                "score": score,
+                "total": total,
+                "correcta": nivel_data["respuesta"],
+                "narracion_activada": narracion_activada,
+            })
+
+    # 🔹 CARGAR NIVEL INICIAL
+    nivel_data = get_level(idx)
+    return render(request, "escribe_palabra.html", {
+        "descripcion": nivel_data["texto"],
+        "level_num": idx + 1,
+        "score": score,
+        "total": total,
+        "narracion_activada": narracion_activada,
+    })

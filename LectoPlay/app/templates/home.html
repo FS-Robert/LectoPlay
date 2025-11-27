@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LectoPlay{% endblock %}</title>
 
-    {% load static %}
+    <!-- TTS para que esté disponible en todo el proyecto -->
+    <script src="{% static 'js/tts.js' %}"></script>
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
@@ -88,6 +91,7 @@
 
     {% block content %}
     {% endblock %}
+
     <div id="chatbot-toggle" role="button" aria-label="Abrir chat">
         <svg id="chat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22H6C4.89543 22 4 21.1046 4 20V18C4 16.8954 3.10457 16 2 16V12ZM6 18H8V20H6V18ZM12 4C7.58172 4 4 7.58172 4 12V16H20V12C20 7.58172 16.4183 4 12 4Z" fill="currentColor"/>
@@ -127,6 +131,9 @@
     <footer>
         <p>🐾 &copy; 2025 LectoPlay. Aprende jugando </p>
     </footer>
+
+    <!-- BLOQUE PARA SCRIPTS ESPECÍFICOS DE CADA TEMPLATE -->
+    {% block extra_js %}{% endblock %}
 
 </body>
 </html>

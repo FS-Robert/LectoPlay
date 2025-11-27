@@ -10,6 +10,27 @@ body {
     text-align: left;
 }
 
+/*TTS LECTURA RSPIDA*/
+.btn-flotante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ff4fa0;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-flotante.activo {
+    background: #ff8ad6;
+    box-shadow: 0 0 10px 2px #ff4fa0;
+}
+
 /* Navbar */
 .navbar {
   display: flex;

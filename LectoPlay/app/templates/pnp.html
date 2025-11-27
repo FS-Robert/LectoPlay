@@ -27,7 +27,7 @@
             <div class="lectura-card">
                 <h2 class="titulo-categoria">¿Cuál es la palabra real?</h2>
 
-                <form method="post">
+                <form method="post" id="pnpForm">
                     {% csrf_token %}
                     <div class="opciones-container">
                         {% for palabra in opciones %}
@@ -49,4 +49,93 @@
         </div>
     {% endif %}
 </section>
+
+<!-- 🌸 BOTÓN FLOTANTE -->
+<button id="btnNarracion" onclick="toggleNarracion()"
+    style="position: fixed; left: 15px; bottom: 15px; padding: 12px 18px;
+           background-color: #ff85c0; border: none; border-radius: 12px;
+           font-weight: bold; color: white; box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+           cursor: pointer; z-index: 999;">
+    🔇 Narración Desactivada
+</button>
+
+<script>
+// 🔵 Estado de narración
+let narracionActiva = localStorage.getItem("narracionActiva") === "true";
+let narrando = false;
+
+// 🟢 Al cargar la página
+window.addEventListener("DOMContentLoaded", () => {
+    actualizarBotonNarracion();
+
+    {% if finished %}
+        if (narracionActiva) {
+            leerTexto(`¡Felicidades, has completado el juego! Puntuación final: {{ score }} de {{ total }}.`);
+        }
+        return;
+    {% endif %}
+
+    // Nivel 1: descripción + opciones en secuencia
+    {% if level_num == 1 and not message %}
+        if (narracionActiva) {
+            const opcionesNivel1 = [{% for palabra in opciones %}"{{ palabra|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+            // Primera frase (después de 1s)
+            setTimeout(() => {
+                leerTexto(`Palabra o no palabra. Elige cuál de las opciones es una palabra real. Las opciones son ${opcionesNivel1.join(" y ")}.`);
+            }, 1000);
+
+            // Segunda frase (después de 3s)
+            setTimeout(() => {
+                leerTexto(`Cuál es la palabra real. Las opciones son ${opcionesNivel1.join(" y ")}.`);
+            }, 3000);
+        }
+    {% else %}
+        // Nivel 2+: solo leer palabra real y opciones
+        if (narracionActiva) {
+            const opcionesNiveles = [{% for palabra in opciones %}"{{ palabra|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+            leerTexto(`Cuál es la palabra real. Las opciones son ${opcionesNiveles.join(" y ")}.`);
+        }
+    {% endif %}
+
+    // Feedback después de elegir
+    {% if message %}
+        if (narracionActiva) {
+            setTimeout(() => { leerTexto("{{ message|escapejs }}"); }, 500);
+        }
+    {% endif %}
+});
+
+// 📌 Función TTS
+function leerTexto(texto) {
+    if (!narracionActiva || narrando) return;
+    if (!('speechSynthesis' in window)) return; // navegadores sin soporte
+    narrando = true;
+
+    const utter = new SpeechSynthesisUtterance(texto);
+    utter.lang = "es-ES";
+    utter.rate = 1;
+    utter.onend = () => narrando = false;
+    speechSynthesis.speak(utter);
+}
+
+// Activar / desactivar narración
+function toggleNarracion() {
+    narracionActiva = !narracionActiva;
+    localStorage.setItem("narracionActiva", narracionActiva);
+    actualizarBotonNarracion();
+}
+
+// Actualizar botón de narración
+function actualizarBotonNarracion() {
+    const btn = document.getElementById("btnNarracion");
+    btn.textContent = narracionActiva ? "🔊 Narrador Activado" : "🔇 Narrador Desactivado";
+}
+
+// Detener TTS al salir
+window.addEventListener("beforeunload", function () {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+});
+</script>
+
 {% endblock %}

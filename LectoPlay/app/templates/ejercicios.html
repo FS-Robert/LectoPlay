@@ -4,55 +4,96 @@
 
 {% block content %}
 
-<script>
-window.addEventListener("DOMContentLoaded", () => {
-    window.protectRoute("/ejercicios");
-});
-</script>
+<style>
+/* 🔊 Botón flotante para activar narrador */
+#tts-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: #ffafcc;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+    z-index: 9999;
+}
+</style>
+
+<!-- 🔊 Botón flotante -->
+<button id="tts-btn" onclick="activarTTS()">🔊 Activar narrador</button>
 
 <section class="ejercicios">
     <h1>🧩 Ejercicios Divertidos</h1>
     <p>Aprende y juega con estos ejercicios interactivos.</p>
 
+    <button onclick="leerTexto('Ejercicios Divertidos. Aprende y juega con estos ejercicios interactivos.')">
+        🔊 Escuchar de nuevo
+    </button>
+
     <div class="cards">
-        
-        <!-- 🔹 Lectura Rápida -->
         <div class="card">
             <h3>📖 Lectura Rápida</h3>
-            <p>Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
+            <p>Lee frases cortas y responde preguntas.</p>
             <a href="{% url 'lectura_rapida_game' %}" class="btn">Empezar</a>
         </div>
-
-        <!-- 🔸 Palabras y Colores -->
         <div class="card">
             <h3>🎨 Palabras y Colores</h3>
-            <p>Asocia palabras con colores y mejora tu memoria visual.</p>
+            <p>Asocia palabras con colores.</p>
             <a href="{% url 'palabras_colores' %}" class="btn">Jugar</a>
         </div>
-
-        <!-- 🔹 Encuentra la Letra -->
         <div class="card">
             <h3>🔤 Encuentra la Letra</h3>
-            <p>Identifica letras escondidas en palabras divertidas.</p>
+            <p>Identifica letras escondidas.</p>
             <a href="{% url 'encuentra' %}" class="btn">Jugar</a>
         </div>
-
-        <!-- ✏️ Escribe la Palabra -->
         <div class="card">
-        <h3>✏️ Escribe la Palabra</h3>
-        <p>Lee una descripción y escribe la palabra correcta.</p>
-        <a href="{% url 'desc_palabra' %}" class="btn">Jugar</a>
+            <h3>✏️ Escribe la Palabra</h3>
+            <p>Lee una descripción y escribe la palabra correcta.</p>
+            <a href="{% url 'desc_palabra' %}" class="btn">Jugar</a>
         </div>
-
-        <!-- ✅ Palabra o no palabra -->
         <div class="card">
-        <h3>✅ Palabra o no palabra</h3>
-        <p>Diferencia entre palabras reales y palabras inventadas.</p>
-        <a href="{% url 'pnp' %}" class="btn">Jugar</a>
+            <h3>✅ Palabra o no palabra</h3>
+            <p>Diferencia palabras reales e inventadas.</p>
+            <a href="{% url 'pnp' %}" class="btn">Jugar</a>
         </div>
- 
-
     </div>
-
 </section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 🔊 SI leerTexto NO EXISTE, SE DEFINE (evita errores)
+if (typeof leerTexto !== "function") {
+    function leerTexto(texto) {
+        const speech = new SpeechSynthesisUtterance(texto);
+        speech.lang = "es-ES";
+        window.speechSynthesis.speak(speech);
+    }
+}
+
+// ✔️ NARRADOR al presionar el botón flotante
+function activarTTS() {
+    leerTexto("Ejercicios Divertidos. Aprende y juega con estos ejercicios interactivos.");
+    leerTexto("Elige entre los distintos ejercicios.");
+    leerTexto("Lectura Rápida, lee frases cortas y responde preguntas.");
+    leerTexto("Palabras y Colores, asocia palabras con colores.");
+    leerTexto("Encuentra la Letra, identifica letras escondidas.");
+    leerTexto("Escribe la Palabra, lee una descripción y escribe la palabra correcta.");
+    leerTexto("Palabra o no palabra, diferencia palabras reales e inventadas.");
+    leerTexto("Diviértete aprendiendo con los ejercicios.");
+
+    document.getElementById('tts-btn').style.display = 'none';
+}
+</script>
+
+<!-- 🛑 DETENER LA VOZ AL CAMBIAR DE PÁGINA -->
+<script>
+window.addEventListener("beforeunload", function () {
+    window.speechSynthesis.cancel();
+});
+</script>
 {% endblock %}

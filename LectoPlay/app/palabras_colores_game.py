@@ -12,12 +12,15 @@ LEVELS = [
     {"word": "Morado", "color": "purple"},
 ]
 
+# Total de niveles
 def total_levels():
     return len(LEVELS)
 
+# Obtener nivel actual
 def get_level(index):
     return LEVELS[index]
 
+# Generar opciones (una correcta + 3 incorrectas)
 def make_choices(correct_color):
     """Genera 4 colores mezclados donde uno es el correcto."""
     colores = ["red", "blue", "green", "yellow", "pink", "purple"]
@@ -32,10 +35,19 @@ def make_choices(correct_color):
     random.shuffle(choices)
     return choices
 
+# Verificar respuesta
 def check_choice(choice, level_idx, score):
     """
-    choice: color elegido
-    return: (nuevoNivel, nuevoScore, correct, mensaje)
+    choice: color elegido por el usuario (string)
+    level_idx: nivel actual (int)
+    score: puntaje actual (int)
+
+    return:
+        level_idx (nuevo nivel),
+        score (nuevo puntaje),
+        correct (True/False),
+        message (texto para mostrar en pantalla),
+        finished (True/False) -> indica si se terminó el juego
     """
     correct_color = LEVELS[level_idx]["color"]
 
@@ -44,9 +56,13 @@ def check_choice(choice, level_idx, score):
         message = "✔ ¡Correcto!"
         correct = True
     else:
-        message = "✘ Incorrecto"
+        message = f"✘ Incorrecto. Era {correct_color}."
         correct = False
 
+    # Pasar al siguiente nivel
     level_idx += 1
 
-    return level_idx, score, correct, message
+    # Verificar si se terminó el juego
+    finished = level_idx >= len(LEVELS)
+
+    return level_idx, score, correct, message, finished

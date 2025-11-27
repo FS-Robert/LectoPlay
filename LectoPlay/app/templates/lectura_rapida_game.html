@@ -3,18 +3,81 @@
 {% block title %}Lectura Rápida{% endblock %}
 
 {% block content %}
+<script>
+// 🔵 Estado de narración, se guarda en localStorage
+let narracionActiva = localStorage.getItem("narracionActiva") === "true";  // Recuperar estado
+let narrando = false;
+
+// 🟢 Al cargar la página, actualizar botón y leer si es necesario
+window.addEventListener("DOMContentLoaded", () => {
+    actualizarBotonNarracion();
+
+    // 📌 SOLO en categoría (antes de empezar el juego)
+    {% if not categoria_actual %}
+        leerTexto("Lectura rápida. Lee frases cortas y responde preguntas para mejorar tu comprensión.");
+    {% else %}
+        if (narracionActiva) {
+            leerCategoriaYFrase();  // 🔊 AQUÍ SE LEE TODO LO PEDIDO
+        }
+    {% endif %}
+});
+
+// 📌 Leer texto
+function leerTexto(texto) {
+    if (!narracionActiva || narrando) return;
+    narrando = true;
+
+    const utter = new SpeechSynthesisUtterance(texto);
+    utter.lang = "es-ES";
+    utter.rate = 1;
+    utter.onend = () => narrando = false;
+    speechSynthesis.speak(utter);
+}
+
+//  Activar / desactivar narración
+function toggleNarracion() {
+    narracionActiva = !narracionActiva;
+    localStorage.setItem("narracionActiva", narracionActiva); 
+    actualizarBotonNarracion();
+
+    if (narracionActiva && document.getElementById("fraseTexto")) {
+        leerCategoriaYFrase();
+    }
+}
+
+// 🟣 Leer CATEGORÍA + FRASE + PREGUNTA + OPCIONES 
+function leerCategoriaYFrase() {
+    const categoria = "{{ categoria_actual }}";
+    const frase = document.getElementById("fraseTexto")?.textContent || "";
+    let texto = "Categoría: " + categoria + ". Frase: " + frase + ". Pregunta: {{ pregunta }}. Opciones: ";
+
+    {% for opcion in opciones %}
+        texto += "{{ opcion }}, ";
+    {% endfor %}
+
+    leerTexto(texto);
+}
+
+// 🟠 Cambiar el texto del botón
+function actualizarBotonNarracion() {
+    const btn = document.getElementById("btnNarracion");
+    btn.textContent = narracionActiva ? "🔊 Narración Activada" : "🔇 Narración Desactivada";
+}
+</script>
+
+
 <div class="ejercicios">
     <h1>📖 Lectura Rápida</h1>
     <p>Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
 
     {% if not categoria_actual %}
-        <!-- PASO 1: ELEGIR CATEGORÍA -->
+        <!-- 🟢 CATEGORÍAS (solo lee la intro) -->
         <h2>Elige una categoría</h2>
         <div class="cards">
             {% for cat in categorias %}
                 <div class="card">
                     <h3>{{ cat }}</h3>
-                    <p>Frases y preguntas relacionadas con <strong>{{ cat }}</strong>.</p>
+                    <p>Frases y preguntas de <strong>{{ cat }}</strong>.</p>
                     <form method="get">
                         <input type="hidden" name="categoria" value="{{ cat }}">
                         <button type="submit" class="btn">Empezar</button>
@@ -24,64 +87,69 @@
         </div>
 
     {% else %}
-    <div class="lectura-bg">
+        <!-- 🧠 EJERCICIO -->
+        <div class="lectura-bg">
+            <div class="score-pretty">Aciertos: {{ aciertos }} / {{ intentos }}</div>
 
-        <div class="score-pretty">
-            Aciertos: {{ aciertos }} / {{ intentos }}
-        </div>
+            <div class="lectura-card">
+                <h2 class="titulo-categoria">Categoría: {{ categoria_actual }}</h2>
 
-        <div class="lectura-card">
+                <div class="frase-box-pretty">
+                    <strong>Frase:</strong>
+                    <p id="fraseTexto">{{ frase }}</p>
+                </div>
 
-            <h2 class="titulo-categoria">Categoría: {{ categoria_actual }}</h2>
+                <p><strong>Pregunta:</strong> {{ pregunta }}</p>
 
-            <div class="frase-box-pretty">
-                <strong>Frase:</strong>
-                <p>{{ frase }}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="opciones-container">
+                        {% for opcion in opciones %}
+                            <label class="opcion-linea">
+                                <input type="radio" name="respuesta" value="{{ opcion }}" required>
+                                {{ opcion }}
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                    <input type="hidden" name="correcta" value="{{ correcta }}">
+                    <input type="hidden" name="categoria" value="{{ categoria_actual }}">
+
+                    <div class="btn-row">
+                        <button type="submit" class="btn" name="action" value="responder">Responder</button>
+                        <button type="submit" class="btn" name="action" value="otra">Otra frase</button>
+                        <a href="{% url 'lectura_rapida_game' %}" class="btn">Cambiar categoría</a>
+                    </div>
+                </form>
             </div>
-
-            <p><strong>Pregunta:</strong> {{ pregunta }}</p>
-
-            <!-- ==== FORMULARIO ÚNICO: OPCIONES + BOTONES ==== -->
-            <form method="post">
-                {% csrf_token %}
-
-                <!-- Opciones de respuesta -->
-                <div class="opciones-container">
-                    {% for opcion in opciones %}
-                        <label class="opcion-linea">
-                            <input type="radio" name="respuesta" value="{{ opcion }}" required>
-                            {{ opcion }}
-                        </label>
-                    {% endfor %}
-                </div>
-
-                <!-- Datos ocultos -->
-                <input type="hidden" name="correcta" value="{{ correcta }}">
-                <input type="hidden" name="categoria" value="{{ categoria_actual }}">
-
-                <!-- Botones en una sola línea -->
-                <div class="btn-row">
-                    <button type="submit" class="btn" name="action" value="responder">
-                        Responder
-                    </button>
-
-                    <button type="submit" class="btn" name="action" value="otra">
-                        Otra frase
-                    </button>
-
-                    <a href="{% url 'lectura_rapida_game' %}" class="btn">
-                        Cambiar categoría
-                    </a>
-                </div>
-            </form>
-
-            {% if feedback %}
-                <p class="feedback">{{ feedback }}</p>
-            {% endif %}
-
         </div>
-
-    </div>
     {% endif %}
 </div>
+
+<!-- 🌸 BOTÓN FLOTANTE -->
+<button id="btnNarracion" onclick="toggleNarracion()"
+    style="
+        position: fixed;
+        left: 15px;
+        bottom: 15px;
+        padding: 12px 18px;
+        background-color: #ff85c0;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        color: white;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        cursor: pointer;
+        z-index: 999;
+    ">
+    🔇 Narración Desactivada
+</button>
+
+<!-- 🛑 DETENER LA VOZ AL CAMBIAR DE PÁGINA -->
+<script>
+window.addEventListener("beforeunload", function () {
+    window.speechSynthesis.cancel();
+});
+</script>
+
 {% endblock %}

@@ -55,4 +55,95 @@
         </div>
     {% endif %}
 </section>
+
+<!-- 🌸 BOTÓN FLOTANTE -->
+<button id="btnNarracion" onclick="toggleNarracion()"
+    style="position: fixed; left: 15px; bottom: 15px; padding: 12px 18px;
+           background-color: #ff85c0; border: none; border-radius: 12px;
+           font-weight: bold; color: white; box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+           cursor: pointer; z-index: 999;">
+    🔇 Narración Desactivada
+</button>
+
+<script>
+// 🔵 Estado de narración, se guarda en localStorage
+let narracionActiva = localStorage.getItem("narracionActiva") === "true";
+let narrando = false;
+
+// 🟢 Al cargar la página, actualizar botón y leer si es necesario
+window.addEventListener("DOMContentLoaded", () => {
+    actualizarBotonNarracion();
+
+    // 📌 Si el juego terminó (nivel final)
+    {% if finished %}
+        if(narracionActiva) {
+            leerTexto("¡Felicidades, has completado el juego!");
+        }
+        return; // No seguir leyendo nada más
+    {% endif %}
+
+    // 📌 Nivel 1: bienvenida + descripción
+    {% if level_num == 1 and not message %}
+        if(narracionActiva) {
+            leerTexto("Bienvenido al juego. Escribe la palabra correcta según la descripción.");
+            setTimeout(() => {
+                leerNivelYDescripcion();
+            }, 1500); // Pequeño retraso para separar mensajes
+        }
+    {% else %}
+        // 📌 Niveles 2 a 10: solo descripción
+        if(narracionActiva) {
+            leerNivelYDescripcion();
+        }
+    {% endif %}
+
+    // 📌 Leer feedback si existe
+    {% if message %}
+        if(narracionActiva) {
+            setTimeout(() => { leerTexto("{{ message }}"); }, 500);
+        }
+    {% endif %}
+});
+
+// 📌 Función TTS
+function leerTexto(texto) {
+    if (!narracionActiva || narrando) return;
+    narrando = true;
+
+    const utter = new SpeechSynthesisUtterance(texto);
+    utter.lang = "es-ES";
+    utter.rate = 1;
+    utter.onend = () => narrando = false;
+    speechSynthesis.speak(utter);
+}
+
+// 🔵 Leer nivel actual + descripción
+function leerNivelYDescripcion() {
+    const descripcion = document.querySelector(".frase-box-pretty p")?.textContent || "{{ descripcion }}";
+    leerTexto(`Nivel {{ level_num }}. Escribe la palabra. Descripción: ${descripcion}`);
+}
+
+// 🔄 Activar / desactivar narración
+function toggleNarracion() {
+    narracionActiva = !narracionActiva;
+    localStorage.setItem("narracionActiva", narracionActiva);
+    actualizarBotonNarracion();
+
+    if (narracionActiva && !({{ finished|yesno:"true,false" }})) {
+        leerNivelYDescripcion();
+    }
+}
+
+// 🔵 Actualizar texto del botón
+function actualizarBotonNarracion() {
+    const btn = document.getElementById("btnNarracion");
+    btn.textContent = narracionActiva ? "🔊 Narrador Activado" : "🔇 Narrador Desactivado";
+}
+
+// 🛑 Detener la voz al cambiar de página
+window.addEventListener("beforeunload", function () {
+    window.speechSynthesis.cancel();
+});
+</script>
+
 {% endblock %}

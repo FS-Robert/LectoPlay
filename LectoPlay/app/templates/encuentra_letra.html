@@ -6,6 +6,12 @@
 <section class="ejercicios">
     <h1>🔤 Encuentra la Letra</h1>
 
+    <!-- BOTÓN PARA ACTIVAR/DESACTIVAR NARRADOR -->
+    <button id="toggle-tts" class="btn"
+            style="position: fixed; bottom: 20px; left: 20px; z-index: 999;">
+        Activar Narrador
+    </button>
+
     {% if finished %}
         <div class="result">
             <p>¡Has completado el juego!</p>
@@ -20,24 +26,28 @@
             <p>Nivel {{ level_num }} / {{ total }}</p>
             <p>Puntos: <strong>{{ score }}</strong></p>
 
+            <!-- PALABRA COMO BOTONES -->
             <div style="margin-top:1rem; font-size:1.6rem;">
                 <div>Palabra:
                     <form method="post" id="word-form" style="display:inline-block; margin-left:0.5rem;">
                         {% csrf_token %}
-                        {% comment %}Render each character as a button so the user can hover and click directly on the letter shown in the word.{% endcomment %}
                         {% for ch in word %}
-                            <button type="submit" name="choice" value="{{ ch }}" class="letter-btn" aria-label="Letra {{ ch }}">{{ ch|upper }}</button>
+                            <button type="submit" name="choice" value="{{ ch }}" class="letter-btn" aria-label="Letra {{ ch }}">
+                                {{ ch|upper }}
+                            </button>
                         {% endfor %}
                     </form>
                 </div>
-                <div style="margin-top:0.5rem;">Encuentra la letra: <strong>{{ target|upper }}</strong></div>
+
+                <!-- LETRA OBJETIVO -->
+                <div style="margin-top:0.5rem;">
+                    Encuentra la letra: <strong id="target-letter">{{ target|upper }}</strong>
+                </div>
             </div>
 
             {% if message %}
                 <div style="color:crimson; margin-top:0.5rem; font-weight:bold;">{{ message }}</div>
             {% endif %}
-
-            {# Removed separate choice buttons: selection is now made by clicking letters in the word above #}
 
             <form method="post" style="margin-top:0.5rem;">
                 {% csrf_token %}
@@ -45,6 +55,60 @@
             </form>
         </div>
     {% endif %}
-
 </section>
+
+<script>
+    // 🔵 Estado de TTS persistente
+    let ttsActive = localStorage.getItem("ttsActive") === "true";
+    let level = {{ level_num }};
+    let word = "{{ word }}";
+    let target = "{{ target }}";
+
+    const btn = document.getElementById("toggle-tts");
+
+    // Actualizar texto del botón según estado
+    function updateButton() {
+        btn.textContent = ttsActive ? "🔇 Desactivar Narrador" : "🔊 Activar Narrador";
+    }
+    updateButton();
+
+    // Activar/Desactivar TTS
+    btn.addEventListener("click", () => {
+        ttsActive = !ttsActive;
+        localStorage.setItem("ttsActive", ttsActive); // Persistencia entre niveles
+        updateButton();
+        if (!ttsActive) stopVoice();
+        else speak(level === 1
+            ? `Encuentra la letra. La palabra es ${word}. Debes encontrar la letra ${target}.`
+            : `La palabra es ${word}. Busca la letra ${target}`);
+    });
+
+    // Detener TTS
+    function stopVoice() {
+        window.speechSynthesis.cancel();
+    }
+
+    // Función TTS
+    function speak(text) {
+        if (!ttsActive) return;
+        stopVoice();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "es-ES";
+        msg.rate = 0.9;
+        msg.pitch = 1.2;
+        window.speechSynthesis.speak(msg);
+    }
+
+    // 🔵 Al cargar la página, leer automáticamente si TTS activo
+    if (ttsActive) {
+        let text = level === 1
+            ? `Encuentra la letra. La palabra es ${word}. Debes encontrar la letra ${target}.`
+            : `La palabra es ${word}. Busca la letra ${target}`;
+        speak(text);
+    }
+
+    // 🔵 Detener TTS al cambiar de página
+    window.addEventListener("beforeunload", stopVoice);
+</script>
+
 {% endblock %}
