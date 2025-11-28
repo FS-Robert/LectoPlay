@@ -192,7 +192,7 @@ def inicio_view(request):
 def about_view(request):
     return render(request, 'about.html')
 
-
+@login_required(login_url='/login/') 
 def ejercicios(request):
     return render(request, 'ejercicios.html')
 

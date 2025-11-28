@@ -2157,3 +2157,849 @@ p {
     margin-bottom: 10px;
 }
 
+/* =========================================
+   ESTILOS ESPECÍFICOS: ACERCA DE (About)
+   ========================================= */
+
+/* Encabezado suave */
+.about-header {
+    text-align: center;
+    padding: 40px 20px 20px 20px;
+}
+
+.about-header h1 {
+    color: #ffafcc;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 0px #fff;
+}
+
+.about-header p {
+    color: #555;
+    font-size: 1.2rem;
+}
+
+/* Animación del Osito (Flotando) */
+.floating-panda {
+    animation: floatPanda 3s ease-in-out infinite;
+}
+
+@keyframes floatPanda {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Títulos de Sección */
+.section-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.section-title h2 {
+    color: #023047;
+    font-size: 2rem;
+}
+
+/* Tarjetas Informativas (Variación de tus .card existentes) */
+.info-card {
+    background: #fff;
+    border: 2px solid #e0fbfc;
+    text-align: center;
+    min-height: 250px;
+}
+
+.icon-header {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    background: #fdfbf7;
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    border-radius: 50%;
+    margin: 0 auto 15px auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* =========================================
+   SECCIÓN DEL EQUIPO (Team)
+   ========================================= */
+
+.team-section {
+    background: linear-gradient(135deg, #a2d2ff 0%, #ffafcc 100%);
+    padding: 60px 20px;
+    border-radius: 40px 40px 0 0; /* Curva superior bonita */
+    margin-top: 50px;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.team-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 25px 15px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    border: 3px solid transparent;
+}
+
+.team-card:hover {
+    transform: translateY(-10px);
+    border-color: #fff;
+    background: white;
+}
+
+.avatar-placeholder {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin: 0 auto 15px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: white;
+    font-size: 1.5rem;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.team-card h4 {
+    color: #023047;
+    font-size: 1rem;
+    margin: 10px 0 5px 0;
+    font-weight: 700;
+}
+
+.team-card span {
+    color: #888;
+    font-size: 0.8rem;
+    display: block;
+    font-weight: 600;
+}
+
+/* =========================================
+   ESTILOS PÁGINA DE INICIO (HOME)
+   ========================================= */
+
+/* --- Botón del Carrusel Principal --- */
+.btn-hero {
+    background-color: #ffafcc;
+    color: white;
+    border-radius: 50px;
+    border: none;
+    font-weight: bold;
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-hero:hover {
+    background-color: #ff8ab7;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* --- Sección de Juegos --- */
+.games-section {
+    background-color: #fdfbf7;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1100px;
+    margin: 40px auto 0;
+}
+
+.game-card-home {
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+    border: 4px solid transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-card-home:hover {
+    transform: translateY(-10px);
+    border-color: #ffafcc;
+}
+
+.game-img-container {
+    height: 200px;
+    overflow: hidden;
+    background: #eaf6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.game-card-home:hover .game-img-container img {
+    transform: scale(1.1);
+}
+
+.game-info {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.game-info h3 {
+    color: #023047;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.game-info p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+/* Botones de las tarjetas de juego */
+.btn-game-play {
+    width: 100%;
+    font-weight: bold;
+    border-radius: 15px;
+    padding: 10px;
+    border: none;
+    transition: opacity 0.2s;
+}
+.btn-game-play:hover { opacity: 0.9; }
+
+/* Variantes de color para los botones */
+.btn-blue { background-color: #a2d2ff; color: #023047; }
+.btn-pink { background-color: #ffafcc; color: white; }
+.btn-yellow { background-color: #ffd166; color: white; }
+
+
+/* --- Sección de Características (Por qué elegirnos) --- */
+.features-section {
+    padding: 60px 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #fff0f5 100%);
+}
+
+.feature-box {
+    text-align: center;
+    padding: 20px;
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 175, 204, 0.5);
+}
+
+/* Colores de iconos */
+.icon-blue { background-color: #a2d2ff; }
+.icon-pink { background-color: #ffafcc; }
+.icon-yellow { background-color: #ffd166; }
+
+/* =========================================
+   PÁGINA DE CONTACTO
+   ========================================= */
+
+.contact-section {
+    padding: 60px 0;
+    min-height: 80vh; /* Para que ocupe buena parte de la pantalla */
+    display: flex;
+    align-items: center;
+}
+
+/* Columna Izquierda (Información) */
+.contact-info-box {
+    padding-right: 30px;
+}
+
+.contact-title {
+    color: #023047;
+    font-weight: 800;
+    font-size: 3rem;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.contact-desc {
+    color: #666;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.contact-features {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+.contact-features li {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.feature-icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.contact-features li:hover .feature-icon-circle {
+    transform: scale(1.1) rotate(10deg);
+}
+
+/* Columna Derecha (Formulario) */
+.contact-card {
+    background: white;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    border: 4px solid #e0fbfc; /* Borde suave azul */
+}
+
+.form-label-styled {
+    font-weight: 700;
+    color: #023047;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.input-styled {
+    background-color: #fdfbf7;
+    border: 2px solid #eee;
+    border-radius: 15px;
+    padding: 12px 15px;
+    width: 100%;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-styled:focus {
+    background-color: white;
+    border-color: #219ebc;
+    box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.15);
+    outline: none;
+}
+
+.btn-send-msg {
+    background-color: #ffafcc;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 30px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(255, 175, 204, 0.5);
+    transition: transform 0.2s, background 0.2s;
+    margin-top: 10px;
+}
+
+.btn-send-msg:hover {
+    background-color: #ff8ab7;
+    transform: translateY(-3px);
+}
+
+/* --- ESTILOS DEL MODAL (POPUP) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 48, 71, 0.6); /* Azul oscuro semi-transparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content-box {
+    background: white;
+    padding: 40px;
+    border-radius: 30px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    position: relative;
+    border: 5px solid #bde0fe;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-title {
+    color: #ff6fa8;
+    margin-bottom: 15px;
+    font-weight: 800;
+    font-size: 1.8rem;
+}
+
+.alert-warning-box {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #ffeeba;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.url-input-readonly {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #4db7d8;
+    border-radius: 10px;
+    background: #f0f8ff;
+    color: #023047;
+    font-size: 0.9rem;
+    text-align: center;
+    font-weight: bold;
+    cursor: text;
+    margin-bottom: 5px;
+}
+
+.btn-modal-chat {
+    display: block;
+    width: 100%;
+    background: #219ebc;
+    color: white;
+    padding: 14px 0;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    transition: 0.2s;
+}
+
+.btn-modal-chat:hover {
+    background: #023047;
+    transform: scale(1.02);
+}
+
+.btn-modal-close {
+    background: transparent;
+    color: #999;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* =========================================
+   SECCIÓN: LECTURA RÁPIDA (Categorías)
+   ========================================= */
+
+/* Contenedor principal */
+.categories-section {
+    padding: 40px 0;
+}
+
+/* Tarjeta de Categoría Base */
+.category-card {
+    background: white;
+    border: none;
+    border-radius: 25px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%; /* Para que todas tengan la misma altura */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+
+/* Icono decorativo superior */
+.cat-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    transition: 0.3s;
+}
+
+.category-card:hover .cat-icon {
+    transform: scale(1.1) rotate(10deg);
+    background: white;
+}
+
+/* Título de la categoría */
+.cat-title {
+    color: #023047;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    text-transform: capitalize;
+}
+
+/* Descripción */
+.cat-desc {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    flex-grow: 1; /* Empuja el botón hacia abajo */
+}
+
+/* Botón de Empezar */
+.btn-cat-start {
+    width: 100%;
+    padding: 12px;
+    border-radius: 50px;
+    font-weight: bold;
+    border: none;
+    color: white;
+    transition: 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-cat-start:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+/* --- SISTEMA DE COLORES ROTATIVOS --- */
+/* Usamos nth-child para asignar colores automáticamente sin cambiar el HTML */
+
+/* 1. Azul */
+.col-category:nth-child(4n+1) .category-card { border-top: 6px solid #a2d2ff; }
+.col-category:nth-child(4n+1) .cat-icon { color: #a2d2ff; background-color: #eaf6ff; }
+.col-category:nth-child(4n+1) .btn-cat-start { background-color: #a2d2ff; color: #023047; }
+
+/* 2. Rosa */
+.col-category:nth-child(4n+2) .category-card { border-top: 6px solid #ffafcc; }
+.col-category:nth-child(4n+2) .cat-icon { color: #ffafcc; background-color: #fff0f5; }
+.col-category:nth-child(4n+2) .btn-cat-start { background-color: #ffafcc; }
+
+/* 3. Amarillo */
+.col-category:nth-child(4n+3) .category-card { border-top: 6px solid #ffd166; }
+.col-category:nth-child(4n+3) .cat-icon { color: #ffd166; background-color: #fffbe6; }
+.col-category:nth-child(4n+3) .btn-cat-start { background-color: #ffd166; }
+
+/* 4. Morado */
+.col-category:nth-child(4n+4) .category-card { border-top: 6px solid #cdb4db; }
+.col-category:nth-child(4n+4) .cat-icon { color: #cdb4db; background-color: #f7ebff; }
+.col-category:nth-child(4n+4) .btn-cat-start { background-color: #cdb4db; }
+
+/* =========================================
+   JUEGO: PALABRAS Y COLORES
+   ========================================= */
+
+.game-bg-colors {
+    background: linear-gradient(180deg, #fff0f5, #eaf6ff);
+    padding: 40px 20px;
+    border-radius: 25px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.word-display {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #023047;
+    margin: 30px 0;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.color-options-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.color-circle-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.color-circle-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.color-circle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Feedback de error/éxito */
+.feedback-msg {
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.feedback-error {
+    background-color: #ffe6e6;
+    color: #e03131;
+    border: 1px solid #ffa8a8;
+}
+
+.feedback-success {
+    background-color: #e6ffed;
+    color: #2f9e44;
+    border: 1px solid #95d5b2;
+}
+
+
+/* =========================================
+   JUEGO: ENCUENTRA LA LETRA
+   ========================================= */
+.game-bg-letters {
+    background: linear-gradient(180deg, #fffbe6, #eaf6ff);
+    padding: 40px 20px;
+    border-radius: 25px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.word-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.letter-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #023047;
+    background: white;
+    border: 3px solid #ffd166;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 #ffd166;
+}
+
+.letter-btn:hover {
+    transform: translateY(-4px);
+    background: #fffdf5;
+    box-shadow: 0 8px 0 #ffd166;
+}
+
+.letter-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #ffd166;
+}
+
+.target-instruction {
+    font-size: 1.5rem;
+    color: #023047;
+    margin-bottom: 20px;
+}
+
+.target-letter-display {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fb8500;
+    display: inline-block;
+    padding: 0 10px;
+    background: white;
+    border-radius: 10px;
+    border: 2px dashed #fb8500;
+    vertical-align: middle;
+}
+
+/* =========================================
+   JUEGO: ESCRIBE LA PALABRA
+   ========================================= */
+
+.game-bg-write {
+    background: linear-gradient(180deg, #f3e5f5, #e1bee7); /* Tonos violetas suaves */
+    padding: 40px 30px;
+    border-radius: 25px;
+    max-width: 650px;
+    margin: 0 auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    border: 4px solid white;
+}
+
+/* Caja de la descripción */
+.desc-box {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    border-left: 6px solid #9d4edd;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.desc-text {
+    font-size: 1.3rem;
+    color: #4a4a4a;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Input de texto grande y amigable */
+.write-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 3px solid #d1c4e9;
+    border-radius: 50px;
+    outline: none;
+    color: #512da8;
+    background-color: #fff;
+    transition: 0.3s;
+    letter-spacing: 1px;
+}
+
+.write-input:focus {
+    border-color: #9d4edd;
+    box-shadow: 0 0 0 5px rgba(157, 78, 221, 0.2);
+}
+
+.write-input::placeholder {
+    color: #ccc;
+    font-size: 1.2rem;
+}
+
+
+/* =========================================
+   JUEGO: PALABRA O NO PALABRA
+   ========================================= */
+
+.game-bg-pnp {
+    background: linear-gradient(180deg, #e0fbfc, #cbf3f0); /* Tonos menta suaves */
+    padding: 40px 30px;
+    border-radius: 25px;
+    max-width: 650px;
+    margin: 0 auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    border: 4px solid white;
+}
+
+/* Pregunta destacada */
+.pnp-question {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #2ec4b6; /* Verde azulado */
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 0 white;
+}
+
+/* Contenedor de botones */
+.pnp-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Botones de palabras */
+.btn-word-option {
+    background-color: white;
+    color: #023047;
+    border: 3px solid #90e0ef;
+    border-radius: 15px;
+    padding: 15px 40px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    width: 100%;
+    max-width: 400px;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    box-shadow: 0 5px 0 #90e0ef; /* Efecto 3D */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-word-option:hover {
+    transform: translateY(-3px);
+    background-color: #f0fdff;
+    border-color: #00b4d8;
+    box-shadow: 0 8px 0 #00b4d8;
+}
+
+.btn-word-option:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #00b4d8;
+}

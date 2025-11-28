@@ -5,61 +5,123 @@
 {% block content %}
 
 <style>
-    /* Botón flotante para activar narrador */
+    /* Botón flotante del narrador */
     #tts-btn {
         position: fixed;
         bottom: 30px;
         left: 30px;
         background: #ffafcc;
+        color: white;
         padding: 15px 25px;
         border-radius: 50px;
         font-size: 16px;
         border: none;
         cursor: pointer;
         font-weight: bold;
-        box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0px 4px 15px rgba(255, 175, 204, 0.6);
         z-index: 9999;
+        transition: transform 0.2s, background 0.2s;
+    }
+
+    #tts-btn:hover {
+        transform: scale(1.05);
+        background: #ff8ab7;
+    }
+
+    /* Efecto hover en las tarjetas */
+    .game-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 20px;
+        background: white;
+    }
+
+    .game-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+
+    /* Iconos grandes */
+    .game-icon {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+        display: inline-block;
     }
 </style>
 
 <button id="tts-btn" onclick="activarTTS()">🔊 Activar narrador</button>
 
-<section class="ejercicios">
-    <h1>🧩 Ejercicios Divertidos</h1>
-    <p>Aprende y juega con estos ejercicios interactivos.</p>
-
-    <button onclick="leerTexto('Ejercicios Divertidos. Aprende y juega con estos ejercicios interactivos.')">
-        🔊 Escuchar de nuevo
-    </button>
-
-    <div class="cards">
-        <div class="card">
-            <h3>📖 Lectura Rápida</h3>
-            <p>Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
-            <a href="{% url 'lectura_rapida_game' %}" class="btn">Jugar</a>
-        </div>
-        <div class="card">
-            <h3>🎨 Palabras y Colores</h3>
-            <p>Asocia palabras con colores.</p>
-            <a href="{% url 'palabras_colores' %}" class="btn">Jugar</a>
-        </div>
-        <div class="card">
-            <h3>🔤 Encuentra la Letra</h3>
-            <p>Identifica letras escondidas.</p>
-            <a href="{% url 'encuentra' %}" class="btn">Jugar</a>
-        </div>
-        <div class="card">
-            <h3>✏️ Escribe la Palabra</h3>
-            <p>Lee una descripción y escribe la palabra correcta.</p>
-            <a href="{% url 'desc_palabra' %}" class="btn">Jugar</a>
-        </div>
-        <div class="card">
-            <h3>✅ Palabra o no palabra</h3>
-            <p>Diferencia palabras reales e inventadas.</p>
-            <a href="{% url 'pnp' %}" class="btn">Jugar</a>
-        </div>
+<div class="container py-5">
+    
+    <div class="text-center mb-5">
+        <h1 class="fw-bold" style="color: #023047;">🧩 Ejercicios Divertidos</h1>
+        <p class="lead text-muted">Aprende y juega con estos ejercicios interactivos.</p>
+        
+        <button onclick="leerTexto('Ejercicios Divertidos. Aprende y juega con estos ejercicios interactivos.')" 
+                class="btn btn-outline-info btn-sm rounded-pill mt-2">
+            🔊 Escuchar de nuevo
+        </button>
     </div>
-</section>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+
+        <div class="col">
+            <div class="card h-100 shadow-sm game-card" style="border-top: 5px solid #a2d2ff;">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="game-icon">📖</div>
+                    <h3 class="h4 card-title fw-bold" style="color: #219ebc;">Lectura Rápida</h3>
+                    <p class="card-text text-muted flex-grow-1">Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
+                    <a href="{% url 'lectura_rapida_game' %}" class="btn w-100 fw-bold mt-3" style="background-color: #a2d2ff; color: #023047;">Jugar Ahora</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 shadow-sm game-card" style="border-top: 5px solid #ffafcc;">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="game-icon">🎨</div>
+                    <h3 class="h4 card-title fw-bold" style="color: #ff5d8f;">Palabras y Colores</h3>
+                    <p class="card-text text-muted flex-grow-1">Asocia palabras con sus colores reales para entrenar tu atención.</p>
+                    <a href="{% url 'palabras_colores' %}" class="btn w-100 fw-bold mt-3" style="background-color: #ffafcc; color: white;">Jugar Ahora</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 shadow-sm game-card" style="border-top: 5px solid #ffd166;">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="game-icon">🔤</div>
+                    <h3 class="h4 card-title fw-bold" style="color: #fb8500;">Encuentra la Letra</h3>
+                    <p class="card-text text-muted flex-grow-1">Conviértete en detective e identifica letras escondidas.</p>
+                    <a href="{% url 'encuentra' %}" class="btn w-100 fw-bold mt-3" style="background-color: #ffd166; color: white;">Jugar Ahora</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 shadow-sm game-card" style="border-top: 5px solid #cdb4db;">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="game-icon">✏️</div>
+                    <h3 class="h4 card-title fw-bold" style="color: #9d4edd;">Escribe la Palabra</h3>
+                    <p class="card-text text-muted flex-grow-1">Lee una descripción y escribe la palabra correcta.</p>
+                    <a href="{% url 'desc_palabra' %}" class="btn w-100 fw-bold mt-3" style="background-color: #cdb4db; color: white;">Jugar Ahora</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 shadow-sm game-card" style="border-top: 5px solid #bde0fe;">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="game-icon">✅</div>
+                    <h3 class="h4 card-title fw-bold" style="color: #0077b6;">Palabra o no</h3>
+                    <p class="card-text text-muted flex-grow-1">Diferencia palabras reales de las inventadas.</p>
+                    <a href="{% url 'pnp' %}" class="btn w-100 fw-bold mt-3" style="background-color: #bde0fe; color: #023047;">Jugar Ahora</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 {% endblock %}
 
@@ -68,15 +130,9 @@
 // Variable global para referencia del audio actual
 window.currentUtterance = null;
 
-/**
- * Función recursiva para narrar una lista de mensajes.
- * Recibe el botón (ttsBtn) para restaurar el texto cuando termine la lista.
- */
 function narrarSecuencia(lista, ttsBtn) {
-    // Caso base: si la lista está vacía, terminamos
     if (lista.length === 0) {
         console.log("Secuencia terminada.");
-        // Restaurar el botón al estado original
         if (ttsBtn) {
             ttsBtn.textContent = '🔊 Activar narrador';
         }
@@ -85,33 +141,25 @@ function narrarSecuencia(lista, ttsBtn) {
 
     console.log("Reproduciendo:", lista[0]);
 
-    // Crear la instancia de voz
     window.currentUtterance = new SpeechSynthesisUtterance(lista[0]);
     window.currentUtterance.lang = "es-ES";
-    window.currentUtterance.rate = 0.9; // Velocidad ligeramente más lenta
+    window.currentUtterance.rate = 0.9;
 
-    // Evento: Al terminar este audio, reproducir el siguiente (recursión)
     window.currentUtterance.onend = function() {
         narrarSecuencia(lista.slice(1), ttsBtn);
     };
 
-    // Evento: Manejo de errores (intenta seguir con el siguiente)
     window.currentUtterance.onerror = function(event) {
         console.error("Error en TTS:", event);
         narrarSecuencia(lista.slice(1), ttsBtn);
     };
 
-    // Hablar
     window.speechSynthesis.speak(window.currentUtterance);
 }
 
-/**
- * Función simple para leer un texto puntual (botones de ayuda)
- */
 function leerTexto(texto) {
-    window.speechSynthesis.cancel(); // Detiene cualquier narración en curso
+    window.speechSynthesis.cancel();
     
-    // Si la narración global estaba activa, reseteamos el botón grande
     const ttsBtn = document.getElementById('tts-btn');
     if (ttsBtn && ttsBtn.textContent.includes('Desactivar')) {
         ttsBtn.textContent = '🔊 Activar narrador';
@@ -122,13 +170,9 @@ function leerTexto(texto) {
     window.speechSynthesis.speak(speech);
 }
 
-/**
- * Función principal del botón flotante (Toggle Activar/Desactivar)
- */
 function activarTTS() {
     const ttsBtn = document.getElementById('tts-btn');
     
-    // CASO 1: Si ya está narrando (el botón dice "Desactivar"), lo paramos.
     if (ttsBtn.textContent.includes('Desactivar')) {
         window.speechSynthesis.cancel();
         ttsBtn.textContent = '🔊 Activar narrador';
@@ -136,11 +180,9 @@ function activarTTS() {
         return;
     }
 
-    // CASO 2: Iniciar narración
     console.log("Iniciando narrador...");
-    window.speechSynthesis.cancel(); // Limpieza preventiva
+    window.speechSynthesis.cancel();
     
-    // Cambiar estado del botón
     ttsBtn.textContent = '🛑 Desactivar narrador';
 
     const mensajes = [
@@ -154,13 +196,11 @@ function activarTTS() {
         "Diviértete aprendiendo con los ejercicios."
     ];
 
-    // Iniciar secuencia pasando el botón para resetearlo al final
     narrarSecuencia(mensajes, ttsBtn);
 }
 </script>
 
 <script>
-// Detener voz si el usuario cambia de página o recarga
 window.addEventListener("beforeunload", function () {
     window.speechSynthesis.cancel();
 });

@@ -1,114 +1,172 @@
 {% extends 'home.html' %}
+{% load static %}
 
 {% block title %}Encuentra la Letra | LectoPlay{% endblock %}
 
 {% block content %}
-<section class="ejercicios">
-    <h1>🔤 Encuentra la Letra</h1>
 
-    <!-- BOTÓN PARA ACTIVAR/DESACTIVAR NARRADOR -->
-    <button id="toggle-tts" class="btn"
-            style="position: fixed; bottom: 20px; left: 20px; z-index: 999;">
-        Activar Narrador
-    </button>
+<div class="container py-5">
+    
+    <div class="text-center mb-4">
+        <h1 class="fw-bold" style="color: #fb8500;">🔤 Encuentra la Letra</h1>
+        <p class="lead text-muted">Busca y selecciona la letra correcta dentro de la palabra.</p>
+    </div>
 
     {% if finished %}
-        <div class="result">
-            <p>¡Has completado el juego!</p>
-            <p>Puntuación final: <strong>{{ score }}</strong> / {{ total }} niveles</p>
-            <form method="post" style="margin-top:1rem;">
-                {% csrf_token %}
-                <button name="reset" value="1" class="btn">Jugar de nuevo</button>
-            </form>
-        </div>
-    {% else %}
-        <div class="game">
-            <p>Nivel {{ level_num }} / {{ total }}</p>
-            <p>Puntos: <strong>{{ score }}</strong></p>
-
-            <!-- PALABRA COMO BOTONES -->
-            <div style="margin-top:1rem; font-size:1.6rem;">
-                <div>Palabra:
-                    <form method="post" id="word-form" style="display:inline-block; margin-left:0.5rem;">
-                        {% csrf_token %}
-                        {% for ch in word %}
-                            <button type="submit" name="choice" value="{{ ch }}" class="letter-btn" aria-label="Letra {{ ch }}">
-                                {{ ch|upper }}
-                            </button>
-                        {% endfor %}
-                    </form>
-                </div>
-
-                <!-- LETRA OBJETIVO -->
-                <div style="margin-top:0.5rem;">
-                    Encuentra la letra: <strong id="target-letter">{{ target|upper }}</strong>
-                </div>
+        <div class="game-bg-letters text-center">
+            <div class="display-1 mb-3">🎉</div>
+            <h2 class="fw-bold text-success mb-3">¡Misión Cumplida!</h2>
+            
+            <div class="p-4 bg-white rounded-4 shadow-sm d-inline-block mb-4">
+                <p class="mb-0 fs-4 text-secondary">Puntuación Final</p>
+                <p class="display-4 fw-bold text-warning mb-0">{{ score }} <span class="fs-4 text-muted">/ {{ total }}</span></p>
             </div>
 
+            <form method="post">
+                {% csrf_token %}
+                <button name="reset" value="1" class="btn btn-lg btn-warning text-white rounded-pill px-5 fw-bold shadow-sm">
+                    🔄 Jugar de nuevo
+                </button>
+            </form>
+        </div>
+
+    {% else %}
+        <div class="game-bg-letters text-center">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-6">
+                    Nivel {{ level_num }} / {{ total }}
+                </span>
+                <span class="badge bg-primary text-white px-3 py-2 rounded-pill fs-6">
+                    ⭐ Puntos: {{ score }}
+                </span>
+            </div>
+
+            <div class="target-instruction">
+                Encuentra la letra: 
+                <span class="target-letter-display">{{ target|upper }}</span>
+            </div>
+
+            <form method="post" id="word-form">
+                {% csrf_token %}
+                <div class="word-container">
+                    {% for ch in word %}
+                        <button type="submit" name="choice" value="{{ ch }}" class="letter-btn" aria-label="Letra {{ ch }}">
+                            {{ ch|upper }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </form>
+
             {% if message %}
-                <div style="color:crimson; margin-top:0.5rem; font-weight:bold;">{{ message }}</div>
+                <div class="alert alert-danger fw-bold d-inline-block px-4 py-2 rounded-pill animate__animated animate__shakeX">
+                    {{ message }}
+                </div>
             {% endif %}
 
-            <form method="post" style="margin-top:0.5rem;">
+            <form method="post" class="mt-4">
                 {% csrf_token %}
-                <button name="reset" value="1" class="btn">Reiniciar</button>
+                <button name="reset" value="1" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                     Reiniciar Nivel
+                </button>
             </form>
         </div>
     {% endif %}
-</section>
 
+</div>
+
+<button id="btnNarracion" onclick="toggleNarracion()"
+    class="shadow"
+    style="
+        position: fixed; left: 20px; bottom: 20px; padding: 12px 20px;
+        background-color: #ff85c0; border: none; border-radius: 50px;
+        font-weight: bold; color: white; cursor: pointer; z-index: 999;
+        transition: 0.3s; font-size: 0.9rem;
+    ">
+    🔇 Narrador Desactivado
+</button>
+
+{% endblock %}
+
+{% block extra_js %}
 <script>
-    // 🔵 Estado de TTS persistente
-    let ttsActive = localStorage.getItem("ttsActive") === "true";
-    let level = {{ level_num }};
-    let word = "{{ word }}";
-    let target = "{{ target }}";
+    //  Estado de TTS persistente (Estandarizado a 'narracionActiva')
+    let narracionActiva = localStorage.getItem("narracionActiva") === "true";
+    
+    //  Inicialización segura de variables para evitar errores de sintaxis
+    // Usamos |default para que si Django no envía el dato, JS reciba un valor seguro
+    const isFinished = "{{ finished|yesno:'true,false' }}" === "true";
+    const level = {{ level_num|default:"0" }};
+    const word = "{{ word|default:'' }}";
+    const target = "{{ target|default:'' }}";
 
-    const btn = document.getElementById("toggle-tts");
+    const btn = document.getElementById("btnNarracion");
 
-    // Actualizar texto del botón según estado
+    // Actualizar texto del botón
     function updateButton() {
-        btn.textContent = ttsActive ? "🔇 Desactivar Narrador" : "🔊 Activar Narrador";
+        if(btn) {
+            btn.textContent = narracionActiva ? "🔊 Narrador Activado" : "🔇 Narrador Desactivado";
+            btn.style.backgroundColor = narracionActiva ? "#4cc9f0" : "#ff85c0";
+        }
     }
+    
+    // Inicializar
     updateButton();
 
-    // Activar/Desactivar TTS
-    btn.addEventListener("click", () => {
-        ttsActive = !ttsActive;
-        localStorage.setItem("ttsActive", ttsActive); // Persistencia entre niveles
-        updateButton();
-        if (!ttsActive) stopVoice();
-        else speak(level === 1
-            ? `Encuentra la letra. La palabra es ${word}. Debes encontrar la letra ${target}.`
-            : `La palabra es ${word}. Busca la letra ${target}`);
-    });
+    // Función Hablar
+    function leerTexto(text) {
+        if (!narracionActiva) return;
+        if (!('speechSynthesis' in window)) return;
 
-    // Detener TTS
-    function stopVoice() {
-        window.speechSynthesis.cancel();
-    }
-
-    // Función TTS
-    function speak(text) {
-        if (!ttsActive) return;
-        stopVoice();
+        window.speechSynthesis.cancel(); // Limpiar cola
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9;
-        msg.pitch = 1.2;
+        msg.pitch = 1.1; 
         window.speechSynthesis.speak(msg);
     }
 
-    // 🔵 Al cargar la página, leer automáticamente si TTS activo
-    if (ttsActive) {
-        let text = level === 1
-            ? `Encuentra la letra. La palabra es ${word}. Debes encontrar la letra ${target}.`
-            : `La palabra es ${word}. Busca la letra ${target}`;
-        speak(text);
+    // Toggle Narración
+    function toggleNarracion() {
+        narracionActiva = !narracionActiva;
+        localStorage.setItem("narracionActiva", narracionActiva);
+        updateButton();
+        
+        if (!narracionActiva) {
+            window.speechSynthesis.cancel();
+        } else {
+            // Leer inmediatamente al activar
+            generarInstruccion();
+        }
     }
 
-    // 🔵 Detener TTS al cambiar de página
-    window.addEventListener("beforeunload", stopVoice);
-</script>
+    // Generar texto según estado del juego
+    function generarInstruccion() {
+        if (isFinished) {
+            leerTexto("¡Misión cumplida! Has completado todos los niveles.");
+        } else {
+            let texto = "";
+            if (level === 1) {
+                // Instrucción completa para nivel 1
+                texto = `Encuentra la letra. La palabra es ${word}. Debes encontrar la letra ${target}.`;
+            } else {
+                // Instrucción corta para siguientes niveles
+                texto = `La palabra es ${word}. Busca la letra ${target}`;
+            }
+            leerTexto(texto);
+        }
+    }
 
+    // Al cargar la página, leer automáticamente con pequeño delay
+    setTimeout(() => {
+        if (narracionActiva) {
+            generarInstruccion();
+        }
+    }, 500);
+
+    //  Detener TTS al cambiar de página
+    window.addEventListener("beforeunload", () => {
+        window.speechSynthesis.cancel();
+    });
+</script>
 {% endblock %}

@@ -6,7 +6,6 @@
 
 <div style="max-width: 700px; margin: 30px auto;">
 
-    <!-- Header -->
     <div style="
         background: linear-gradient(135deg, #6cbef5, #82d0ff);
         padding: 20px;
@@ -21,21 +20,38 @@
             <small style="opacity: .9;">Usuario: {{ ticket.contacto.nombre }}</small>
         </div>
 
-        <form action="{% url 'finalizar_ticket' ticket.pk %}" method="post">
-            {% csrf_token %}
-            <button style="
-                background:#fff;
+        <div style="display: flex; gap: 10px; align-items: center;">
+            
+            <a href="{% url 'admin_consultas' %}" style="
+                text-decoration: none;
+                background: rgba(255, 255, 255, 0.2);
+                border: 1px solid #fff;
+                color: #fff;
                 padding: 8px 13px;
-                border-radius:10px;
-                border:none;
-                color:#f44336;
+                border-radius: 10px;
                 font-weight: bold;
-                cursor:pointer;
-            ">Finalizar</button>
-        </form>
+                font-size: 14px;
+                transition: 0.3s;
+            " onmouseover="this.style.background='rgba(255,255,255,0.4)'" 
+               onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                ⬅ Volver
+            </a>
+
+            <form action="{% url 'finalizar_ticket' ticket.pk %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button style="
+                    background:#fff;
+                    padding: 8px 13px;
+                    border-radius:10px;
+                    border:none;
+                    color:#f44336;
+                    font-weight: bold;
+                    cursor:pointer;
+                ">Finalizar</button>
+            </form>
+        </div>
     </div>
 
-    <!-- Caja del chat -->
     <div style="
         border: 1px solid #ccc;
         border-radius: 0 0 15px 15px;
@@ -43,12 +59,28 @@
         padding: 20px;
     ">
 
-        <!-- Contenedor mensajes -->
         <div style="height: 380px; overflow-y: auto; padding-right: 10px;">
 
-            {% for m in mensajes %}
+           {% for m in mensajes %}
                 {% if m.autor == 'usuario' %}
-                    <!-- Mensaje del usuario -->
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <div style="
+                            display: inline-block;
+                            background: #f1f1f1;
+                            color: #333;
+                            padding: 10px 15px;
+                            border-radius: 12px;
+                            max-width: 70%;
+                            text-align: left;
+                        ">
+                            <strong style="color:#555;">Usuario:</strong><br>
+                            {{ m.contenido }}
+                        </div>
+                        <br>
+                        <small style="color:#777;">{{ m.creado|date:"H:i d/m" }}</small>
+                    </div>
+
+                {% else %}
                     <div style="text-align: right; margin-bottom: 15px;">
                         <div style="
                             display: inline-block;
@@ -64,29 +96,10 @@
                         <br>
                         <small style="color:#777;">✓ {{ m.creado|date:"H:i d/m" }}</small>
                     </div>
-                {% else %}
-                    <!-- Mensaje del admin -->
-                    <div style="text-align: left; margin-bottom: 15px;">
-                        <div style="
-                            display: inline-block;
-                            background: #f1f1f1;
-                            color: #333;
-                            padding: 10px 15px;
-                            border-radius: 12px;
-                            max-width: 70%;
-                        ">
-                            <strong style="color:#ff9800;">Admin:</strong><br>
-                            {{ m.contenido }}
-                        </div>
-                        <br>
-                        <small style="color:#777;">{{ m.creado|date:"H:i d/m" }}</small>
-                    </div>
                 {% endif %}
             {% endfor %}
-
         </div>
 
-        <!-- Formulario de respuesta -->
         {% if ticket.estado != "finalizado" %}
         <form method="post" style="margin-top: 15px;">
             {% csrf_token %}

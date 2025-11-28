@@ -1,79 +1,131 @@
 {% extends 'home.html' %}
+{% load static %}
 
 {% block title %}Contacto | LectoPlay{% endblock %}
 
 {% block content %}
-<h1>Contáctanos 💌</h1>
 
-{% if error %}
-  <p style="color: red;">{{ error }}</p>
-{% endif %}
-
-<form action="{% url 'contacto' %}" method="post" class="contact-form">
-    {% csrf_token %}
+<div class="container contact-section">
     
-    <label for="name">👦 Nombre:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    {% if error %}
+        <div class="alert alert-danger rounded-4 mb-4 text-center">
+            ⚠️ {{ error }}
+        </div>
+    {% endif %}
 
-    <label for="email">📧 Correo electrónico:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
+    <div class="row align-items-center g-5">
+        
+        <div class="col-lg-5 contact-info-box">
+            <h1 class="contact-title">¡Estamos aquí para escucharte! 💌</h1>
+            <p class="contact-desc">
+                En <strong>LectoPlay</strong> creemos que la comunicación es clave. Ya sea que tengas una idea brillante, una duda sobre los juegos o simplemente quieras saludar, ¡escríbenos!
+            </p>
+            
+            <ul class="contact-features">
+                <li>
+                    <div class="feature-icon-circle" style="background: #a2d2ff;">💡</div>
+                    <span>Sugerencias de nuevos juegos</span>
+                </li>
+                <li>
+                    <div class="feature-icon-circle" style="background: #ffafcc;">🛠️</div>
+                    <span>Soporte técnico y ayuda</span>
+                </li>
+                <li>
+                    <div class="feature-icon-circle" style="background: #ffd166;">🏫</div>
+                    <span>Información para escuelas</span>
+                </li>
+            </ul>
 
-    <label for="message">💬 Mensaje:</label><br>
-    <textarea id="message" name="message" rows="5" required></textarea><br><br>
+            <div class="text-center mt-5 d-none d-md-block">
+                <img src="{% static 'css/osito.png' %}" alt="Oso saludando" style="max-width: 200px; border-radius: 20px; transform: rotate(-5deg);">
+            </div>
+        </div>
 
-    <label for="fecha">📅 Fecha de envío:</label><br>
-    <input type="date" id="fecha" name="fecha" required><br><br>
+        <div class="col-lg-7">
+            <div class="contact-card">
+                <h3 class="text-center mb-4" style="color: #219ebc; font-weight: 700;">Envíanos un mensaje</h3>
+                
+                <form action="{% url 'contacto' %}" method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label-styled">👦 Tu Nombre</label>
+                            <input type="text" id="name" name="name" class="input-styled" placeholder="Ej: Juan Pérez" required>
+                        </div>
 
-    <button type="submit" class="btn">Enviar mensaje</button>
-</form>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha" class="form-label-styled">📅 Fecha</label>
+                            <input type="date" id="fecha" name="fecha" class="input-styled" required>
+                        </div>
+                    </div>
 
+                    <div class="mb-3">
+                        <label for="email" class="form-label-styled">📧 Correo Electrónico</label>
+                        <input type="email" id="email" name="email" class="input-styled" placeholder="correo@ejemplo.com" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="message" class="form-label-styled">💬 ¿Cómo podemos ayudarte?</label>
+                        <textarea id="message" name="message" rows="5" class="input-styled" placeholder="Cuéntanos todo aquí..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-send-msg">Enviar Mensaje 🚀</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 {% if success %}
-<div id="modal" onclick="closeModal()" 
-     style="position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: rgba(0,0,0,0.4); display:flex; align-items:center; 
-            justify-content:center; z-index:9999;">
+<div id="modal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-content-box" onclick="event.stopPropagation()">
+        
+        <h2 class="modal-title">¡Mensaje enviado! 🎉</h2>
+        <p style="color:#555; margin-bottom:20px;">Hemos recibido tu consulta y generado un ticket único.</p>
 
-    <div onclick="event.stopPropagation()" 
-         style="background:white; padding:30px; border-radius:20px; 
-                width: 320px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+        <div class="alert-warning-box">
+            <strong>⚠️ IMPORTANTE:</strong><br>
+            Para leer la respuesta del administrador en el futuro, 
+            <strong>guarda el siguiente enlace</strong>:
+        </div>
 
-        <h2 style="color:#ff6fa8; margin-bottom:10px;">
-            ¡Mensaje enviado! 🎉
-        </h2>
+        <div style="margin-bottom: 25px;">
+            <input type="text" 
+                   value="{{ request.scheme }}://{{ request.get_host }}{% url 'usuario_ver_ticket' ticket_codigo %}" 
+                   readonly 
+                   onclick="this.select();"
+                   class="url-input-readonly">
+            <small style="color: #888; display: block; margin-top: 5px; font-size: 0.8rem;">(Haz clic para seleccionar)</small>
+        </div>
 
-        <p style="font-size:15px; color:#333; margin-bottom:20px;">
-            Tu consulta fue registrada correctamente.
-        </p>
-
-        <!-- BOTÓN PARA VER CONSULTA  -->
-        <a href="{% url 'usuario_ver_ticket' ticket_codigo %}"
-           style="display:inline-block; background:#ff6fa8; color:white; 
-                  padding:10px 20px; border-radius:8px; text-decoration:none; 
-                  font-weight:bold; margin-bottom:15px;">
-            Ver mi consulta
+        <a href="{% url 'usuario_ver_ticket' ticket_codigo %}" class="btn-modal-chat">
+            💬 Ir al chat ahora
         </a>
 
-        <br>
-
-        <button type="button"
-        onclick="document.getElementById('modal').style.display='none';"
-        style="background:#ddd; color:#555; padding:8px 16px; 
-               border:none; border-radius:6px; cursor:pointer;">
-            Cerrar
+        <button type="button" onclick="closeModal()" class="btn-modal-close">
+            Cerrar ventana
         </button>
-
 
     </div>
 </div>
 {% endif %}
 
-
 {% endblock %}
 
+{% block extra_js %}
 <script>
-function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-}
-</script>
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
 
+    // Script opcional para poner la fecha de hoy automáticamente
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('fecha');
+        if (dateInput && !dateInput.value) {
+            dateInput.valueAsDate = new Date();
+        }
+    });
+</script>
+{% endblock %}

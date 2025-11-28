@@ -1,9 +1,208 @@
 {% extends 'home.html' %}
+{% load static %}
 
-{% block title %}About | My Django Site{% endblock %}
+{% block title %}Acerca de | LectoPlay{% endblock %}
 
 {% block content %}
-<h1>Welcome to My Django Website</h1>
-<p>This is the about page. You can customize this template however you like.</p>
-{% endblock %}
 
+<div class="about-header text-center my-5">
+    <h1 style="color: #ffafcc; font-weight: 800; text-shadow: 2px 2px 0 #fff;">Nuestra Misión 🌟</h1>
+    <p style="color: #555; font-size: 1.2rem;">Creando un espacio inclusivo donde cada niño avanza a su propio ritmo.</p>
+</div>
+
+<section class="about-lectoplay container mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0 about-text">
+            <h2 style="color: #219ebc; font-weight: 700;">Más que un juego, un aliado educativo</h2>
+            <p class="lead" style="font-size: 1rem; color: #555;">
+                LectoPlay nace con un objetivo claro: derribar las barreras de la lectura. Entendemos que la dislexia no es una limitante, sino una forma diferente de procesar la información.
+            </p>
+            <p style="color: #666;">
+                Nuestra plataforma está diseñada para ser una <strong>herramienta de apoyo integral</strong>. No solo ayudamos a los niños, sino que servimos como un recurso valioso para <strong>docentes, terapeutas del lenguaje y padres</strong> que buscan complementar el aprendizaje en casa o en el aula.
+            </p>
+            <p style="color: #666;">
+                Buscamos fortalecer la <strong>autoconfianza</strong> de los pequeños, transformando la frustración en logros a través de un diseño visualmente amigable y libre de estrés.
+            </p>
+            
+            <a href="{% url 'ejercicios' %}" class="btn btn-lg mt-3" style="background-color: #ffafcc; color: white; border-radius: 50px; font-weight: bold;">
+                Ver nuestras herramientas 🚀
+            </a>
+        </div>
+
+        <div class="col-lg-6 text-center about-image">
+            <img src="{% static 'css/osito.png' %}" alt="Panda LectoPlay" class="img-fluid floating-panda" style="max-width: 80%; border-radius: 20px;">
+        </div>
+    </div>
+</section>
+
+<section class="container mb-5">
+    <div class="text-center mb-5">
+        <h2 style="color: #023047; font-weight: 700;">Nuestra Metodología</h2>
+        <p class="text-muted">Actividades diseñadas para estimular habilidades cognitivas específicas.</p>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+        
+        <div class="col">
+            <div class="card h-100 text-center p-4 border-0 shadow-sm info-card" style="background: #fff; border-top: 6px solid #a2d2ff !important; border-radius: 20px;">
+                <div class="display-4 mb-3">📖</div>
+                <h5 class="card-title" style="color: #219ebc; font-weight: bold;">Lectura Rápida</h5>
+                <p class="card-text text-muted">Mejoramos la fluidez y comprensión lectora mediante frases cortas sin presión de tiempo.</p>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 text-center p-4 border-0 shadow-sm info-card" style="background: #fff; border-top: 6px solid #ffafcc !important; border-radius: 20px;">
+                <div class="display-4 mb-3">🎨</div>
+                <h5 class="card-title" style="color: #219ebc; font-weight: bold;">Palabras y Colores</h5>
+                <p class="card-text text-muted">Estimulamos la memoria visual y la atención selectiva asociando términos con colores.</p>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 text-center p-4 border-0 shadow-sm info-card" style="background: #fff; border-top: 6px solid #ffd166 !important; border-radius: 20px;">
+                <div class="display-4 mb-3">🔤</div>
+                <h5 class="card-title" style="color: #219ebc; font-weight: bold;">Encuentra la Letra</h5>
+                <p class="card-text text-muted">Entrenamos la discriminación visual para identificar grafemas dentro de palabras.</p>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 text-center p-4 border-0 shadow-sm info-card" style="background: #fff; border-top: 6px solid #cdb4db !important; border-radius: 20px;">
+                <div class="display-4 mb-3">✏️</div>
+                <h5 class="card-title" style="color: #219ebc; font-weight: bold;">Escribe la Palabra</h5>
+                <p class="card-text text-muted">Reforzamos la ortografía y la conciencia fonológica a partir de descripciones.</p>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 text-center p-4 border-0 shadow-sm info-card" style="background: #fff; border-top: 6px solid #bde0fe !important; border-radius: 20px;">
+                <div class="display-4 mb-3">✅</div>
+                <h5 class="card-title" style="color: #219ebc; font-weight: bold;">Palabra o No</h5>
+                <p class="card-text text-muted">Desarrollamos el léxico diferenciando palabras reales de inventadas.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="team-section py-5" style="background: linear-gradient(180deg, #eaf6ff 0%, #fff0f5 100%); border-radius: 40px 40px 0 0;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 style="color: #023047; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                Nuestro Equipo de Desarrollo 💻
+            </h2>
+            <p class="text-muted">Estudiantes de Ingeniería en Sistemas - UGB</p>
+        </div>
+        
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center">
+            
+            <div class="col">
+                <div class="card h-100 border-0 shadow text-center py-4 team-hover" style="border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold fs-4 shadow-sm" 
+                             style="width: 80px; height: 80px; border-radius: 50%; background: #FFD166; border: 4px solid white;">
+                            AB
+                        </div>
+                        <h5 class="card-title text-dark fw-bold">Alejandra María<br>Baires Campos</h5>
+                        <p class="card-text text-muted small">Desarrolladora Fullstack</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow text-center py-4 team-hover" style="border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold fs-4 shadow-sm" 
+                             style="width: 80px; height: 80px; border-radius: 50%; background: #FFAFCC; border: 4px solid white;">
+                            AT
+                        </div>
+                        <h5 class="card-title text-dark fw-bold">Andrea Melissa<br>Torres Batres</h5>
+                        <p class="card-text text-muted small">Diseñadora UI/UX</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow text-center py-4 team-hover" style="border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold fs-4 shadow-sm" 
+                             style="width: 80px; height: 80px; border-radius: 50%; background: #A2D2FF; border: 4px solid white;">
+                            FH
+                        </div>
+                        <h5 class="card-title text-dark fw-bold">Fredys Alejandro<br>Hernández Robles</h5>
+                        <p class="card-text text-muted small">Desarrollador Backend</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow text-center py-4 team-hover" style="border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold fs-4 shadow-sm" 
+                             style="width: 80px; height: 80px; border-radius: 50%; background: #CDB4DB; border: 4px solid white;">
+                            RL
+                        </div>
+                        <h5 class="card-title text-dark fw-bold">Roberto Antonio<br>López Ramírez</h5>
+                        <p class="card-text text-muted small">Desarrollador Frontend</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow text-center py-4 team-hover" style="border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold fs-4 shadow-sm" 
+                             style="width: 80px; height: 80px; border-radius: 50%; background: #ffc8dd; border: 4px solid white;">
+                            NM
+                        </div>
+                        <h5 class="card-title text-dark fw-bold">Nelson Javier<br>Mejía Lemus</h5>
+                        <p class="card-text text-muted small">Gestión de Base de Datos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow text-center py-4 team-hover" style="border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold fs-4 shadow-sm" 
+                             style="width: 80px; height: 80px; border-radius: 50%; background: #bde0fe; border: 4px solid white;">
+                            GG
+                        </div>
+                        <h5 class="card-title text-dark fw-bold">Gerardo Eliseo<br>Guevara Reyes</h5>
+                        <p class="card-text text-muted small">QA & Testing</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    .floating-panda {
+        animation: floatPanda 3s ease-in-out infinite;
+    }
+
+    @keyframes floatPanda {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .info-card {
+        transition: transform 0.3s ease;
+    }
+    .info-card:hover {
+        transform: translateY(-8px);
+    }
+    .team-hover {
+        transition: transform 0.3s ease;
+    }
+    .team-hover:hover {
+        transform: translateY(-5px);
+        background: #fffdf9;
+    }
+</style>
+
+{% endblock %}

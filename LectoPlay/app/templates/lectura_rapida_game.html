@@ -14,24 +14,27 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // 📌 SOLO en categoría (antes de empezar el juego)
     {% if not categoria_actual %}
-        leerTexto("Lectura rápida. Lee frases cortas y responde preguntas para mejorar tu comprensión.");
+        // Pequeño delay para asegurar que la página cargó bien
+        setTimeout(() => {
+             leerTexto("Bienvenido a Lectura rápida. Elige una categoría para empezar.");
+        }, 500);
     {% else %}
         if (narracionActiva) {
-            leerCategoriaYFrase();  // 🔊 AQUÍ SE LEE TODO LO PEDIDO
+            leerCategoriaYFrase(); 
         }
     {% endif %}
 });
 
-// 📌 Leer texto
+// 📌 Leer texto simple
 function leerTexto(texto) {
-    if (!narracionActiva || narrando) return;
-    narrando = true;
-
+    if (!narracionActiva && !texto.includes("Bienvenido")) return; // Forzamos bienvenida si se desea, o respetamos el flag
+    if (!narracionActiva) return;
+    
+    window.speechSynthesis.cancel(); // Limpiar cola anterior
     const utter = new SpeechSynthesisUtterance(texto);
     utter.lang = "es-ES";
-    utter.rate = 1;
-    utter.onend = () => narrando = false;
-    speechSynthesis.speak(utter);
+    utter.rate = 0.9; // Un poco más lento para niños
+    window.speechSynthesis.speak(utter);
 }
 
 //  Activar / desactivar narración
@@ -40,73 +43,105 @@ function toggleNarracion() {
     localStorage.setItem("narracionActiva", narracionActiva); 
     actualizarBotonNarracion();
 
-    if (narracionActiva && document.getElementById("fraseTexto")) {
-        leerCategoriaYFrase();
+    if (narracionActiva) {
+        // Si estamos jugando, leer la frase actual
+        if (document.getElementById("fraseTexto")) {
+            leerCategoriaYFrase();
+        } else {
+            leerTexto("Narración activada.");
+        }
+    } else {
+        window.speechSynthesis.cancel();
     }
 }
 
-// 🟣 Leer CATEGORÍA + FRASE + PREGUNTA + OPCIONES 
+// 🟣 Leer TODO EL CONTEXTO DEL JUEGO
 function leerCategoriaYFrase() {
     const categoria = "{{ categoria_actual }}";
     const frase = document.getElementById("fraseTexto")?.textContent || "";
-    let texto = "Categoría: " + categoria + ". Frase: " + frase + ". Pregunta: {{ pregunta }}. Opciones: ";
+    // Construir texto limpio para leer
+    let texto = "Categoría: " + categoria + ". . Frase: " + frase + ". . Pregunta: {{ pregunta }}. . Opciones: ";
 
     {% for opcion in opciones %}
-        texto += "{{ opcion }}, ";
+        texto += "{{ opcion }}, . ";
     {% endfor %}
 
     leerTexto(texto);
 }
 
-// 🟠 Cambiar el texto del botón
+// 🟠 Cambiar el texto del botón visualmente
 function actualizarBotonNarracion() {
     const btn = document.getElementById("btnNarracion");
-    btn.textContent = narracionActiva ? "🔊 Narración Activada" : "🔇 Narración Desactivada";
+    if(btn) {
+        btn.innerHTML = narracionActiva ? "🔊 Narración Activada" : "🔇 Narración Desactivada";
+        btn.style.backgroundColor = narracionActiva ? "#4cc9f0" : "#ff85c0"; // Cambio de color visual
+    }
 }
 </script>
 
-
-<div class="ejercicios">
-    <h1>📖 Lectura Rápida</h1>
-    <p>Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
+<div class="container py-5">
+    
+    <div class="text-center mb-5">
+        <h1 class="fw-bold" style="color: #023047; font-size: 2.5rem;">📖 Lectura Rápida</h1>
+        <p class="lead text-muted">Lee frases cortas y responde preguntas para mejorar tu comprensión.</p>
+    </div>
 
     {% if not categoria_actual %}
-        <!-- 🟢 CATEGORÍAS (solo lee la intro) -->
-        <h2>Elige una categoría</h2>
-        <div class="cards">
-            {% for cat in categorias %}
-                <div class="card">
-                    <h3>{{ cat }}</h3>
-                    <p>Frases y preguntas de <strong>{{ cat }}</strong>.</p>
-                    <form method="get">
-                        <input type="hidden" name="categoria" value="{{ cat }}">
-                        <button type="submit" class="btn">Empezar</button>
-                    </form>
-                </div>
-            {% endfor %}
+        <div class="categories-section">
+            <h3 class="text-center mb-4" style="color: #219ebc;">✨ Elige un tema para empezar:</h3>
+            
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+                {% for cat in categorias %}
+                    <div class="col col-category">
+                        <div class="category-card">
+                            <div class="cat-icon">📚</div>
+                            
+                            <h3 class="cat-title">{{ cat }}</h3>
+                            <p class="cat-desc">Diviértete con frases y preguntas sobre <strong>{{ cat }}</strong>.</p>
+                            
+                            <form method="get" action="">
+                                <input type="hidden" name="categoria" value="{{ cat }}">
+                                <button type="submit" class="btn-cat-start">
+                                    Jugar Ahora ▶
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
 
     {% else %}
-        <!-- 🧠 EJERCICIO -->
-        <div class="lectura-bg">
-            <div class="score-pretty">Aciertos: {{ aciertos }} / {{ intentos }}</div>
+        <div class="lectura-bg mt-4">
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge rounded-pill bg-warning text-dark fs-6 px-3 py-2 shadow-sm">
+                    ⭐ Aciertos: {{ aciertos }} / {{ intentos }}
+                </span>
+                <a href="{% url 'lectura_rapida_game' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                    ↩ Cambiar tema
+                </a>
+            </div>
 
-            <div class="lectura-card">
-                <h2 class="titulo-categoria">Categoría: {{ categoria_actual }}</h2>
+            <div class="lectura-card text-center">
+                <h4 class="titulo-categoria mb-3">Tema: <span style="color:#023047">{{ categoria_actual }}</span></h4>
 
-                <div class="frase-box-pretty">
-                    <strong>Frase:</strong>
-                    <p id="fraseTexto">{{ frase }}</p>
+                <div class="frase-box-pretty my-4">
+                    <p class="mb-0 fs-4 text-dark" id="fraseTexto" style="line-height: 1.6;">{{ frase }}</p>
                 </div>
 
-                <p><strong>Pregunta:</strong> {{ pregunta }}</p>
+                <div class="mt-4">
+                    <p class="fs-5 fw-bold" style="color:#d74b76;">❓ {{ pregunta }}</p>
+                </div>
 
-                <form method="post">
+                <form method="post" class="mt-4">
                     {% csrf_token %}
-                    <div class="opciones-container">
+                    
+                    <div class="d-flex flex-column align-items-center gap-2 mb-4">
                         {% for opcion in opciones %}
-                            <label class="opcion-linea">
-                                <input type="radio" name="respuesta" value="{{ opcion }}" required>
+                            <label class="btn btn-outline-primary w-100 py-2 rounded-3 border-2 fw-bold text-start px-4" 
+                                   style="max-width: 400px; transition:0.2s;">
+                                <input type="radio" name="respuesta" value="{{ opcion }}" required class="me-2 form-check-input">
                                 {{ opcion }}
                             </label>
                         {% endfor %}
@@ -115,37 +150,47 @@ function actualizarBotonNarracion() {
                     <input type="hidden" name="correcta" value="{{ correcta }}">
                     <input type="hidden" name="categoria" value="{{ categoria_actual }}">
 
-                    <div class="btn-row">
-                        <button type="submit" class="btn" name="action" value="responder">Responder</button>
-                        <button type="submit" class="btn" name="action" value="otra">Otra frase</button>
-                        <a href="{% url 'lectura_rapida_game' %}" class="btn">Cambiar categoría</a>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="submit" class="btn btn-lg btn-success rounded-pill px-5 fw-bold shadow-sm" name="action" value="responder">
+                            ✅ Responder
+                        </button>
+                        
+                        <button type="submit" class="btn btn-light text-muted rounded-pill px-3" name="action" value="otra" title="Saltar frase">
+                            Saltar ➡
+                        </button>
                     </div>
                 </form>
+                
+                {% if feedback %}
+                    <div class="alert alert-info mt-3 rounded-3 fw-bold">
+                        {{ feedback }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% endif %}
 </div>
 
-<!-- 🌸 BOTÓN FLOTANTE -->
 <button id="btnNarracion" onclick="toggleNarracion()"
+    class="shadow"
     style="
         position: fixed;
-        left: 15px;
-        bottom: 15px;
-        padding: 12px 18px;
+        left: 20px;
+        bottom: 20px;
+        padding: 12px 20px;
         background-color: #ff85c0;
         border: none;
-        border-radius: 12px;
+        border-radius: 50px;
         font-weight: bold;
         color: white;
-        box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
         cursor: pointer;
         z-index: 999;
+        transition: 0.3s;
+        font-size: 0.9rem;
     ">
     🔇 Narración Desactivada
 </button>
 
-<!-- 🛑 DETENER LA VOZ AL CAMBIAR DE PÁGINA -->
 <script>
 window.addEventListener("beforeunload", function () {
     window.speechSynthesis.cancel();

@@ -1,141 +1,184 @@
 {% extends "home.html" %}
+{% load static %}
 
 {% block title %}Palabra o no palabra | LectoPlay{% endblock %}
 
 {% block content %}
-<section class="ejercicios">
-    <h1>✅ Palabra o no palabra</h1>
-    <p>Elige cuál de las opciones es una palabra real.</p>
+
+<div class="container py-5">
+    
+    <div class="text-center mb-4">
+        <h1 class="fw-bold" style="color: #00b4d8;">Palabra o no Palabra</h1>
+        <p class="lead text-muted">Elige cuál de las opciones es una palabra real.</p>
+    </div>
 
     {% if finished %}
-        <div class="lectura-bg">
-            <div class="lectura-card" style="text-align:center;">
-                <p>Has completado el juego.</p>
-                <p>Puntuación final: <strong>{{ score }}</strong> / {{ total }}</p>
-                <form method="post">
-                    {% csrf_token %}
-                    <button type="submit" name="reset" value="1" class="btn">Jugar de nuevo</button>
-                </form>
+        <div class="game-bg-pnp text-center">
+            <h2 class="fw-bold text-success mb-3">¡Misión Cumplida!</h2>
+            
+            <div class="p-4 bg-white rounded-4 shadow-sm d-inline-block mb-4">
+                <p class="mb-0 fs-4 text-secondary">Puntuación Final</p>
+                <p class="display-4 fw-bold" style="color: #00b4d8;">{{ score }} <span class="fs-4 text-muted">/ {{ total }}</span></p>
             </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <button name="reset" value="1" class="btn btn-lg text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #00b4d8;">
+                    Jugar de nuevo
+                </button>
+            </form>
         </div>
+
     {% else %}
-        <div class="lectura-bg">
-            <div class="score-pretty">
-                Nivel {{ level_num }} / {{ total }} &nbsp; | &nbsp; Puntos: {{ score }}
+        <div class="game-bg-pnp text-center">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-6">
+                    Nivel {{ level_num }} / {{ total }}
+                </span>
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fs-6">
+                    Puntos: {{ score }}
+                </span>
             </div>
 
-            <div class="lectura-card">
-                <h2 class="titulo-categoria">¿Cuál es la palabra real?</h2>
+            <h2 class="pnp-question">¿Cuál es la palabra real?</h2>
 
-                <form method="post" id="pnpForm">
-                    {% csrf_token %}
-                    <div class="opciones-container">
-                        {% for palabra in opciones %}
-                            <button type="submit"
-                                    name="choice"
-                                    value="{{ palabra }}"
-                                    class="btn"
-                                    style="margin:6px 0; min-width:160px;">
-                                {{ palabra }}
-                            </button>
-                        {% endfor %}
-                    </div>
+            <form method="post" id="pnpForm">
+                {% csrf_token %}
+                <div class="pnp-options-container">
+                    {% for palabra in opciones %}
+                        <button type="submit" name="choice" value="{{ palabra }}" class="btn-word-option">
+                            {{ palabra }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </form>
 
-                    {% if message %}
-                        <p class="feedback">{{ message }}</p>
-                    {% endif %}
-                </form>
-            </div>
+            {% if message %}
+                <div class="mt-4 alert alert-danger fw-bold d-inline-block px-4 py-2 rounded-pill animate__animated animate__shakeX">
+                    {{ message }}
+                </div>
+            {% endif %}
+            
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <button name="reset" value="1" class="btn btn-sm btn-link text-secondary text-decoration-none">
+                    Reiniciar juego
+                </button>
+            </form>
         </div>
     {% endif %}
-</section>
 
-<!-- 🌸 BOTÓN FLOTANTE -->
+</div>
+
 <button id="btnNarracion" onclick="toggleNarracion()"
-    style="position: fixed; left: 15px; bottom: 15px; padding: 12px 18px;
-           background-color: #ff85c0; border: none; border-radius: 12px;
-           font-weight: bold; color: white; box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-           cursor: pointer; z-index: 999;">
-    🔇 Narración Desactivada
+    class="shadow"
+    style="
+        position: fixed; left: 20px; bottom: 20px; padding: 12px 20px;
+        background-color: #ff85c0; border: none; border-radius: 50px;
+        font-weight: bold; color: white; cursor: pointer; z-index: 999;
+        transition: 0.3s; font-size: 0.9rem;
+    ">
+    Narrador Desactivado
 </button>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
-// 🔵 Estado de narración
-let narracionActiva = localStorage.getItem("narracionActiva") === "true";
-let narrando = false;
-
-// 🟢 Al cargar la página
-window.addEventListener("DOMContentLoaded", () => {
-    actualizarBotonNarracion();
-
-    {% if finished %}
-        if (narracionActiva) {
-            leerTexto(`¡Felicidades, has completado el juego! Puntuación final: {{ score }} de {{ total }}.`);
-        }
-        return;
+    // Estado de TTS persistente
+    let narracionActiva = localStorage.getItem("narracionActiva") === "true";
+    
+    // Variables seguras
+    const isFinished = "{{ finished|yesno:'true,false' }}" === "true";
+    const level = {{ level_num|default:"0" }};
+    const message = "{{ message|default:''|escapejs }}";
+    
+    // Construir lista de opciones para leer
+    const opcionesLista = [];
+    {% if opciones %}
+        {% for palabra in opciones %}
+            opcionesLista.push("{{ palabra|escapejs }}");
+        {% endfor %}
     {% endif %}
 
-    // Nivel 1: descripción + opciones en secuencia
-    {% if level_num == 1 and not message %}
-        if (narracionActiva) {
-            const opcionesNivel1 = [{% for palabra in opciones %}"{{ palabra|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
-
-            // Primera frase (después de 1s)
-            setTimeout(() => {
-                leerTexto(`Palabra o no palabra. Elige cuál de las opciones es una palabra real. Las opciones son ${opcionesNivel1.join(" y ")}.`);
-            }, 1000);
-
-            // Segunda frase (después de 3s)
-            setTimeout(() => {
-                leerTexto(`Cuál es la palabra real. Las opciones son ${opcionesNivel1.join(" y ")}.`);
-            }, 3000);
-        }
-    {% else %}
-        // Nivel 2+: solo leer palabra real y opciones
-        if (narracionActiva) {
-            const opcionesNiveles = [{% for palabra in opciones %}"{{ palabra|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
-            leerTexto(`Cuál es la palabra real. Las opciones son ${opcionesNiveles.join(" y ")}.`);
-        }
-    {% endif %}
-
-    // Feedback después de elegir
-    {% if message %}
-        if (narracionActiva) {
-            setTimeout(() => { leerTexto("{{ message|escapejs }}"); }, 500);
-        }
-    {% endif %}
-});
-
-// 📌 Función TTS
-function leerTexto(texto) {
-    if (!narracionActiva || narrando) return;
-    if (!('speechSynthesis' in window)) return; // navegadores sin soporte
-    narrando = true;
-
-    const utter = new SpeechSynthesisUtterance(texto);
-    utter.lang = "es-ES";
-    utter.rate = 1;
-    utter.onend = () => narrando = false;
-    speechSynthesis.speak(utter);
-}
-
-// Activar / desactivar narración
-function toggleNarracion() {
-    narracionActiva = !narracionActiva;
-    localStorage.setItem("narracionActiva", narracionActiva);
-    actualizarBotonNarracion();
-}
-
-// Actualizar botón de narración
-function actualizarBotonNarracion() {
     const btn = document.getElementById("btnNarracion");
-    btn.textContent = narracionActiva ? "🔊 Narrador Activado" : "🔇 Narrador Desactivado";
-}
 
-// Detener TTS al salir
-window.addEventListener("beforeunload", function () {
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-});
+    // Actualizar boton
+    function updateButton() {
+        if(btn) {
+            btn.textContent = narracionActiva ? "Narrador Activado" : "Narrador Desactivado";
+            btn.style.backgroundColor = narracionActiva ? "#4cc9f0" : "#ff85c0";
+        }
+    }
+    updateButton();
+
+    // Toggle Narracion
+    function toggleNarracion() {
+        narracionActiva = !narracionActiva;
+        localStorage.setItem("narracionActiva", narracionActiva);
+        updateButton();
+        
+        if (!narracionActiva) {
+            window.speechSynthesis.cancel();
+        } else {
+            leerEstadoJuego();
+        }
+    }
+
+    // Funcion TTS
+    function leerTexto(text) {
+        if (!narracionActiva) return;
+        if (!('speechSynthesis' in window)) return;
+
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "es-ES";
+        msg.rate = 0.9; 
+        window.speechSynthesis.speak(msg);
+    }
+
+    // Logica de lectura
+    function leerEstadoJuego() {
+        if (isFinished) {
+            leerTexto("Misión cumplida. Has completado el juego.");
+            return;
+        }
+
+        // Construir texto de las opciones
+        const textoOpciones = opcionesLista.join(", o, ");
+
+        // 1. Si hay feedback (Error), leerlo primero
+        if (message) {
+            leerTexto(message);
+            
+            // 2. Leer la pregunta de nuevo tras el error (opcional)
+            /* setTimeout(() => {
+                leerTexto("Elige cuál es la palabra real: " + textoOpciones);
+            }, 1500); */
+        } else {
+            // Juego Normal
+            let intro = "¿Cuál es la palabra real?";
+            
+            // Si es nivel 1, ser mas explicito
+            if (level === 1) {
+                intro = "Bienvenido. Palabra o no palabra. " + intro;
+            }
+            
+            leerTexto(`${intro}. Las opciones son: ${textoOpciones}.`);
+        }
+    }
+
+    // Al cargar la pagina
+    setTimeout(() => {
+        if (narracionActiva) {
+            leerEstadoJuego();
+        }
+    }, 500);
+
+    // Detener al salir
+    window.addEventListener("beforeunload", () => {
+        window.speechSynthesis.cancel();
+    });
 </script>
-
 {% endblock %}

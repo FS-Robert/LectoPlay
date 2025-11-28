@@ -5,75 +5,155 @@
 
 {% block content %}
 
-<!-- Carrusel -->
-
 <div id="lectoCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <!-- ==== Diapo1 -->
-             <div class="carousel-item active">
-                <img src="{% static 'css/carrusel1.png' %}" class="d-block w-100 carrusel-image">
-                <div class="carousel-caption custom-caption">
-                    <h4>LECTURA Y DIVERSIÓN</h4>
-                    <h1>Donde las letras son amigas</h1>
-                </div>
-            </div>
-            
-            <!-- Diapo2 -->
-             <div class="carousel-item">
-                <img src="{% static 'css/carrusel2.png' %}" class="d-block w-100 carrusel-image">
-                <div class="carousel-caption custom-caption">
-                    <h4>APRENDER ES UNA AVENTURA</h4>
-                    <h1>Jugar es tu mejor herramienta</h1>
-                </div>
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="1"></button>
+    </div>
+
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{% static 'css/carrusel1.png' %}" class="d-block w-100 carrusel-image" alt="Niño leyendo feliz">
+            <div class="carousel-caption custom-caption">
+                <h4 class="animate-fade-down">LECTURA Y DIVERSIÓN</h4>
+                <h1 class="animate-fade-up">Donde las letras son amigas</h1>
+                <a href="#juegos" class="btn btn-lg mt-3 btn-hero">¡Empezar a Jugar!</a>
             </div>
         </div>
         
-        <!-- Flecha anterior -->
-        <button class="carousel-control-prev custom-arrow" type="button"
-         data-bs-target="#lectoCarousel" data-bs-slide="prev">
-         <i class="bi bi-arrow-left-circle arrow-icon"></i>
-         <span class="visually-hidden">Anterior</span>
-        </button>
-        
-        <!-- Flecha siguiente -->
-        <button class="carousel-control-next custom-arrow" type="button"
-         data-bs-target="#lectoCarousel" data-bs-slide="next">
-         <i class="bi bi-arrow-right-circle arrow-icon"></i>
-         <span class="visually-hidden">Siguiente</span>
-        </button>
-        
-        <!-- Indicadores -->
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#lectoCarousel" data-bs-slide-to="1"></button>
+        <div class="carousel-item">
+            <img src="{% static 'css/carrusel2.png' %}" class="d-block w-100 carrusel-image" alt="Juegos educativos">
+            <div class="carousel-caption custom-caption">
+                <h4>APRENDER ES UNA AVENTURA</h4>
+                <h1>Jugar es tu mejor herramienta</h1>
+            </div>
         </div>
+    </div>
+    
+    <button class="carousel-control-prev custom-arrow" type="button" data-bs-target="#lectoCarousel" data-bs-slide="prev">
+        <i class="bi bi-arrow-left-circle arrow-icon"></i>
+    </button>
+    <button class="carousel-control-next custom-arrow" type="button" data-bs-target="#lectoCarousel" data-bs-slide="next">
+        <i class="bi bi-arrow-right-circle arrow-icon"></i>
+    </button>
 </div>
 
-
-
-<main class="container"> 
-        <section class="about-lectoplay">
-            <div class="about-text">
-                <h2>¡BIENVENIDOS A LECTOPLAY!</h2>
+<main> 
+    <section class="about-lectoplay container" style="margin-top: 60px;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 about-text">
+                <h2 style="color: #219ebc; font-weight:800;">¡BIENVENIDOS A LECTOPLAY! 🐼</h2>
                 <p>
-                    <strong>LectoPlay</strong> es un sitio web educativo diseñado para ayudar a 
-                    <strong>niños con dislexia</strong> a mejorar su lectura de forma divertida y accesible. 
-                    Mediante actividades visuales, colores llamativos y herramientas interactivas,
-                    busca convertir el aprendizaje en una experiencia positiva y entretenida.
+                    <strong>LectoPlay</strong> es un sitio mágico diseñado para ayudar a niños con dislexia a mejorar su lectura. 
+                    Aquí no hay presiones, solo colores, juegos y mucha diversión.
                 </p>
                 <p>
-                    Su objetivo es brindar una <strong>plataforma inclusiva</strong> que apoye tanto a los niños 
-                    como a docentes, terapeutas del lenguaje y familias, fomentando la confianza 
-                    y el gusto por la lectura.
-                </p>
-                <p>
-                    Con <strong>LectoPlay</strong>, aprender a leer se convierte en una aventura colorida 
-                    donde cada palabra cuenta.
+                    Convertimos las letras difíciles en compañeras de juego para que aprender sea una experiencia positiva.
                 </p>
             </div>
-            <div class="about-image">
-                <img src="{% static 'css/osito.png' %}" alt="LectoPlay" />
+            <div class="col-lg-6 about-image text-center">
+                <img src="{% static 'css/osito.png' %}" alt="Panda Mascota" style="max-width: 80%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);" />
             </div>
-        </section>
-    </main> 
+        </div>
+    </section>
+
+    <section id="juegos" class="games-section">
+        <h2 style="color: #023047; font-weight: 800; font-size: 2.5rem;">🎮 Explora nuestros Juegos</h2>
+        <p style="color: #666; font-size: 1.2rem;">Selecciona una actividad y comienza la aventura</p>
+
+        <div class="games-grid">
+            
+            <div class="game-card-home">
+                <div class="game-img-container">
+                    <img src="https://placehold.co/600x400/a2d2ff/ffffff?text=Lectura+R%C3%A1pida&font=roboto" alt="Juego Lectura Rápida">
+                </div>
+                <div class="game-info">
+                    <div>
+                        <h3>Lectura Rápida</h3>
+                        <p>Mejora tu comprensión leyendo frases cortas y divertidas sin presión de tiempo.</p>
+                    </div>
+                    <a href="{% url 'lectura_rapida_game' %}" class="btn btn-game-play btn-blue">Jugar Ahora ▶</a>
+                </div>
+            </div>
+
+            <div class="game-card-home">
+                <div class="game-img-container">
+                    <img src="https://placehold.co/600x400/ffafcc/ffffff?text=Palabras+y+Colores&font=roboto" alt="Juego Colores">
+                </div>
+                <div class="game-info">
+                    <div>
+                        <h3>Palabras y Colores</h3>
+                        <p>Entrena tu cerebro asociando el nombre de los colores con su pintura real.</p>
+                    </div>
+                    <a href="{% url 'palabras_colores' %}" class="btn btn-game-play btn-pink">Jugar Ahora ▶</a>
+                </div>
+            </div>
+
+            <div class="game-card-home">
+                <div class="game-img-container">
+                    <img src="https://placehold.co/600x400/ffd166/ffffff?text=Encuentra+la+Letra&font=roboto" alt="Juego Letras">
+                </div>
+                <div class="game-info">
+                    <div>
+                        <h3>Encuentra la Letra</h3>
+                        <p>Conviértete en detective y busca las letras escondidas dentro de las palabras.</p>
+                    </div>
+                    <a href="{% url 'encuentra' %}" class="btn btn-game-play btn-yellow">Jugar Ahora ▶</a>
+                </div>
+            </div>
+
+            <div class="game-card-home">
+                <div class="game-img-container">
+                    <img src="https://placehold.co/600x400/cdb4db/ffffff?text=Escribe+la+Palabra&font=roboto" alt="Juego Escribir">
+                </div>
+                <div class="game-info">
+                    <div>
+                        <h3>Escribe la Palabra</h3>
+                        <p>Lee la descripción y demuestra qué tan bien sabes escribir la respuesta correcta.</p>
+                    </div>
+                    <a href="{% url 'desc_palabra' %}" class="btn btn-game-play btn-purple">Jugar Ahora ▶</a>
+                </div>
+            </div>
+
+            <div class="game-card-home">
+                <div class="game-img-container">
+                    <img src="https://placehold.co/600x400/bde0fe/ffffff?text=Palabra+o+No&font=roboto" alt="Juego Real o No">
+                </div>
+                <div class="game-info">
+                    <div>
+                        <h3>Palabra o no Palabra</h3>
+                        <p>¿Es real o inventada? Diferencia las palabras verdaderas de las que no existen.</p>
+                    </div>
+                    <a href="{% url 'pnp' %}" class="btn btn-game-play btn-green">Jugar Ahora ▶</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="container">
+            <h2 class="text-center mb-5" style="color: #023047; font-weight:800;">¿Por qué aprender con nosotros?</h2>
+            
+            <div class="row">
+                <div class="col-md-4 feature-box">
+                    <div class="feature-icon icon-blue">👁️</div>
+                    <h4 style="color: #219ebc; font-weight:bold;">Diseño Amigable</h4>
+                    <p>Usamos colores pastel y letras grandes para reducir el estrés visual y facilitar la lectura.</p>
+                </div>
+                <div class="col-md-4 feature-box">
+                    <div class="feature-icon icon-pink">🧠</div>
+                    <h4 style="color: #d65d89; font-weight:bold;">Cognitivo y Divertido</h4>
+                    <p>Cada juego está diseñado para reforzar la memoria, la atención y la asociación.</p>
+                </div>
+                <div class="col-md-4 feature-box">
+                    <div class="feature-icon icon-yellow">🏆</div>
+                    <h4 style="color: #fb8500; font-weight:bold;">Sin Frustración</h4>
+                    <p>Avanza a tu propio ritmo. Aquí los errores son solo oportunidades para intentar de nuevo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main> 
 {% endblock %}

@@ -1,149 +1,182 @@
 {% extends "home.html" %}
+{% load static %}
 
 {% block title %}Escribe la Palabra | LectoPlay{% endblock %}
 
 {% block content %}
-<section class="ejercicios">
-    <h1>✏️ Escribe la palabra</h1>
-    <p>Lee la descripción y escribe la palabra correcta.</p>
+
+<div class="container py-5">
+    
+    <div class="text-center mb-4">
+        <h1 class="fw-bold" style="color: #9d4edd;">Escribe la Palabra</h1>
+        <p class="lead text-muted">Lee la descripción y escribe la respuesta correcta.</p>
+    </div>
 
     {% if finished %}
-        <div class="lectura-bg">
-            <div class="lectura-card" style="text-align:center;">
-                <p>Has completado el juego.</p>
-                <p>Puntuación final: <strong>{{ score }}</strong> / {{ total }}</p>
-                <form method="post">
-                    {% csrf_token %}
-                    <button type="submit" name="reset" value="1" class="btn">Jugar de nuevo</button>
-                </form>
+        <div class="game-bg-write text-center">
+            <h2 class="fw-bold text-success mb-3" style="font-size: 2.5rem;">¡Juego Completado!</h2>
+            
+            <div class="p-4 bg-white rounded-4 shadow-sm d-inline-block mb-4">
+                <p class="mb-0 fs-4 text-secondary">Puntuación Final</p>
+                <p class="display-4 fw-bold" style="color: #9d4edd;">{{ score }} <span class="fs-4 text-muted">/ {{ total }}</span></p>
             </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <button name="reset" value="1" class="btn btn-lg text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #9d4edd;">
+                    Jugar de nuevo
+                </button>
+            </form>
         </div>
+
     {% else %}
-        <div class="lectura-bg">
-            <div class="score-pretty">
-                Nivel {{ level_num }} / {{ total }} &nbsp; | &nbsp; Puntos: {{ score }}
+        <div class="game-bg-write text-center">
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-6">
+                    Nivel {{ level_num }} / {{ total }}
+                </span>
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fs-6">
+                    Puntos: {{ score }}
+                </span>
             </div>
 
-            <div class="lectura-card">
-                <h2 class="titulo-categoria">Escribe la palabra</h2>
+            <div class="desc-box text-start">
+                <h5 class="fw-bold text-uppercase mb-2" style="color: #9d4edd; font-size: 0.9rem;">Pista:</h5>
+                <p class="desc-text" id="descripcion-texto">{{ descripcion }}</p>
+            </div>
 
-                <div class="frase-box-pretty">
-                    <strong>Descripción:</strong>
-                    <p>{{ descripcion }}</p>
+            <form method="post" autocomplete="off">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="respuesta" class="form-label visually-hidden">Tu respuesta</label>
+                    <input type="text" id="respuesta" name="respuesta" 
+                           class="write-input" 
+                           placeholder="Escribe aquí..." autofocus required>
                 </div>
 
-                <form method="post">
-                    {% csrf_token %}
-                    <label for="respuesta"><strong>Tu respuesta:</strong></label><br>
-                    <input
-                        type="text"
-                        id="respuesta"
-                        name="respuesta"
-                        autocomplete="off"
-                        style="margin-top:6px; padding:8px; border-radius:8px;
-                               border:2px solid #ffd166; width:70%; max-width:260px;">
+                <button type="submit" class="btn btn-lg text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #9d4edd;">
+                    Comprobar
+                </button>
+            </form>
 
-                    <div class="btn-row">
-                        <button type="submit" class="btn">Comprobar</button>
-                    </div>
-                </form>
-
-                {% if message %}
-                    <p class="feedback">{{ message }}</p>
-                {% endif %}
-            </div>
+            {% if message %}
+                <div class="mt-4 alert alert-danger fw-bold d-inline-block px-4 py-2 rounded-pill animate__animated animate__shakeX">
+                    {{ message }}
+                </div>
+            {% endif %}
+            
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <button name="reset" value="1" class="btn btn-sm btn-link text-muted text-decoration-none">
+                    Reiniciar juego
+                </button>
+            </form>
         </div>
     {% endif %}
-</section>
 
-<!-- 🌸 BOTÓN FLOTANTE -->
+</div>
+
 <button id="btnNarracion" onclick="toggleNarracion()"
-    style="position: fixed; left: 15px; bottom: 15px; padding: 12px 18px;
-           background-color: #ff85c0; border: none; border-radius: 12px;
-           font-weight: bold; color: white; box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-           cursor: pointer; z-index: 999;">
-    🔇 Narración Desactivada
+    class="shadow"
+    style="
+        position: fixed; left: 20px; bottom: 20px; padding: 12px 20px;
+        background-color: #ff85c0; border: none; border-radius: 50px;
+        font-weight: bold; color: white; cursor: pointer; z-index: 999;
+        transition: 0.3s; font-size: 0.9rem;
+    ">
+    Narrador Desactivado
 </button>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
-// 🔵 Estado de narración, se guarda en localStorage
-let narracionActiva = localStorage.getItem("narracionActiva") === "true";
-let narrando = false;
+    // Estado de TTS persistente
+    let narracionActiva = localStorage.getItem("narracionActiva") === "true";
+    
+    // Variables seguras
+    const isFinished = "{{ finished|yesno:'true,false' }}" === "true";
+    const level = {{ level_num|default:"0" }};
+    const message = "{{ message|default:''|escapejs }}";
+    
+    const descEl = document.getElementById("descripcion-texto");
+    const descripcion = descEl ? descEl.textContent.trim() : "";
 
-// 🟢 Al cargar la página, actualizar botón y leer si es necesario
-window.addEventListener("DOMContentLoaded", () => {
-    actualizarBotonNarracion();
-
-    // 📌 Si el juego terminó (nivel final)
-    {% if finished %}
-        if(narracionActiva) {
-            leerTexto("¡Felicidades, has completado el juego!");
-        }
-        return; // No seguir leyendo nada más
-    {% endif %}
-
-    // 📌 Nivel 1: bienvenida + descripción
-    {% if level_num == 1 and not message %}
-        if(narracionActiva) {
-            leerTexto("Bienvenido al juego. Escribe la palabra correcta según la descripción.");
-            setTimeout(() => {
-                leerNivelYDescripcion();
-            }, 1500); // Pequeño retraso para separar mensajes
-        }
-    {% else %}
-        // 📌 Niveles 2 a 10: solo descripción
-        if(narracionActiva) {
-            leerNivelYDescripcion();
-        }
-    {% endif %}
-
-    // 📌 Leer feedback si existe
-    {% if message %}
-        if(narracionActiva) {
-            setTimeout(() => { leerTexto("{{ message }}"); }, 500);
-        }
-    {% endif %}
-});
-
-// 📌 Función TTS
-function leerTexto(texto) {
-    if (!narracionActiva || narrando) return;
-    narrando = true;
-
-    const utter = new SpeechSynthesisUtterance(texto);
-    utter.lang = "es-ES";
-    utter.rate = 1;
-    utter.onend = () => narrando = false;
-    speechSynthesis.speak(utter);
-}
-
-// 🔵 Leer nivel actual + descripción
-function leerNivelYDescripcion() {
-    const descripcion = document.querySelector(".frase-box-pretty p")?.textContent || "{{ descripcion }}";
-    leerTexto(`Nivel {{ level_num }}. Escribe la palabra. Descripción: ${descripcion}`);
-}
-
-// 🔄 Activar / desactivar narración
-function toggleNarracion() {
-    narracionActiva = !narracionActiva;
-    localStorage.setItem("narracionActiva", narracionActiva);
-    actualizarBotonNarracion();
-
-    if (narracionActiva && !({{ finished|yesno:"true,false" }})) {
-        leerNivelYDescripcion();
-    }
-}
-
-// 🔵 Actualizar texto del botón
-function actualizarBotonNarracion() {
     const btn = document.getElementById("btnNarracion");
-    btn.textContent = narracionActiva ? "🔊 Narrador Activado" : "🔇 Narrador Desactivado";
-}
 
-// 🛑 Detener la voz al cambiar de página
-window.addEventListener("beforeunload", function () {
-    window.speechSynthesis.cancel();
-});
+    // Actualizar boton
+    function updateButton() {
+        if(btn) {
+            btn.textContent = narracionActiva ? "Narrador Activado" : "Narrador Desactivado";
+            btn.style.backgroundColor = narracionActiva ? "#4cc9f0" : "#ff85c0";
+        }
+    }
+    updateButton();
+
+    // Toggle Narracion
+    function toggleNarracion() {
+        narracionActiva = !narracionActiva;
+        localStorage.setItem("narracionActiva", narracionActiva);
+        updateButton();
+        
+        if (!narracionActiva) {
+            window.speechSynthesis.cancel();
+        } else {
+            leerEstadoJuego();
+        }
+    }
+
+    // Funcion TTS basica
+    function leerTexto(text) {
+        if (!narracionActiva) return;
+        if (!('speechSynthesis' in window)) return;
+
+        // No cancelamos aqui si es parte de una secuencia
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "es-ES";
+        msg.rate = 0.9; 
+        window.speechSynthesis.speak(msg);
+    }
+
+    // Logica de lectura secuencial
+    function leerEstadoJuego() {
+        // Cancelamos cualquier audio previo
+        window.speechSynthesis.cancel();
+
+        if (isFinished) {
+            leerTexto("Juego completado. Felicidades.");
+            return;
+        }
+
+        // 1. Si hay mensaje de error/feedback, leerlo primero
+        if (message) {
+            leerTexto(message); 
+            // Despues leer la pista de nuevo
+            leerTexto("La pista es: " + descripcion);
+        } else {
+            // Si es un nivel nuevo (sin error previo)
+            if (level === 1) {
+                // Lectura completa de bienvenida y reglas en Nivel 1
+                leerTexto(`Bienvenido a Escribe la palabra. Lee la descripción y escribe la respuesta correcta. Nivel 1. Pista: ${descripcion}`);
+            } else {
+                // Niveles siguientes: solo pista
+                leerTexto(`Pista: ${descripcion}`);
+            }
+        }
+    }
+
+    // Al cargar la pagina
+    setTimeout(() => {
+        if (narracionActiva) {
+            leerEstadoJuego();
+        }
+    }, 500);
+
+    // Detener al salir
+    window.addEventListener("beforeunload", () => {
+        window.speechSynthesis.cancel();
+    });
 </script>
-
 {% endblock %}

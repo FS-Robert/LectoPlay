@@ -4,63 +4,92 @@
 {% block title %}Palabras y Colores | LectoPlay{% endblock %}
 
 {% block content %}
-<section class="ejercicios">
-    <h1>🎨 Palabras y Colores</h1>
-    <p class="descripcion">Asocia la palabra con el color correcto</p>
+
+<div class="container py-5">
+    
+    <div class="text-center mb-4">
+        <h1 class="fw-bold" style="color: #ff5d8f;">🎨 Palabras y Colores</h1>
+        <p class="lead text-muted">Asocia la palabra escrita con su color real.</p>
+    </div>
 
     {% if finished %}
-        <div class="result">
-            <p>¡Juego completado!</p>
-            <p>Puntuación final: <strong>{{ score }}</strong> / {{ total }}</p>
+        <div class="game-bg-colors text-center">
+            <div class="display-1 mb-3">🎉</div>
+            <h2 class="fw-bold text-success mb-3">¡Juego Completado!</h2>
+            
+            <div class="p-4 bg-white rounded-4 shadow-sm d-inline-block mb-4">
+                <p class="mb-0 fs-4 text-secondary">Puntuación Final</p>
+                <p class="display-4 fw-bold text-primary mb-0">{{ score }} <span class="fs-4 text-muted">/ {{ total }}</span></p>
+            </div>
 
-            <form method="post" style="margin-top:1rem;">
+            <form method="post">
                 {% csrf_token %}
-                <button name="reset" value="1" class="btn">Jugar de nuevo</button>
+                <button name="reset" value="1" class="btn btn-lg btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                    🔄 Jugar de nuevo
+                </button>
             </form>
         </div>
-    {% else %}
-        <div class="game">
-            <p>Nivel {{ level_num }} / {{ total }}</p>
-            <p>Puntos: <strong>{{ score }}</strong></p>
 
-            <div id="palabra" class="palabra" style="font-size:2rem; margin:1rem 0;">
+    {% else %}
+        <div class="game-bg-colors text-center">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-6">
+                    Nivel {{ level_num }} / {{ total }}
+                </span>
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fs-6">
+                    ⭐ Puntos: {{ score }}
+                </span>
+            </div>
+
+            <div id="palabra" class="word-display">
                 {{ word }}
             </div>
 
             {% if message %}
-                <div style="color:crimson; margin:0.5rem 0; font-weight:bold;">
+                <div class="feedback-msg feedback-error animate__animated animate__shakeX">
                     {{ message }}
                 </div>
             {% endif %}
 
             <form method="post">
                 {% csrf_token %}
-                <div class="colores-opciones" style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin:1.5rem 0;">
+                <div class="color-options-container">
                     {% for c in choices %}
-                        <button name="choice" value="{{ c }}" class="color-btn"
-                            style="width:60px; height:60px; border-radius:50%; border:none; cursor:pointer; background-color: {{ c }};">
+                        <button type="submit" name="choice" value="{{ c }}" 
+                                class="color-circle-btn"
+                                style="background-color: {{ c }};"
+                                aria-label="Color {{ c }}">
                         </button>
                     {% endfor %}
                 </div>
             </form>
 
-            <form method="post" style="margin-top:1rem;">
+            <form method="post" class="mt-4">
                 {% csrf_token %}
-                <button name="reset" value="1" class="btn">Reiniciar</button>
+                <button name="reset" value="1" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                    🔄 Reiniciar Nivel
+                </button>
             </form>
         </div>
     {% endif %}
-</section>
 
-<!-- 🌸 BOTÓN FLOTANTE PARA NARRACIÓN -->
+</div>
+
 <button id="btnNarracion" onclick="toggleNarracion()"
-    style="position: fixed; left: 15px; bottom: 15px; padding: 12px 18px;
-           background-color: #ff85c0; border: none; border-radius: 12px;
-           font-weight: bold; color: white; box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-           cursor: pointer; z-index: 999;">
-    🔇 Narración Desactivada
+    class="shadow"
+    style="
+        position: fixed; left: 20px; bottom: 20px; padding: 12px 20px;
+        background-color: #ff85c0; border: none; border-radius: 50px;
+        font-weight: bold; color: white; cursor: pointer; z-index: 999;
+        transition: 0.3s; font-size: 0.9rem;
+    ">
+    🔇 Narrador Desactivado
 </button>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
 // 🔵 Estado de narración persistente
 let narracionActiva = localStorage.getItem("narracionActiva") === "true";
@@ -69,20 +98,25 @@ let narrando = false;
 // 🟢 Actualizar botón según estado
 function actualizarBotonNarracion() {
     const btn = document.getElementById("btnNarracion");
-    btn.textContent = narracionActiva ? "🔊 Narrador Activado" : "🔇 Narrador Desactivado";
+    if(btn) {
+        btn.textContent = narracionActiva ? "🔊 Narrador Activado" : "🔇 Narrador Desactivado";
+        btn.style.backgroundColor = narracionActiva ? "#4cc9f0" : "#ff85c0"; // Cambio de color visual
+    }
 }
 
 // 📌 Función TTS
 function leerTexto(texto) {
     if (!narracionActiva || narrando) return;
-    if (!('speechSynthesis' in window)) return; // si no soporta TTS
+    if (!('speechSynthesis' in window)) return;
+    
+    window.speechSynthesis.cancel(); // Limpiar cola anterior
     narrando = true;
 
     const utter = new SpeechSynthesisUtterance(texto);
     utter.lang = "es-ES";
-    utter.rate = 1;
+    utter.rate = 0.9;
     utter.onend = () => narrando = false;
-    speechSynthesis.speak(utter);
+    window.speechSynthesis.speak(utter);
 }
 
 // Activar / desactivar narración
@@ -91,23 +125,26 @@ function toggleNarracion() {
     localStorage.setItem("narracionActiva", narracionActiva);
     actualizarBotonNarracion();
 
-    // Leer palabra si activamos narración
     if (narracionActiva) {
         leerNivelYPalabra();
+    } else {
+        window.speechSynthesis.cancel();
     }
 }
 
-// Leer nivel y palabra según reglas
+// Leer nivel y palabra
 function leerNivelYPalabra() {
-    const wordEl = document.getElementById("palabra")?.textContent || "{{ word|escapejs }}";
+    // Obtenemos la palabra del HTML o desde Django
+    const wordEl = document.getElementById("palabra")?.textContent.trim() || "{{ word|escapejs }}";
     const level = {{ level_num }};
     const total = {{ total }};
     let texto = "";
 
+    // Si es el primer nivel, damos la instrucción completa
     if (level === 1) {
-        texto = ` Palabras y colores. Asocia la palabra con el color correcto. Nivel 1. La palabra es ${wordEl}.`;
+        texto = `Bienvenido a Palabras y colores. Asocia la palabra con el color correcto. Nivel 1. La palabra es ${wordEl}.`;
     } else {
-        texto = `Nivel ${level} de ${total}. La palabra es ${wordEl}.`;
+        texto = `Nivel ${level}. La palabra es ${wordEl}.`;
     }
 
     leerTexto(texto);
@@ -118,16 +155,22 @@ window.addEventListener("DOMContentLoaded", () => {
     actualizarBotonNarracion();
 
     {% if not finished %}
+        // Pequeño delay para que no choque con la carga
+        setTimeout(() => {
+            if (narracionActiva) {
+                leerNivelYPalabra();
+            }
+        }, 500);
+    {% else %}
         if (narracionActiva) {
-            leerNivelYPalabra();
+            leerTexto("¡Felicidades! Has completado todos los niveles.");
         }
     {% endif %}
 });
 
-// Detener TTS al salir de la página
+// Detener TTS al salir
 window.addEventListener("beforeunload", function () {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 });
 </script>
-
 {% endblock %}
