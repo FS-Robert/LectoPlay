@@ -2,9 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import random
 from .desc_game import get_level, total_levels, check_answer
-
-
-
 from httpx import request
 from matplotlib.style import context
 from . import encuentra_game
@@ -79,7 +76,7 @@ def admin_usuario_nuevo(request):
             email=email,
             password=password,
         )
-        # 🔒 Fuerza siempre a usuario normal
+        #  Fuerza siempre a usuario normal
         user.is_staff = False
         user.is_superuser = False
         user.save()
@@ -663,19 +660,19 @@ def escribe_palabra_game(request):
     total = total_levels()
 
     if request.method == "POST":
-        # 🔹 ACTIVAR / DESACTIVAR NARRACIÓN
+        #  ACTIVAR / DESACTIVAR NARRACIÓN
         if request.POST.get("toggle_narracion"):
             narracion_activada = not narracion_activada
             request.session["narracion_activada"] = narracion_activada
 
-        # 🔹 REINICIAR JUEGO
+        # REINICIAR JUEGO
         if request.POST.get("reset") == "1":
             request.session["level_idx"] = 0
             request.session["score"] = 0
             request.session["narracion_activada"] = False
             return redirect("escribe_palabra_game")  # 👈 NOMBRE DE TU URL
 
-        # 🔹 REVISAR RESPUESTA
+        #  REVISAR RESPUESTA
         if request.POST.get("respuesta"):
             respuesta = request.POST.get("respuesta", "")
             idx, score, correct, msg, finished = check_answer(respuesta, idx, score)
@@ -689,7 +686,7 @@ def escribe_palabra_game(request):
                     "total": total,
                 })
 
-            # 🔹 ENVIAR MENSAJE DE CORRECCIÓN
+            #  ENVIAR MENSAJE DE CORRECCIÓN
             nivel_data = get_level(idx)
             return render(request, "escribe_palabra.html", {
                 "descripcion": nivel_data["texto"],
@@ -701,7 +698,7 @@ def escribe_palabra_game(request):
                 "narracion_activada": narracion_activada,
             })
 
-    # 🔹 CARGAR NIVEL INICIAL
+    #  CARGAR NIVEL INICIAL
     nivel_data = get_level(idx)
     return render(request, "escribe_palabra.html", {
         "descripcion": nivel_data["texto"],

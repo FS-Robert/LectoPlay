@@ -5,24 +5,23 @@
 {% block content %}
 
 <style>
-/* 🔊 Botón flotante para activar narrador */
-#tts-btn {
-    position: fixed;
-    bottom: 30px;
-    left: 30px;
-    background: #ffafcc;
-    padding: 15px 25px;
-    border-radius: 50px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
-    z-index: 9999;
-}
+    /* Botón flotante para activar narrador */
+    #tts-btn {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        background: #ffafcc;
+        padding: 15px 25px;
+        border-radius: 50px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+        z-index: 9999;
+    }
 </style>
 
-<!-- 🔊 Botón flotante -->
 <button id="tts-btn" onclick="activarTTS()">🔊 Activar narrador</button>
 
 <section class="ejercicios">
@@ -66,32 +65,102 @@
 
 {% block extra_js %}
 <script>
-// 🔊 SI leerTexto NO EXISTE, SE DEFINE (evita errores)
-if (typeof leerTexto !== "function") {
-    function leerTexto(texto) {
-        const speech = new SpeechSynthesisUtterance(texto);
-        speech.lang = "es-ES";
-        window.speechSynthesis.speak(speech);
+// Variable global para referencia del audio actual
+window.currentUtterance = null;
+
+/**
+ * Función recursiva para narrar una lista de mensajes.
+ * Recibe el botón (ttsBtn) para restaurar el texto cuando termine la lista.
+ */
+function narrarSecuencia(lista, ttsBtn) {
+    // Caso base: si la lista está vacía, terminamos
+    if (lista.length === 0) {
+        console.log("Secuencia terminada.");
+        // Restaurar el botón al estado original
+        if (ttsBtn) {
+            ttsBtn.textContent = '🔊 Activar narrador';
+        }
+        return;
     }
+
+    console.log("Reproduciendo:", lista[0]);
+
+    // Crear la instancia de voz
+    window.currentUtterance = new SpeechSynthesisUtterance(lista[0]);
+    window.currentUtterance.lang = "es-ES";
+    window.currentUtterance.rate = 0.9; // Velocidad ligeramente más lenta
+
+    // Evento: Al terminar este audio, reproducir el siguiente (recursión)
+    window.currentUtterance.onend = function() {
+        narrarSecuencia(lista.slice(1), ttsBtn);
+    };
+
+    // Evento: Manejo de errores (intenta seguir con el siguiente)
+    window.currentUtterance.onerror = function(event) {
+        console.error("Error en TTS:", event);
+        narrarSecuencia(lista.slice(1), ttsBtn);
+    };
+
+    // Hablar
+    window.speechSynthesis.speak(window.currentUtterance);
 }
 
-// ✔️ NARRADOR al presionar el botón flotante
-function activarTTS() {
-    leerTexto("Ejercicios Divertidos. Aprende y juega con estos ejercicios interactivos.");
-    leerTexto("Elige entre los distintos ejercicios.");
-    leerTexto("Lectura Rápida, lee frases cortas y responde preguntas.");
-    leerTexto("Palabras y Colores, asocia palabras con colores.");
-    leerTexto("Encuentra la Letra, identifica letras escondidas.");
-    leerTexto("Escribe la Palabra, lee una descripción y escribe la palabra correcta.");
-    leerTexto("Palabra o no palabra, diferencia palabras reales e inventadas.");
-    leerTexto("Diviértete aprendiendo con los ejercicios.");
+/**
+ * Función simple para leer un texto puntual (botones de ayuda)
+ */
+function leerTexto(texto) {
+    window.speechSynthesis.cancel(); // Detiene cualquier narración en curso
+    
+    // Si la narración global estaba activa, reseteamos el botón grande
+    const ttsBtn = document.getElementById('tts-btn');
+    if (ttsBtn && ttsBtn.textContent.includes('Desactivar')) {
+        ttsBtn.textContent = '🔊 Activar narrador';
+    }
 
-    document.getElementById('tts-btn').style.display = 'none';
+    const speech = new SpeechSynthesisUtterance(texto);
+    speech.lang = "es-ES";
+    window.speechSynthesis.speak(speech);
+}
+
+/**
+ * Función principal del botón flotante (Toggle Activar/Desactivar)
+ */
+function activarTTS() {
+    const ttsBtn = document.getElementById('tts-btn');
+    
+    // CASO 1: Si ya está narrando (el botón dice "Desactivar"), lo paramos.
+    if (ttsBtn.textContent.includes('Desactivar')) {
+        window.speechSynthesis.cancel();
+        ttsBtn.textContent = '🔊 Activar narrador';
+        console.log("Narrador detenido por el usuario.");
+        return;
+    }
+
+    // CASO 2: Iniciar narración
+    console.log("Iniciando narrador...");
+    window.speechSynthesis.cancel(); // Limpieza preventiva
+    
+    // Cambiar estado del botón
+    ttsBtn.textContent = '🛑 Desactivar narrador';
+
+    const mensajes = [
+        "Ejercicios Divertidos. Aprende y juega con estos ejercicios interactivos.",
+        "Elige entre los distintos ejercicios.",
+        "Lectura Rápida: lee frases cortas y responde preguntas.",
+        "Palabras y Colores: asocia palabras con colores.",
+        "Encuentra la Letra: identifica letras escondidas.",
+        "Escribe la Palabra: lee una descripción y escribe la palabra correcta.",
+        "Palabra o no palabra: diferencia palabras reales e inventadas.",
+        "Diviértete aprendiendo con los ejercicios."
+    ];
+
+    // Iniciar secuencia pasando el botón para resetearlo al final
+    narrarSecuencia(mensajes, ttsBtn);
 }
 </script>
 
-<!-- 🛑 DETENER LA VOZ AL CAMBIAR DE PÁGINA -->
 <script>
+// Detener voz si el usuario cambia de página o recarga
 window.addEventListener("beforeunload", function () {
     window.speechSynthesis.cancel();
 });

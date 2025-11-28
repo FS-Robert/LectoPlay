@@ -6,49 +6,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LectoPlay{% endblock %}</title>
 
-    {% load static %}
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
 
     <style>
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
     </style>
     <script>
-    tailwind.config = {
-        corePlugins: {
-            preflight: false,
-        },
+        tailwind.config = {
+            corePlugins: {
+                preflight: false, /* Evita conflictos con Bootstrap */
+            },
         }
     </script>
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
 </head>
 
 <body>
     
     {% csrf_token %}
-    <!-- Barra rosa -->
+    
     <header class="navbar">
-        <div class="container-fluid py-3 d-none d-md-block d-flex justify-content-end">
-        </div>
+        <div class="container-fluid py-3 d-none d-md-block d-flex justify-content-end"></div>
     </header>
 
 
-    <!-- Navbar blanco -->
     <nav class="navbar navbar-expand-lg bg-white shadow-sm white-navbar" style="border-radius:60px; padding:10px 35px; margin-top:-45px;">
         <div class="container d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-3"> 
 
-                <!-- LOGIN / CERRAR SESIÓN - ESCRITORIO Y MÓVIL -->
-                <div class="d-flex align-items-center ms-auto" style="margin-left:auto;">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'css/logo3.png' %}" height="55" style="object-fit:contain;" alt="Logo LectoPlay">
+                </a>
+            </div>
+
+            <button class="navbar-toggler ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#lectoplay_nav"
+             aria-controls="lectoplay_nav" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="lectoplay_nav">
+                <ul class="navbar-nav mx-auto white-nav-links">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">Acerca de</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'ejercicios' %}active{% endif %}" href="{% url 'ejercicios' %}">Ejercicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contacto' %}active{% endif %}" href="{% url 'contacto' %}">Contacto</a>
+                    </li>
+                    {% if request.user.is_authenticated and request.user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <div class="d-flex align-items-center ms-auto">
                     <div id="user-info">
                         {% if user.is_authenticated %}
-                        <!-- Usuario logueado -->
                         <div class="user-avatar d-flex align-items-center gap-2">
                             <i class="bi bi-person-circle" style="font-size: 30px;"></i>
                             <span style="font-weight:600; font-size: 10px; color:#6a4736;">
@@ -56,102 +80,27 @@
                             </span>
                             <form method="post" action="{% url 'logout' %}">
                              {% csrf_token %}
-                                <button type="submit" style="
-                                    background:#ff6b6b;
-                                    border:none;
-                                    padding:2px 5px;
-                                    border-radius:6px;
-                                    color:white;
-                                    font-size: 10px;
-                                    cursor:pointer;">Cerrar sesión
+                                <button type="submit" style="background:#ff6b6b; border:none; padding:2px 5px; border-radius:6px; color:white; font-size: 10px; cursor:pointer;">
+                                    Cerrar sesión
                                 </button>
                             </form>
                         </div>
                         {% else %}
-                        <!-- Usuario NO logueado -->
                         <button id="login-btn" class="login-btn" onclick="window.location.href='/login'">
                             Iniciar Sesión
                         </button>
                         {% endif %}
                     </div>
                 </div>
-
-             <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'css/logo3.png' %}" height="55" style="object-fit:contain;">
-            </a>
-
-            </div>
-
-            <!-- Botón hamburguesa -->
-             <button class="navbar-toggler ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#lectoplay_nav"
-             aria-controls="lectoplay_nav" aria-expanded="false" aria-label="Toggle navigation">
-             <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <!-- Menu principal -->
-            <div class="collapse navbar-collapse" id="lectoplay_nav">
-                <!-- LINKS CENTRALES -->
-                <ul class="navbar-nav mx-auto white-nav-links">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-                        href="{% url 'home' %}">Inicio</a>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
-                        href="{% url 'about' %}">Acerca de</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'ejercicios' %}active{% endif %}"
-                        href="{% url 'ejercicios' %}">Ejercicios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'contacto' %}active{% endif %}"
-                        href="{% url 'contacto' %}">Contacto</a></li>
-                        
-                    {% if request.user.is_authenticated and request.user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin</a>
-                    </li>
-                    {% endif %}
-                </ul>
             </div>
         </div>
     </nav>
 
-
-    <script>
-    document.addEventListener("keydown", function(e) {
-        // Detectar Shift + A + D
-        if (e.shiftKey && e.key.toLowerCase() === "a") {
-            document.addEventListener("keydown", function secondKey(ev) {
-                if (ev.key.toLowerCase() === "d") {
-                    const adminBtn = document.getElementById("admin-secret-btn");
-                    adminBtn.style.display = "block";
-                    document.removeEventListener("keydown", secondKey);
-                }
-            });
-        }
-    });
-    </script>
-
-
-
-  
-    
-   
-    
-    
-    
     <main class="container-fluid my-4"> 
         {% block content %}
-            {% endblock content %}
+        {% endblock content %}
     </main>
-    <script src="{% static 'js/chatbot.js' %}"></script>
 
-
-   
-    
     <div id="chatbot-toggle" role="button" aria-label="Abrir chat">
         <svg id="chat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22H6C4.89543 22 4 21.1046 4 20V18C4 16.8954 3.10457 16 2 16V12ZM6 18H8V20H6V18ZM12 4C7.58172 4 4 7.58172 4 12V16H20V12C20 7.58172 16.4183 4 12 4Z" fill="currentColor"/>
@@ -182,23 +131,36 @@
             <button type="submit" id="chat-send-btn" aria-label="Enviar mensaje">Enviar</button>
         </form>
     </div>
-    
-   
-    
-    
-    
-    
-    <script src="{% static 'js/chatbot.js' %}"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Lógica extra para el carrusel si fuera necesaria
-        });
-    </script>
 
     <footer>
         <p>🐾 &copy; 2025 LectoPlay. Aprende jugando </p>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <script src="{% static 'js/chatbot.js' %}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lógica global si se necesita en el futuro
+        });
+
+        // Lógica botón secreto (Shift + A + D)
+        document.addEventListener("keydown", function(e) {
+            if (e.shiftKey && e.key.toLowerCase() === "a") {
+                document.addEventListener("keydown", function secondKey(ev) {
+                    if (ev.key.toLowerCase() === "d") {
+                        const adminBtn = document.getElementById("admin-secret-btn");
+                        if(adminBtn) adminBtn.style.display = "block"; // Verificación de null por seguridad
+                        document.removeEventListener("keydown", secondKey);
+                    }
+                });
+            }
+        });
+    </script>
+
+    {% block extra_js %}
+    {% endblock %}
+
 </body>
 </html>
