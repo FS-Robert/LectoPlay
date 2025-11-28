@@ -271,7 +271,7 @@ def logout_view(request):
 # =========================
 #   JUEGO: ENCUENTRA LETRA
 # =========================
-
+@login_required(login_url='/login/') 
 def encuentra(request):
     total = encuentra_game.total_levels()
 
@@ -323,7 +323,7 @@ def encuentra(request):
 
 
 # JUEGO: LECTURA RÁPIDA
-
+@login_required(login_url='/login/') 
 def lectura_rapida_game(request):
     categorias = get_categorias()
     categoria = request.GET.get("categoria") or request.POST.get("categoria")
@@ -381,7 +381,7 @@ def lectura_rapida_game(request):
 # ====================================
 #   JUEGO: PALABRAS Y COLORES
 # ====================================
-
+@login_required(login_url='/login/') 
 def palabras_colores(request):
     total = palabras_colores_game.total_levels()
 
@@ -442,6 +442,7 @@ def palabras_colores(request):
 
 
 # descripción de la palabra
+@login_required(login_url='/login/') 
 def desc_palabra(request):
     total = desc_game.total_levels()
 
@@ -501,7 +502,7 @@ def toggle_tts_pc(request):
 # ==============================
 #   JUEGO: PALABRA O NO PALABRA
 # ==============================
-
+@login_required(login_url='/login/') 
 def pnp(request):
     total = pnp_game.total_levels()
 
