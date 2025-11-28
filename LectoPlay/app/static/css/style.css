@@ -3022,3 +3022,64 @@ p {
     object-fit: cover; /* Ajusta la imagen sin deformarla */
     display: block;
 }
+
+/* Footer */
+
+footer {
+  min-height: 400px;
+}
+
+.footer-seccion {
+    background-color: #8ecae6; 
+    padding: 40px 0;
+    color: #023047;
+    text-align: center;
+}
+
+footer .footer-logo {
+    width: 80px !important;
+    height: auto !important;
+    margin: 10px ;
+    object-fit: contain;
+}
+
+.footer-texto {
+    font-size: 1.5rem;
+    padding: 2px;
+    margin-top: 8px; 
+    margin-bottom: 15px;
+    font-family: 'Comic Sans MS', 'Poppins', sans-serif;
+}
+
+.iconos-redes-sociales a {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    margin: 10px;
+    border: 2px solid white;
+    border-radius: 50%;
+    transition: all 0.2s ease-in;
+}
+
+.iconos-redes-sociales i {
+    color: white;
+    font-size: 1.5rem;
+    transition: all 0.2s ease-in;
+}
+
+.iconos-redes-sociales a:hover {
+    background-color: white;
+}
+
+.iconos-redes-sociales a:hover i {
+    color: #ff8ab7;
+}
+
+.derechos-de-autor {
+    font-size: 15px;
+    color: #585858;
+    padding-top: 20px;
+}
