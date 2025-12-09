@@ -2,10 +2,10 @@ import requests
 import json
 from django.conf import settings
 
-# Nota: The API key and URL are defined here, centralizing the configuration.
-# The API key is defined in the view file to be used here.
+# Nota: La clave API y la URL se definen aquí, centralizando la configuración.
+# La clave API se define en el archivo de vista para usarse aquí.
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent"
-# The system prompt ensures the AI acts as a helpful, friendly assistant for children with dyslexia.
+# El símbolo de sistema garantiza que la IA actúe como un asistente útil y amigable para niños con dislexia.
 SYSTEM_INSTRUCTION = (
     "Eres PandaPlay, un asistente amigable y motivador diseñado para ayudar a niños "
     "con dislexia, sus padres y educadores. Responde con un tono cálido, simple y alentador. "
@@ -21,17 +21,17 @@ SYSTEM_INSTRUCTION = (
 
 def get_ai_response(user_message, api_key):
     """
-    Communicates with the Gemini API to get a conversational response.
+    Se comunica con la API de Gemini para obtener una respuesta conversacional.
 
     Args:
-        user_message (str): The text message sent by the user.
-        api_key (str): The Gemini API key.
+        user_message (str): El mensaje de texto enviado por el usuario.
+        api_key (str): La clave de API de Gemini.
 
     Returns:
-        str: The AI's generated text response.
+        str: La respuesta de texto generada por la IA.
     """
     
-    # 1. Prepare payload for Gemini API
+    # 1. Preparar carga útil para la API de Gemini
     payload = {
         "contents": [{
             "parts": [{"text": user_message}]
@@ -39,30 +39,30 @@ def get_ai_response(user_message, api_key):
         "systemInstruction": {
             "parts": [{"text": SYSTEM_INSTRUCTION}]
         },
-        # Use search grounding for up-to-date or factual information when needed
+        # Usar búsqueda fundamentada para información actualizada o factual cuando sea necesario
         "tools": [{"google_search": {}}]
     }
 
-    # 2. Call the Gemini API
+    # 2. Llamar a la API de Gemini
     headers = {'Content-Type': 'application/json'}
     
     try:
         response = requests.post(f"{API_URL}?key={api_key}", json=payload, headers=headers)
-        response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
+        response.raise_for_status() # Lanzar HTTPError para respuestas malas (4xx o 5xx)
 
         gemini_result = response.json()
         
-        # 3. Extract the generated text
+        # 3. Extraer el texto generado
         if (candidate := gemini_result.get('candidates')) and candidate[0].get('content', {}).get('parts'):
             return candidate[0]['content']['parts'][0]['text']
         else:
-            # Handle cases where the API returns an unusual or empty response
+            # Manejar casos donde la API devuelve una respuesta inusual o vacía
             return "Lo siento, no pude generar una respuesta. Por favor, sé más específico."
 
     except requests.exceptions.RequestException as e:
-        # Log the error and return a friendly message
+        # Registrar el error y devolver un mensaje amigable
         print(f"Error calling Gemini API in ai_service: {e}")
         raise ConnectionError("Error de conexión con el servicio de IA.")
     except Exception as e:
-        print(f"Internal AI Service Error: {e}")
+        print(f"Error interno del servicio de IA: {e}")
         raise Exception("Error interno al procesar la solicitud de IA.")

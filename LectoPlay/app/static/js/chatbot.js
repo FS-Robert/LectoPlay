@@ -7,9 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatMessages = document.getElementById('chat-messages');
     const sendBtn = document.getElementById('chat-send-btn');
     
-    // --- CORRECCIÓN CSRF ---
-    // En lugar de leer cookies, leemos el token que Django generó en el HTML.
-    // Esto es mucho más robusto para archivos JS externos.
+
     const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
     const CSRF_TOKEN = csrfInput ? csrfInput.value : '';
 
@@ -21,8 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let isChatOpen = false;
     let isLoading = false;
 
-    // Define la ruta de la API.
-    // NOTA: Si en tu urls.py la ruta termina en /, agrega la / aquí también (ej: /api/chatbot_ask/)
     const API_ENDPOINT = '/api/chatbot_ask'; 
     
     // --- UI Handlers ---
@@ -83,9 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function addMessage(text, sender) {
         const bubble = document.createElement('div');
         bubble.classList.add('message-bubble', sender === 'user' ? 'user-message' : 'bot-message');
-        
-        // Conversión simple de markdown (negritas)
-        // Convierte **texto** en <strong>texto</strong>
+
         const formattedText = String(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         
         bubble.innerHTML = formattedText;
@@ -124,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sendBtn.textContent = disabled ? '...' : 'Enviar';
     }
 
-    // --- Llamada a la API y Reintentos (Exponential Backoff) ---
+
 
     async function fetchGeminiResponse(userQuery, retries = 0) {
         const maxRetries = 5;
@@ -135,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Usamos el token recuperado del input
                     'X-CSRFToken': CSRF_TOKEN 
                 },
                 body: JSON.stringify({ message: userQuery })
