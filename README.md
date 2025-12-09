@@ -41,14 +41,14 @@ El niño debe identificar cuáles son correctas, mejorando la conciencia fonoló
 * Asistente virtual (Panda Play) para apoyo constante.
 * Diseño inclusivo y apto para aprendizaje autónomo.
 
-Misión
+Misión: 
 Ofrecer herramientas digitales accesibles y atractivas que ayuden a niños con dislexia a desarrollar sus habilidades 
 lectoras de forma divertida, guiada y sin miedo a equivocarse.
 
-Visión
+Visión :
 Ser una plataforma educativa reconocida por transformar la lectura en un proceso motivador, creativo y lleno de confianza.
 
-Valores
+Valores:
 Inclusión · Empatía · Innovación · Motivación
 
 
