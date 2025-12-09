@@ -129,6 +129,7 @@ def get_level(level_idx: int) -> Dict[str, str]:
 def spaced_word(word: str) -> str:
     return ' '.join(list(word))
 
+#arma las opciones de letras para el niño incluyendo la correcta
 def make_choices(word: str, target: str, count: int = 6, rng=random) -> List[str]:
     if not target or not isinstance(target, str):
         raise ValueError('target debe ser una cadena no vacía')
@@ -145,6 +146,7 @@ def make_choices(word: str, target: str, count: int = 6, rng=random) -> List[str
     rng.shuffle(choices)
     return choices
 
+#verifica si la elección del niño es correcta
 def check_choice(choice: str, level_idx: int, score: int) -> Tuple[int, int, bool, str]:
     total = total_levels()
     if level_idx >= total:

@@ -91,11 +91,11 @@
 
 {% block extra_js %}
 <script>
-// 🔵 Estado de narración persistente
+//  Estado de narración persistente
 let narracionActiva = localStorage.getItem("narracionActiva") === "true";
 let narrando = false;
 
-// 🟢 Actualizar botón según estado
+//  Actualizar botón según estado
 function actualizarBotonNarracion() {
     const btn = document.getElementById("btnNarracion");
     if(btn) {
@@ -104,7 +104,7 @@ function actualizarBotonNarracion() {
     }
 }
 
-// 📌 Función TTS
+//  Función TTS
 function leerTexto(texto) {
     if (!narracionActiva || narrando) return;
     if (!('speechSynthesis' in window)) return;

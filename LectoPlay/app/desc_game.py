@@ -21,9 +21,9 @@ def total_levels():
 def get_level(idx):
     return DESCS[idx]
 
-
+#compara la respuesta escrita con la palabra correcta y dira si es correcta o no.
 def check_answer(answer, idx, score):
-    """Revisa la respuesta del niño y devuelve el siguiente estado."""
+    
     ans = (answer or "").strip().lower()
     correcta = DESCS[idx]["respuesta"].lower()
 

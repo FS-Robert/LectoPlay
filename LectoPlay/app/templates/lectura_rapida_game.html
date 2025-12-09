@@ -4,15 +4,15 @@
 
 {% block content %}
 <script>
-// 🔵 Estado de narración, se guarda en localStorage
+//  Estado de narración, se guarda en localStorage
 let narracionActiva = localStorage.getItem("narracionActiva") === "true";  // Recuperar estado
 let narrando = false;
 
-// 🟢 Al cargar la página, actualizar botón y leer si es necesario
+//  Al cargar la página, actualizar botón y leer si es necesario
 window.addEventListener("DOMContentLoaded", () => {
     actualizarBotonNarracion();
 
-    // 📌 SOLO en categoría (antes de empezar el juego)
+    //  SOLO en categoría (antes de empezar el juego)
     {% if not categoria_actual %}
         // Pequeño delay para asegurar que la página cargó bien
         setTimeout(() => {
@@ -25,9 +25,9 @@ window.addEventListener("DOMContentLoaded", () => {
     {% endif %}
 });
 
-// 📌 Leer texto simple
+//  Leer texto simple
 function leerTexto(texto) {
-    if (!narracionActiva && !texto.includes("Bienvenido")) return; // Forzamos bienvenida si se desea, o respetamos el flag
+    if (!narracionActiva && !texto.includes("Bienvenido")) return; 
     if (!narracionActiva) return;
     
     window.speechSynthesis.cancel(); // Limpiar cola anterior
@@ -55,7 +55,7 @@ function toggleNarracion() {
     }
 }
 
-// 🟣 Leer TODO EL CONTEXTO DEL JUEGO
+//  Leer TODO EL CONTEXTO DEL JUEGO
 function leerCategoriaYFrase() {
     const categoria = "{{ categoria_actual }}";
     const frase = document.getElementById("fraseTexto")?.textContent || "";

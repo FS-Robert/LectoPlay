@@ -23,13 +23,13 @@ def get_level(idx):
     real, fake = PARES[idx]
     return {"real": real, "fake": fake}
 
-
+#Mezcla las opciones para que no siempre estén en el mismo orden
 def make_options(real, fake):
     opciones = [real, fake]
     random.shuffle(opciones)
     return opciones
 
-
+#verifica si la elección del niño es correcta
 def check_choice(choice, idx, score):
     """Revisa qué opción eligió el niño."""
     real, fake = PARES[idx]

@@ -148,14 +148,10 @@
         // Construir texto de las opciones
         const textoOpciones = opcionesLista.join(", o, ");
 
-        // 1. Si hay feedback (Error), leerlo primero
         if (message) {
             leerTexto(message);
             
-            // 2. Leer la pregunta de nuevo tras el error (opcional)
-            /* setTimeout(() => {
-                leerTexto("Elige cuál es la palabra real: " + textoOpciones);
-            }, 1500); */
+          
         } else {
             // Juego Normal
             let intro = "¿Cuál es la palabra real?";
