@@ -51,6 +51,10 @@ Ser una plataforma educativa reconocida por transformar la lectura en un proceso
 Valores:
 Inclusión · Empatía · Innovación · Motivación
 
+NOTA IMPORTANTE : Para que el chatbot de nuestro proyecto funcione correctamente, es necesario contar con una API de Gemini
+que se agregará al proyecto. Para ello, se debe crear un archivo .env en el cual se incluirá la API. Esta se la enviaremos por 
+comentarios en Canvas por motivos de seguridad, o bien, se puede utilizar una API propia si ya posee una.
+
 
 
 
