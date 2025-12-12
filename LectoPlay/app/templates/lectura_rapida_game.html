@@ -8,7 +8,7 @@
 let narracionActiva = localStorage.getItem("narracionActiva") === "true";  // Recuperar estado
 let narrando = false;
 
-//  Al cargar la página, actualizar botón y leer si es necesario
+///  Al cargar la página
 window.addEventListener("DOMContentLoaded", () => {
     actualizarBotonNarracion();
 
@@ -30,7 +30,7 @@ function leerTexto(texto) {
     if (!narracionActiva && !texto.includes("Bienvenido")) return; 
     if (!narracionActiva) return;
     
-    window.speechSynthesis.cancel(); // Limpiar cola anterior
+    window.speechSynthesis.cancel(); // Limpiar cola
     const utter = new SpeechSynthesisUtterance(texto);
     utter.lang = "es-ES";
     utter.rate = 0.9; // Un poco más lento para niños
@@ -44,7 +44,7 @@ function toggleNarracion() {
     actualizarBotonNarracion();
 
     if (narracionActiva) {
-        // Si estamos jugando, leer la frase actual
+        //  Leer contexto actual
         if (document.getElementById("fraseTexto")) {
             leerCategoriaYFrase();
         } else {
@@ -69,7 +69,7 @@ function leerCategoriaYFrase() {
     leerTexto(texto);
 }
 
-// 🟠 Cambiar el texto del botón visualmente
+//  Cambiar el texto del botón visualmente
 function actualizarBotonNarracion() {
     const btn = document.getElementById("btnNarracion");
     if(btn) {

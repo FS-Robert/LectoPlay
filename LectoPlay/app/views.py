@@ -375,9 +375,8 @@ def lectura_rapida_game(request):
         "intentos": intentos,
     }
     return render(request, "lectura_rapida_game.html", context)
-
-
 # FIN DE LECTURA RÁPIDA
+
 # ====================================
 #   JUEGO: PALABRAS Y COLORES
 # ====================================
@@ -435,8 +434,6 @@ def palabras_colores(request):
     }
 
     return render(request, "palabras_colores.html", context)
-
-
 
 # FIN DE PALABRAS Y COLORES
 
@@ -671,7 +668,7 @@ def escribe_palabra_game(request):
             request.session["level_idx"] = 0
             request.session["score"] = 0
             request.session["narracion_activada"] = False
-            return redirect("escribe_palabra_game")  # 👈 NOMBRE DE TU URL
+            return redirect("escribe_palabra_game")  
 
         #  REVISAR RESPUESTA
         if request.POST.get("respuesta"):

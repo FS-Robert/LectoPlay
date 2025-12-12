@@ -93,8 +93,7 @@
     //  Estado de TTS persistente (Estandarizado a 'narracionActiva')
     let narracionActiva = localStorage.getItem("narracionActiva") === "true";
     
-    //  Inicialización segura de variables para evitar errores de sintaxis
-    // Usamos |default para que si Django no envía el dato, JS reciba un valor seguro
+    // Variables del juego
     const isFinished = "{{ finished|yesno:'true,false' }}" === "true";
     const level = {{ level_num|default:"0" }};
     const word = "{{ word|default:'' }}";
@@ -147,10 +146,8 @@
         } else {
             let texto = "";
             if (level === 1) {
-                // Instrucción completa para nivel 1
                 texto = `Encuentra la letra. La palabra es ${word}. Debes encontrar la letra ${target}.`;
             } else {
-                // Instrucción corta para siguientes niveles
                 texto = `La palabra es ${word}. Busca la letra ${target}`;
             }
             leerTexto(texto);
@@ -163,8 +160,7 @@
             generarInstruccion();
         }
     }, 500);
-
-    //  Detener TTS al cambiar de página
+    // Cancelar TTS al salir de la página
     window.addEventListener("beforeunload", () => {
         window.speechSynthesis.cancel();
     });

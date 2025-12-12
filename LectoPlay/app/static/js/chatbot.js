@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchGeminiResponse(userQuery, retries = 0) {
         const maxRetries = 5;
-        const delay = Math.pow(2, retries) * 1000 + (Math.random() * 1000); // 2s, 4s, 8s... + jitter
+        const delay = Math.pow(2, retries) * 1000 + (Math.random() * 1000); 
         
         try {
             const response = await fetch(API_ENDPOINT, {

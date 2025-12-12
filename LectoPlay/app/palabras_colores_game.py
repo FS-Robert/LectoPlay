@@ -37,18 +37,7 @@ def make_choices(correct_color):
 
 # Verificar respuesta
 def check_choice(choice, level_idx, score):
-    """
-    choice: color elegido por el usuario (string)
-    level_idx: nivel actual (int)
-    score: puntaje actual (int)
-
-    return:
-        level_idx (nuevo nivel),
-        score (nuevo puntaje),
-        correct (True/False),
-        message (texto para mostrar en pantalla),
-        finished (True/False) -> indica si se terminó el juego
-    """
+   
     correct_color = LEVELS[level_idx]["color"]
 
     if choice == correct_color:

@@ -133,7 +133,6 @@
         if (!narracionActiva) return;
         if (!('speechSynthesis' in window)) return;
 
-        // No cancelamos aqui si es parte de una secuencia
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9; 
@@ -142,32 +141,29 @@
 
     // Logica de lectura secuencial
     function leerEstadoJuego() {
-        // Cancelamos cualquier audio previo
+      
         window.speechSynthesis.cancel();
 
         if (isFinished) {
             leerTexto("Juego completado. Felicidades.");
             return;
         }
-
-        // 1. Si hay mensaje de error/feedback, leerlo primero
+o
         if (message) {
             leerTexto(message); 
-            // Despues leer la pista de nuevo
+       
             leerTexto("La pista es: " + descripcion);
         } else {
-            // Si es un nivel nuevo (sin error previo)
+    
             if (level === 1) {
-                // Lectura completa de bienvenida y reglas en Nivel 1
                 leerTexto(`Bienvenido a Escribe la palabra. Lee la descripción y escribe la respuesta correcta. Nivel 1. Pista: ${descripcion}`);
             } else {
-                // Niveles siguientes: solo pista
                 leerTexto(`Pista: ${descripcion}`);
             }
         }
     }
 
-    // Al cargar la pagina
+    // Iniciar lectura si estaba activa
     setTimeout(() => {
         if (narracionActiva) {
             leerEstadoJuego();
